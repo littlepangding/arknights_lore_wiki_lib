@@ -130,7 +130,7 @@ def get_event_summary_for_final_prompt(event_summary_for_char):
 def get_final_prompt(char_name, alias, event_summary_for_char, char_name_info):
     lines = []
     lines.append(f"名称:{char_name}")
-    lines.append(f"已知其他名称(可能有更多):{";".join(list(alias))}")
+    lines.append(f"已知其他名称(可能有更多):{';'.join(list(alias))}")
     char_text = get_char_info_from_alias(alias, char_name_info)
     if char_text:
         lines.append(f"<角色的所有档案>\n{char_text}\n</角色的所有档案>")
@@ -363,7 +363,7 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
         角色名称:{char_name}
         其他名称:{";".join(list(alias))}
 
-        {"基本的角色信息(用于参考):\n{wiki_step1}" if wiki_step1 else ""}
+        基本的角色信息(用于参考):\n{wiki_step1 if wiki_step1 else ""}
 
         完整活动剧情文本:
         {full_text}

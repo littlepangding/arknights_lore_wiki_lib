@@ -14,6 +14,8 @@ skin_filename = "zh_CN/gamedata/excel/skin_table.json"
 uniequip_filename = "zh_CN/gamedata/excel/uniequip_table.json"
 enemy_handbook_filename = "zh_CN/gamedata/excel/enemy_handbook_table.json"
 
+LINE_CHANGE = "\n"
+
 
 def extract_data_from_story_review_table(game_data_path):
     file_path = os.path.join(
@@ -33,7 +35,7 @@ def extract_data_from_story_review_table(game_data_path):
                 {
                     "name": v["storyName"],
                     "storyInfoTxt": (
-                        _get_story_info_text(v["storyInfo"])
+                        _get_story_info_text(game_data_path, v["storyInfo"])
                         if v["storyInfo"] is not None
                         else ""
                     ),
@@ -91,10 +93,11 @@ def extract_data_from_charword_table(game_data_path, charword_filename):
     return ret
 
 
-def _get_story_info_text(info_link):
+def _get_story_info_text(game_data_path, info_link):
     with open(
         os.path.join(
-            "/home/pangdd/Codes/ArknightsGameData/zh_CN/gamedata/story/",
+            game_data_path,
+            "zh_CN/gamedata/story/",
             "[uc]" + info_link + ".txt",
         ),
         "r",
@@ -123,7 +126,9 @@ def extract_data_from_handbook_info_table(game_data_path, filename):
                 {
                     "storySetName": v1["storySetName"],
                     "storyTxt": v1["avgList"][0]["storyTxt"],
-                    "storyInfoTxt": _get_story_info_text(v1["avgList"][0]["storyInfo"]),
+                    "storyInfoTxt": _get_story_info_text(
+                        game_data_path, v1["avgList"][0]["storyInfo"]
+                    ),
                 }
                 for v1 in val["handbookAvgList"]
             ],
@@ -286,13 +291,10 @@ def get_char_info_text_prompt(val):
             f"\n<干员招聘文本>\n{val['itemUsage']}\n{val['itemDesc']}\n</干员招聘文本>"
         )
     if "words" in val:
-        lines.append(f"\n<干员语音>\n{"\n".join(val['words'])}\n</干员语音>")
+        lines.append(f"\n<干员语音>\n{LINE_CHANGE.join(val['words'])}\n</干员语音>")
     if "stories" in val:
-        lines.append(
-            f"\n<干员档案>\n{"\n".join([
-            f"{k1}:{v1}" for k1, v1 in val['stories'].items()
-        ])}\n</干员档案>"
-        )
+        tmp = LINE_CHANGE.join([f"{k1}:{v1}" for k1, v1 in val["stories"].items()])
+        lines.append(f"\n<干员档案>\n{tmp}\n</干员档案>")
 
     if "skins" in val:
         lines.append("\n<干员皮肤>")

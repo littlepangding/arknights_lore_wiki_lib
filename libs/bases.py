@@ -95,7 +95,7 @@ def query_llm_gai(gai_client, system_prompt, prompt_pre, prompt_post, text):
         try:
             # Start streaming
             response = gai_client.models.generate_content(
-                model="gemini-2.5-flash-preview-04-17",
+                model="gemini-2.5-flash",
                 # config=types.GenerateContentConfig(
                 #     max_output_tokens=max_output,
                 # ),
