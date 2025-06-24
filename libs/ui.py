@@ -92,7 +92,7 @@ def get_char_md_page(data_file, n2d_c=None, n2d_s=None):
     char_name = extract_tagged_contents(txt, "名称")[0].strip().replace("\n", "")
     lines = []
     lines.append(f"# {char_name}")
-    lines.append(f"页面版本:{extract_tagged_contents(txt, "version")[0].strip()}")
+    lines.append(f"页面版本:{extract_tagged_contents(txt, 'version')[0].strip()}")
     lines.append(WARNING)
     for tag in char_wiki_tags_out:
         tag_content = extract_tagged_contents(txt, tag)[0].strip()
@@ -247,7 +247,7 @@ def get_story_md_page(data_file, n2d=None):
     char_name = extract_tagged_contents(txt, "活动名称")[0].strip().replace("\n", "")
     lines = []
     lines.append(f"# {char_name}")
-    lines.append(f"页面版本:{extract_tagged_contents(txt, "version")[0].strip()}")
+    lines.append(f"页面版本:{extract_tagged_contents(txt, 'version')[0].strip()}")
     lines.append(WARNING)
     for tag in story_wiki_tags_out:
         tag_content = extract_tagged_contents(txt, tag)[0].strip()
