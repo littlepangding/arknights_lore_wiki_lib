@@ -24,38 +24,22 @@ from libs.game_data import (
 
 import argparse
 
+# new_stories = [
+#     "act43side",
+#     "story_weedy_set_2",
+#     "story_narant_set_1",
+#     "story_vvana_set_1",
+#     "story_christ_set_1",
+# ]
 new_stories = [
-    "act43side",
-    "story_weedy_set_2",
-    "story_narant_set_1",
-    "story_vvana_set_1",
-    "story_christ_set_1",
+    "act44side",
+    "story_ctrail_set_1",
+    "story_cathy_set_1",
+    "story_hsguma_set_1",
+    "story_utage_set_2",
+    "story_kazema_set_2",
 ]
-new_chars = [
-    "傀影",
-    "莫伊拉",
-    "格蕾塔",
-    "道尔顿",
-    "谢莉",
-    "迈克尔",
-    "玛丽昂",
-    "蒂比",
-    "米兰妮",
-    "斯蒂芬",
-    "阿布纳",
-    "Miss.Christine",
-    "劳拉",
-    "暮落",
-    "雅拉·布克·威尔森",
-    "娜仁图亚",
-    "薇薇安娜",
-    "奥比娜",
-    "麦基",
-    "温蒂",
-    "艾丽妮",
-    "卡利托",
-    "郁金香",
-]
+new_chars = []
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
