@@ -31,15 +31,51 @@ import argparse
 #     "story_vvana_set_1",
 #     "story_christ_set_1",
 # ]
+# new_stories = [
+#     "act44side",
+#     "story_ctrail_set_1",
+#     "story_cathy_set_1",
+#     "story_hsguma_set_1",
+#     "story_utage_set_2",
+#     "story_kazema_set_2",
+# ]
+# new_stories = [
+#     "main_16",
+#     "story_mantra_set_1",
+#     "story_bobb_set_1",
+#     "story_tippi_set_1",
+#     "story_pinecn_set_2",
+# ]
 new_stories = [
-    "act44side",
-    "story_ctrail_set_1",
-    "story_cathy_set_1",
-    "story_hsguma_set_1",
-    "story_utage_set_2",
-    "story_kazema_set_2",
+    "act46side",
+    "story_cetsyr_set_1",
+    "story_blkkgt_set_1",
+    "story_halo2_set_1",
+    "story_lava2_set_1",
+    "story_kichi_set_1",
+    "story_snhunt_set_1",
 ]
-new_chars = []
+new_chars = [
+    "雪猎",
+    "银灰",
+    "协律",
+    "哈蒂娅",
+    "初雪",
+    "菈塔托丝·布朗陶",
+    "休露丝·布朗陶",
+    "阿克托斯·佩尔罗契",
+    "灵知",
+    "星源",
+    "卡罗琳",
+    "阿德颂长老",
+    "茱安娜",
+    "锏",
+    "开斯特公爵",
+    "哈洛德",
+    "阿尔贝塔",
+    "尤卡坦",
+    "莫希",
+]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -185,6 +221,9 @@ if __name__ == "__main__":
 
     char_dict = {k: v for k, v in index_v3}
     char_new_txt = ", ".join(
-        [f"[{new_char}](docs/char_v3/{char_dict[new_char]})" for new_char in new_chars]
+        [
+            f"[{new_char}](docs/char_v3/{char_dict.get(new_char, new_char)})"
+            for new_char in new_chars
+        ]
     )
     print(char_new_txt)
