@@ -28,12 +28,21 @@ def extract_data_from_story_review_table(game_data_path):
     for k, val in raw_json.items():
         event_id = val["id"]
         assert event_id not in ret, ret[event_id]
+        # Sort by storySort so chapters are emitted in narrative order even if
+        # the upstream JSON is ever reshuffled. In practice the JSON is sorted
+        # already, but the field is meaningful and cheap to honor.
+        stages_raw = sorted(
+            val["infoUnlockDatas"], key=lambda v: v.get("storySort", 0)
+        )
         ret[event_id] = {
             "name": val["name"],
             "entryType": val["entryType"],
             "stages": [
                 {
                     "name": v["storyName"],
+                    # avgTag distinguishes 行动前 / 行动后 / 幕间 — without it,
+                    # _beg and _end stages share an identical chapter heading.
+                    "avgTag": v.get("avgTag"),
                     "storyInfoTxt": (
                         _get_story_info_text(game_data_path, v["storyInfo"])
                         if v["storyInfo"] is not None
@@ -41,7 +50,7 @@ def extract_data_from_story_review_table(game_data_path):
                     ),
                     "storyTxt": v["storyTxt"],
                 }
-                for v in val["infoUnlockDatas"]
+                for v in stages_raw
             ],
         }
 
@@ -240,6 +249,23 @@ def clean_script(text: str) -> str:
         text,
     )
 
+    # Sticker text often carries narration / inscriptions / scripture (e.g.
+    # 圣巡 scripture in act46side). `text=` is not always the first param so
+    # we match it anywhere inside the bracket. The literal `\n` escape in the
+    # source separates inscription lines — split on it and emit each
+    # non-empty piece as its own 旁白: line so the prefix isn't lost. Sticker
+    # tags without `text=` (e.g. `[Sticker(id="st1")]` to clear) fall through
+    # to the catch-all bracket-line strip below.
+    def extract_sticker(match):
+        pieces = [p.strip() for p in match.group(1).split("\\n") if p.strip()]
+        return "\n".join(f"旁白:{p}" for p in pieces)
+
+    text = re.sub(
+        r'\[Sticker\([^\]]*?text="(.*?)"[^\]]*?\)\]',
+        extract_sticker,
+        text,
+    )
+
     # Replace [name="CHARACTER"]Dialogue → CHARACTER: Dialogue
     pattern = re.compile(
         r'^\[(?:multiline\()?name="([^"]+)"(?:,end=true)?\)?\](.*)$', re.MULTILINE
@@ -272,8 +298,11 @@ def _get_raw_story_txt(game_data_path, story_txt):
 def get_all_text_from_event(game_data_path, event_data):
     lines = [f"<活动名称>{event_data['name']}</活动名称>"]
     for v in event_data["stages"]:
+        chapter_name = v["name"]
+        if v.get("avgTag"):
+            chapter_name = f"{v['name']}（{v['avgTag']}）"
         lines.append(f"<章节>")
-        lines.append(f"<章节名称>{v['name']}</章节名称>")
+        lines.append(f"<章节名称>{chapter_name}</章节名称>")
         lines.append(f"<章节简介>{v['storyInfoTxt']}</章节简介>")
         lines.append(
             f"<正文>\n{_get_raw_story_txt(game_data_path, v['storyTxt'])}\n</正文>"
