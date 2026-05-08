@@ -1,12 +1,6 @@
 import os
-import json
-from itertools import chain
-import pprint
-import pickle
-from copy import deepcopy
-import re
-from collections import Counter
-from pypinyin import lazy_pinyin
+import argparse
+
 from libs import bases
 from libs.ui import (
     output_char_wikis,
@@ -22,47 +16,34 @@ from libs.game_data import (
     get_all_char_info,
 )
 
-import argparse
 
-new_stories = [
-    "act43side",
-    "story_weedy_set_2",
-    "story_narant_set_1",
-    "story_vvana_set_1",
-    "story_christ_set_1",
-]
-new_chars = [
-    "傀影",
-    "莫伊拉",
-    "格蕾塔",
-    "道尔顿",
-    "谢莉",
-    "迈克尔",
-    "玛丽昂",
-    "蒂比",
-    "米兰妮",
-    "斯蒂芬",
-    "阿布纳",
-    "Miss.Christine",
-    "劳拉",
-    "暮落",
-    "雅拉·布克·威尔森",
-    "娜仁图亚",
-    "薇薇安娜",
-    "奥比娜",
-    "麦基",
-    "温蒂",
-    "艾丽妮",
-    "卡利托",
-    "郁金香",
-]
+def _read_list_file(path):
+    if not path or not os.path.exists(path):
+        return []
+    with open(path, "r") as f:
+        return [l.strip() for l in f if l.strip()]
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--wiki-path", default="")
     parser.add_argument("--game-data-path", default="")
+    parser.add_argument(
+        "--new-stories-file",
+        default=None,
+        help="path to a file with one story_id per line (e.g. tmp/stories_<date>.txt). "
+        "Used to print the README 'what's new' snippet at the end.",
+    )
+    parser.add_argument(
+        "--new-chars-file",
+        default=None,
+        help="path to a file with one canonical char name per line (e.g. tmp/char_<date>.txt). "
+        "Used to print the README 'what's new' snippet at the end.",
+    )
 
     args = parser.parse_args()
+    new_stories = _read_list_file(args.new_stories_file)
+    new_chars = _read_list_file(args.new_chars_file)
 
     wiki_path = args.wiki_path or bases.get_value("lore_wiki_path")
     print(f"param\t wiki_path:{wiki_path}")
@@ -189,18 +170,36 @@ if __name__ == "__main__":
     )
 
     story_dict = {k: v for k, v in index_s}
-    story_new_txt = ", ".join(
-        [
-            f"[{story_review_data[new_story]['name']}]"
-            f"(docs/stories/{story_dict[story_review_data[new_story]['name']]})"
-            f"{get_char_name_from_story(story_review_data[new_story]['name'], story_to_char)}"
-            for new_story in new_stories
-        ]
-    )
-    print(story_new_txt)
+    story_new_parts = []
+    for new_story in new_stories:
+        if new_story not in story_review_data:
+            print(f"WARN: new story {new_story!r} not in story_review_data; skipping")
+            continue
+        name = story_review_data[new_story]["name"]
+        if name not in story_dict:
+            print(f"WARN: story {new_story} ({name}) has no compiled page; skipping")
+            continue
+        story_new_parts.append(
+            f"[{name}](docs/stories/{story_dict[name]})"
+            f"{get_char_name_from_story(name, story_to_char)}"
+        )
+    story_new_txt = ", ".join(story_new_parts)
 
     char_dict = {k: v for k, v in index_v3}
-    char_new_txt = ", ".join(
-        [f"[{new_char}](docs/char_v3/{char_dict[new_char]})" for new_char in new_chars]
-    )
-    print(char_new_txt)
+    char_new_parts = []
+    for new_char in new_chars:
+        if new_char not in char_dict:
+            print(f"WARN: char {new_char!r} has no compiled page; emitting plain text")
+            char_new_parts.append(new_char)
+        else:
+            char_new_parts.append(f"[{new_char}](docs/char_v3/{char_dict[new_char]})")
+    char_new_txt = ", ".join(char_new_parts)
+
+    print()
+    print("=" * 60)
+    print("README 'what's new' snippet (paste into arknights_lore_wiki/README.md):")
+    print("=" * 60)
+    if story_new_txt:
+        print(f"\n更新剧情- {story_new_txt}")
+    if char_new_txt:
+        print(f"\n新增/更新角色 {char_new_txt}")

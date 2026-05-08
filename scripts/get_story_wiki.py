@@ -1,15 +1,15 @@
 import os
-from google import genai
-from pypinyin import lazy_pinyin
 import sys
-
-
 import argparse
+
 from libs.bases import (
     get_value,
     ckp_stamp,
-    query_llm_gai,
+    query_llm_validated,
     get_simple_filename,
+    DEFAULT_CLI_MODEL,
+    DEFAULT_GAI_MODEL,
+    STORY_LLM_TAGS,
 )
 
 from libs.game_data import (
@@ -102,9 +102,6 @@ def story_export(story_id, val, summary, version):
 
 if __name__ == "__main__":
 
-    # initial genai client
-    gai_client = genai.Client(api_key=get_value("genai_api_key"))
-
     parser = argparse.ArgumentParser()
     parser.add_argument("story_id", help="story id")
 
@@ -113,7 +110,26 @@ if __name__ == "__main__":
     parser.add_argument(
         "--force", action="store_true", help="overwrite existing files or not"
     )
+    parser.add_argument(
+        "--llm",
+        choices=["cli", "gai"],
+        default=None,
+        help="LLM backend; default reads keys.json llm_backend or 'cli'",
+    )
+    parser.add_argument("--model", default=None, help="model id, overrides default")
     args = parser.parse_args()
+
+    backend = args.llm or get_value("llm_backend", "cli")
+    if backend == "cli":
+        model = args.model or get_value("llm_model", DEFAULT_CLI_MODEL)
+        llm_kwargs = {"backend": backend, "model": model}
+    else:
+        from google import genai
+
+        gai_client = genai.Client(api_key=get_value("genai_api_key"))
+        model = args.model or DEFAULT_GAI_MODEL
+        llm_kwargs = {"backend": backend, "gai_client": gai_client, "model": model}
+    print(f"param\t llm:{backend} model:{model}")
 
     wiki_path = args.wiki_path or get_value("lore_wiki_path")
     print(f"param\t wiki_path:{wiki_path}")
@@ -144,12 +160,14 @@ if __name__ == "__main__":
         f"Event Name: {story_review_data[story_id]['name']}, text length: {len(text)}"
     )
 
-    response_gai, full_response_gai = query_llm_gai(
-        gai_client,
+    full_response_gai = query_llm_validated(
+        backend,
         system_prompt=event_summary_system_prompt,
         prompt_pre=event_summary_prompt_pre,
         prompt_post=event_summary_prompt_post,
         text=text,
+        required_tags=STORY_LLM_TAGS,
+        **llm_kwargs,
     )
     print(full_response_gai)
 

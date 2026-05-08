@@ -1,17 +1,17 @@
 import os
-import pickle
-from google import genai
-from pypinyin import lazy_pinyin
-
-import re
-
 import argparse
+import shutil
+
 from libs.bases import (
     get_value,
     ckp_stamp,
     get_txt_files,
     extract_tagged_contents,
-    query_llm_gai,
+    query_llm,
+    query_llm_validated,
+    DEFAULT_CLI_MODEL,
+    DEFAULT_GAI_MODEL,
+    CHAR_LLM_TAGS,
 )
 
 from libs.game_data import (
@@ -150,7 +150,44 @@ def get_event_summary_from_final_prompt(final_prompt):
     return list(zip(event_names, event_sums))
 
 
-def main(char_name, char_name_info, story_data, force=False, version=None):
+def _atomic_write(path, text):
+    tmp = path + ".tmp"
+    with open(tmp, "w") as f:
+        f.write(text)
+    os.replace(tmp, path)
+
+
+def _cache_dir_for(file_name):
+    # Lives under the lib repo's tmp/ (already gitignored), not the wiki repo.
+    return os.path.join("tmp", "char_v3_cache", file_name)
+
+
+def _load_event_cache(file_name):
+    """Returns dict of event_id -> summary text for already-processed events."""
+    cdir = _cache_dir_for(file_name)
+    if not os.path.isdir(cdir):
+        return {}
+    out = {}
+    for f in os.listdir(cdir):
+        if not f.endswith(".txt"):
+            continue
+        with open(os.path.join(cdir, f), "r") as fh:
+            out[f[:-4]] = fh.read()
+    return out
+
+
+def _save_event_to_cache(file_name, event_id, summary):
+    cdir = _cache_dir_for(file_name)
+    os.makedirs(cdir, exist_ok=True)
+    _atomic_write(os.path.join(cdir, event_id + ".txt"), summary)
+
+
+def main(
+    char_name, char_name_info, story_data, force=False, version=None, llm_kwargs=None
+):
+    llm_kwargs = llm_kwargs or {}
+    backend = llm_kwargs.pop("backend", "cli")
+
     # initial processing of which steps to run
     file_name = get_char_file_name(char_name, char_name_info)
     final_results_path = os.path.join(export_dir, "char_v3", file_name + ".txt")
@@ -162,13 +199,15 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
         print(f"{final_results_path} existed")
         return
 
-    use_existing_final_prompt = False
     final_prompt_path = os.path.join(
         export_dir, "char_v3", "prompt_" + file_name + ".txt"
     )
-    if not force and os.path.exists(final_prompt_path):
-        print(f"Existing final prompt found, will process on top of it")
-        use_existing_final_prompt = True
+
+    if force:
+        cache_dir = _cache_dir_for(file_name)
+        if os.path.isdir(cache_dir):
+            print(f"force requested; clearing cached event summaries under {cache_dir}")
+            shutil.rmtree(cache_dir, ignore_errors=True)
 
     # prepare for getting related events
     story_to_key_chars = get_story_key_chars(export_dir)
@@ -195,33 +234,39 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
     for e in related_event_ids:
         print(e, story_data[e]["name"])
 
-    # prepare for STEP 2
-    if use_existing_final_prompt:
-        with open(final_prompt_path, "r") as f:
-            existing_final_prompt = f.read()
-        event_summary_for_char = get_event_summary_from_final_prompt(
-            existing_final_prompt
-        )
-        remaining_related_event_ids = []
-        existing_event_names = {e: s for e, s in event_summary_for_char}
-        for e in related_event_ids:
-            e_name = story_data[e]["name"]
-            if e_name in existing_event_names:
-                print(
-                    f"Found summary of {e_name} in existing final prompt:\n{existing_event_names[e_name]}"
-                )
-            else:
-                print(
-                    f"Did not find summary of {e_name} in existing final prompt, will generate it"
-                )
-                remaining_related_event_ids.append(e)
-        related_event_ids = remaining_related_event_ids
-    else:
-        event_summary_for_char = []
-
     if (not related_event_ids) and (not force_gen_from_final_prompt):
-        print(f"No event to process and no force gen from final prompt, exiting")
+        print("no related events; nothing to synthesize")
         return
+
+    # Load per-event cache (resume keyed on event_id, atomic per event).
+    # Falls back to legacy resume from prompt_<file>.txt if cache missing.
+    cache = _load_event_cache(file_name)
+    if cache:
+        print(f"loaded {len(cache)} cached event summaries from disk")
+    elif (not force) and os.path.exists(final_prompt_path):
+        # `--force` intentionally skips legacy prompt reuse so step 2
+        # refreshes per-event summaries from source text.
+        print("legacy resume: extracting event summaries from existing prompt file")
+        with open(final_prompt_path, "r") as f:
+            legacy = get_event_summary_from_final_prompt(f.read())
+        # legacy stored by event NAME; map back to event id
+        name_to_id = {story_data[e]["name"]: e for e in related_event_ids}
+        for e_name, e_sum in legacy:
+            e_id = name_to_id.get(e_name)
+            if e_id:
+                cache[e_id] = e_sum
+                _save_event_to_cache(file_name, e_id, e_sum)
+
+    pending_event_ids = [e for e in related_event_ids if e not in cache]
+    if pending_event_ids:
+        print(f"will generate summaries for {len(pending_event_ids)} new events")
+
+    if (not pending_event_ids) and cache and (not force_gen_from_final_prompt):
+        # all events done already and not asked to regen final; only run step 3
+        # if final result missing
+        if os.path.exists(final_results_path):
+            print(f"all events cached and final result exists; nothing to do")
+            return
 
     wiki_format = f"""
     wiki的输出格式如下. 请控制wiki的总长度大概在5000字以内。
@@ -291,20 +336,20 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
 
     ########## STEP 1 (optional) get a rough estimation for charactor if it is playable
 
-    if related_event_ids:
+    wiki_step1 = ""
+    if pending_event_ids:
         char_info_step1 = get_char_info_from_alias(alias, char_name_info)
-        wiki_step1 = ""
         if char_info_step1:
             print("Step 1: getting initial char wiki from records")
             print(f"prompt length ~ {len(char_info_step1)}")
-            response_gai, full_response_gai = query_llm_gai(
-                gai_client,
+            _, wiki_step1 = query_llm(
+                backend,
                 system_prompt=wiki_system_prompt,
                 prompt_pre=prompt_step1,
                 prompt_post="",
                 text=char_info_step1,
+                **llm_kwargs,
             )
-            wiki_step1 = full_response_gai
             print(f"Step 1:\ncurrent wiki:\n{wiki_step1}")
 
         else:
@@ -312,7 +357,7 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
                 "Skipping step 1 since there is no record (likely not playable charactor)"
             )
     else:
-        print("Skipping step 1 since there is no related events to be processed")
+        print("Skipping step 1 since there are no pending events to be processed")
 
     ########## Step 2: for all events, get summary from full event text regarding this charactor
 
@@ -357,9 +402,9 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
 
     print(f"Step 2: summarizing event for character")
 
-    for e in related_event_ids:
+    for e in pending_event_ids:
         e_name = story_data[e]["name"]
-        print(f"Step 2: summarizing event {e_name}")
+        print(f"Step 2: summarizing event {e} ({e_name})")
         full_text = full_story_text[e]
         prompt_text = f"""
         角色名称:{char_name}
@@ -371,15 +416,29 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
         {full_text}
         """
         print(f"prompt length ~ {len(prompt_text)}")
-        response_gai, full_response_gai = query_llm_gai(
-            gai_client,
+        full_response_gai = query_llm_validated(
+            backend,
             system_prompt=wiki_system_prompt,
             prompt_pre=prompt_step2_pre,
             prompt_post=prompt_step2_post,
             text=prompt_text,
+            required_tags=[
+                "相关剧情总结",
+                "相关剧情高光",
+                "相关角色总结",
+                "相关trivia",
+            ],
+            **llm_kwargs,
         )
         print(f"output: \n{full_response_gai}")
-        event_summary_for_char.append((e_name, full_response_gai))
+        # checkpoint immediately so a crash next event doesn't lose this one
+        _save_event_to_cache(file_name, e, full_response_gai)
+        cache[e] = full_response_gai
+
+    # rebuild event_summary_for_char in deterministic event order from cache
+    event_summary_for_char = [
+        (story_data[e]["name"], cache[e]) for e in related_event_ids if e in cache
+    ]
 
     ########## Step 3: summarizing the wiki based on all information
     main_prompt_step3 = f"""是明日方舟这款游戏的中的一个干员/角色的目前档案信息和所有相关的剧情的内容总结， 请总结他们的内容并按照以下提供的wiki格式进行输出。
@@ -419,14 +478,15 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
     print(
         f"Step 3: saving the final prompt (len: {len(final_prompt)}) to {final_prompt_path}"
     )
-    with open(final_prompt_path, "w") as f:
-        f.write(final_prompt)
-    response_gai, full_response_gai = query_llm_gai(
-        gai_client,
+    _atomic_write(final_prompt_path, final_prompt)
+    full_response_gai = query_llm_validated(
+        backend,
         system_prompt=wiki_system_prompt,
         prompt_pre=prompt_step3_pre,
         prompt_post=prompt_step3_post,
         text=final_prompt,
+        required_tags=CHAR_LLM_TAGS,
+        **llm_kwargs,
     )
     print(f"output final:\n{full_response_gai}")
 
@@ -436,14 +496,10 @@ def main(char_name, char_name_info, story_data, force=False, version=None):
     headers.append(f"<version>{version}</version>")
     headers.append(f"<ID>{file_name}</ID>")
     headers.append(full_response_gai)
-    with open(final_results_path, "w") as f:
-        f.write("\n".join(headers))
+    _atomic_write(final_results_path, "\n".join(headers))
 
 
 if __name__ == "__main__":
-
-    # initial genai client
-    gai_client = genai.Client(api_key=get_value("genai_api_key"))
 
     parser = argparse.ArgumentParser()
     parser.add_argument("char", help="char name")
@@ -458,8 +514,27 @@ if __name__ == "__main__":
         help="regen final file even if final prompt is not changed",
     )
     parser.add_argument("--version", default=None, help="the version for this update")
+    parser.add_argument(
+        "--llm",
+        choices=["cli", "gai"],
+        default=None,
+        help="LLM backend; default reads keys.json llm_backend or 'cli'",
+    )
+    parser.add_argument("--model", default=None, help="model id, overrides default")
 
     args = parser.parse_args()
+
+    backend = args.llm or get_value("llm_backend", "cli")
+    if backend == "cli":
+        model = args.model or get_value("llm_model", DEFAULT_CLI_MODEL)
+        llm_kwargs = {"backend": backend, "model": model}
+    else:
+        from google import genai
+
+        gai_client = genai.Client(api_key=get_value("genai_api_key"))
+        model = args.model or DEFAULT_GAI_MODEL
+        llm_kwargs = {"backend": backend, "gai_client": gai_client, "model": model}
+    print(f"param\t llm:{backend} model:{model}")
 
     wiki_path = args.wiki_path or get_value("lore_wiki_path")
     print(f"param\t wiki_path:{wiki_path}")
@@ -482,4 +557,11 @@ if __name__ == "__main__":
     char_info, char_name_info = get_all_char_info(game_data_path)
     story_data = extract_data_from_story_review_table(game_data_path)
 
-    main(args.char, char_name_info, story_data, args.force, args.version)
+    main(
+        args.char,
+        char_name_info,
+        story_data,
+        args.force,
+        args.version,
+        llm_kwargs=llm_kwargs,
+    )
