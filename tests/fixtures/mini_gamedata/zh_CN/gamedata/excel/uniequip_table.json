@@ -1,0 +1,14 @@
+{
+  "equipDict": {
+    "uniequip_001_aria": {
+      "charId": "char_test_001",
+      "uniEquipName": "测试模组",
+      "uniEquipDesc": "提升测试效率的模组。"
+    },
+    "uniequip_002_aria_alt": {
+      "charId": "char_test_001",
+      "uniEquipName": "空模组",
+      "uniEquipDesc": null
+    }
+  }
+}

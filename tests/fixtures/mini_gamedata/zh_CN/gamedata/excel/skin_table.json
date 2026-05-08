@@ -1,0 +1,22 @@
+{
+  "charSkins": {
+    "char_test_001@summer": {
+      "charId": "char_test_001",
+      "displaySkin": {
+        "skinName": "夏日泳装",
+        "dialog": "试穿了一件夏日泳装。",
+        "usage": "海边度假。",
+        "description": "在海风中起舞。"
+      }
+    },
+    "char_test_001@base": {
+      "charId": "char_test_001",
+      "displaySkin": {
+        "skinName": "标准制服",
+        "dialog": "标准制服。",
+        "usage": "日常。",
+        "description": null
+      }
+    }
+  }
+}

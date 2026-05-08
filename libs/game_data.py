@@ -68,6 +68,7 @@ def extract_data_from_character_table(game_data_path, character_filename):
     def _get_data(char):
         keys = [
             "name",
+            "appellation",
             "itemUsage",
             "itemDesc",
             "nationId",
@@ -287,7 +288,7 @@ def clean_script(text: str) -> str:
     return text.strip()
 
 
-def _get_raw_story_txt(game_data_path, story_txt):
+def get_raw_story_txt(game_data_path, story_txt):
     filename = os.path.join(game_data_path, "zh_CN/gamedata/story", story_txt + ".txt")
     with open(filename, "r") as f:
         raw_txt = f.read()
@@ -305,7 +306,7 @@ def get_all_text_from_event(game_data_path, event_data):
         lines.append(f"<章节名称>{chapter_name}</章节名称>")
         lines.append(f"<章节简介>{v['storyInfoTxt']}</章节简介>")
         lines.append(
-            f"<正文>\n{_get_raw_story_txt(game_data_path, v['storyTxt'])}\n</正文>"
+            f"<正文>\n{get_raw_story_txt(game_data_path, v['storyTxt'])}\n</正文>"
         )
         lines.append(f"</章节>\n")
     return "\n".join(lines)

@@ -1,0 +1,7 @@
+{
+  "charWords": {
+    "CHAR_TEST_001_CN_01": {"charId": "char_test_001", "voiceText": "干员艾莉亚，前来报到。"},
+    "CHAR_TEST_001_CN_02": {"charId": "char_test_001", "voiceText": "我会守护这片土地。"}
+  },
+  "charExtraWords": {}
+}
