@@ -46,7 +46,11 @@ Outputs a Python list of story_ids that exist in `ArknightsGameData/zh_CN/gameda
 ### Step 3 — Generate story summaries (LLM)
 
 ```
-.venv/bin/bash tmp/run_story.sh tmp/stories_<BATCH_DATE>.txt
+while IFS= read -r sid || [[ -n "$sid" ]]; do
+    sid="$(echo "$sid" | xargs)"
+    [[ -z "$sid" ]] && continue
+    .venv/bin/python -m scripts.get_story_wiki "$sid"
+done < tmp/stories_<BATCH_DATE>.txt
 ```
 
 This runs `get_story_wiki.py` once per story id. The script skips ids already in `data/stories/` unless `--force` is passed. Default backend is `cli` (gemini-3.1-flash) per `keys.json`.
@@ -99,7 +103,11 @@ Prints three sections:
 ### Step 5 — Per-character generation (LLM)
 
 ```
-.venv/bin/bash tmp/run_char.sh tmp/char_<BATCH_DATE>.txt
+while IFS= read -r char || [[ -n "$char" ]]; do
+    char="$(echo "$char" | xargs)"
+    [[ -z "$char" ]] && continue
+    .venv/bin/python -m scripts.get_char_wiki_v3 "$char"
+done < tmp/char_<BATCH_DATE>.txt
 ```
 
 Each invocation of `get_char_wiki_v3.py` runs three LLM steps. Step 2 (per-event summarization) is checkpointed to `tmp/char_v3_cache/<file_name>/<event_id>.txt` after each event — a crash mid-batch loses at most one event's work. Resume is automatic on re-run.
@@ -160,8 +168,8 @@ gh pr create --base main --head update --title "<date> update" --body "..."
 
 ## Recovery / partial state
 
-- **Crash mid step 3 (story batch):** re-run the same `tmp/run_story.sh` command — completed stories skip themselves.
-- **Crash mid step 5 (char batch):** re-run the same `tmp/run_char.sh` command — completed chars skip via `final_results_path` check; in-progress chars resume from `tmp/char_v3_cache/<id>/`.
+- **Crash mid step 3 (story batch):** re-run the same step 3 loop — completed stories skip themselves.
+- **Crash mid step 5 (char batch):** re-run the same step 5 loop — completed chars skip via `final_results_path` check; in-progress chars resume from `tmp/char_v3_cache/<id>/`.
 - **Wrong char in `tmp/char_<BATCH_DATE>.txt`:** delete `data/char_v3/<file_name>.txt` and `tmp/char_v3_cache/<file_name>/`, then re-run.
 - **Stale prompt cache:** `--force-final` regenerates the final wiki from the existing `prompt_<id>.txt` without re-running step 2. Use this when the user only wants step 3 retried (e.g., to fix a synthesis-level hallucination without re-running event summaries).
 

@@ -5,10 +5,11 @@ import argparse
 from libs.bases import (
     get_value,
     ckp_stamp,
-    query_llm,
+    query_llm_validated,
     get_simple_filename,
     DEFAULT_CLI_MODEL,
     DEFAULT_GAI_MODEL,
+    STORY_LLM_TAGS,
 )
 
 from libs.game_data import (
@@ -159,11 +160,13 @@ if __name__ == "__main__":
         f"Event Name: {story_review_data[story_id]['name']}, text length: {len(text)}"
     )
 
-    _, full_response_gai = query_llm(
+    full_response_gai = query_llm_validated(
+        backend,
         system_prompt=event_summary_system_prompt,
         prompt_pre=event_summary_prompt_pre,
         prompt_post=event_summary_prompt_post,
         text=text,
+        required_tags=STORY_LLM_TAGS,
         **llm_kwargs,
     )
     print(full_response_gai)

@@ -26,7 +26,7 @@ import sys
 
 from libs import bases
 from libs.bases import extract_tagged_contents, get_txt_files
-from libs.game_data import get_all_char_info
+from libs.game_data import get_all_char_info, get_char_file_name
 
 
 def parse_alias_file(path):
@@ -95,7 +95,7 @@ def main():
     parser.add_argument(
         "--out",
         default=None,
-        help="if given, write canonical names of candidates here (one per line)",
+        help="if given, write candidate names here (one per line)",
     )
     args = parser.parse_args()
 
@@ -153,8 +153,13 @@ def main():
                 existing_canonical.append((canon, page_id, sorted(stories)))
                 seen_canonical.add(canon)
             continue
-        # Non-playable: extended_char_* — we can't easily compute the file_name
-        # (it's a hash of pinyin); treat as candidate.
+        # Non-playable: the wiki page lives at extended_char_* if it exists.
+        page_id = get_char_file_name(canon, char_name_info)
+        if page_id in existing_pages:
+            if canon not in seen_canonical:
+                existing_canonical.append((canon, page_id, sorted(stories)))
+                seen_canonical.add(canon)
+            continue
         if canon in seen_canonical:
             continue
         seen_canonical.add(canon)
@@ -199,7 +204,7 @@ def main():
             for canon, _, _ in new_candidates:
                 f.write(canon + "\n")
         print(f"\nwrote {len(existing_canonical) + len(new_candidates)} candidates to {args.out}")
-        print("NOTE: review the file and remove unimportant chars before running run_char.sh")
+        print("NOTE: review the file and remove unimportant chars before running the char batch")
 
 
 if __name__ == "__main__":

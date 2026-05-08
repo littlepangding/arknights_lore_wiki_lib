@@ -1,5 +1,6 @@
 import os
 import argparse
+import shutil
 
 from libs.bases import (
     get_value,
@@ -7,8 +8,10 @@ from libs.bases import (
     get_txt_files,
     extract_tagged_contents,
     query_llm,
+    query_llm_validated,
     DEFAULT_CLI_MODEL,
     DEFAULT_GAI_MODEL,
+    CHAR_LLM_TAGS,
 )
 
 from libs.game_data import (
@@ -200,6 +203,12 @@ def main(
         export_dir, "char_v3", "prompt_" + file_name + ".txt"
     )
 
+    if force:
+        cache_dir = _cache_dir_for(file_name)
+        if os.path.isdir(cache_dir):
+            print(f"force requested; clearing cached event summaries under {cache_dir}")
+            shutil.rmtree(cache_dir, ignore_errors=True)
+
     # prepare for getting related events
     story_to_key_chars = get_story_key_chars(export_dir)
     print(f"story_to_key_chars len: {len(story_to_key_chars)}")
@@ -225,12 +234,18 @@ def main(
     for e in related_event_ids:
         print(e, story_data[e]["name"])
 
+    if (not related_event_ids) and (not force_gen_from_final_prompt):
+        print("no related events; nothing to synthesize")
+        return
+
     # Load per-event cache (resume keyed on event_id, atomic per event).
     # Falls back to legacy resume from prompt_<file>.txt if cache missing.
     cache = _load_event_cache(file_name)
     if cache:
         print(f"loaded {len(cache)} cached event summaries from disk")
     elif (not force) and os.path.exists(final_prompt_path):
+        # `--force` intentionally skips legacy prompt reuse so step 2
+        # refreshes per-event summaries from source text.
         print("legacy resume: extracting event summaries from existing prompt file")
         with open(final_prompt_path, "r") as f:
             legacy = get_event_summary_from_final_prompt(f.read())
@@ -401,12 +416,18 @@ def main(
         {full_text}
         """
         print(f"prompt length ~ {len(prompt_text)}")
-        _, full_response_gai = query_llm(
+        full_response_gai = query_llm_validated(
             backend,
             system_prompt=wiki_system_prompt,
             prompt_pre=prompt_step2_pre,
             prompt_post=prompt_step2_post,
             text=prompt_text,
+            required_tags=[
+                "相关剧情总结",
+                "相关剧情高光",
+                "相关角色总结",
+                "相关trivia",
+            ],
             **llm_kwargs,
         )
         print(f"output: \n{full_response_gai}")
@@ -458,12 +479,13 @@ def main(
         f"Step 3: saving the final prompt (len: {len(final_prompt)}) to {final_prompt_path}"
     )
     _atomic_write(final_prompt_path, final_prompt)
-    _, full_response_gai = query_llm(
+    full_response_gai = query_llm_validated(
         backend,
         system_prompt=wiki_system_prompt,
         prompt_pre=prompt_step3_pre,
         prompt_post=prompt_step3_post,
         text=final_prompt,
+        required_tags=CHAR_LLM_TAGS,
         **llm_kwargs,
     )
     print(f"output final:\n{full_response_gai}")

@@ -69,7 +69,7 @@ scripts/
 ## LLM concerns
 
 - **Backend** in `keys.json`: `llm_backend` = `"cli"` (default `gemini-3.1-flash`, shells out to `gemini` binary) or `"gai"` (`google.genai` SDK, default `gemini-2.5-flash`). Override per-script with `--llm` / `--model`.
-- **Validation**: every LLM-produced file must contain all tags in `story_wiki_tags` / `char_wiki_tags`. `query_llm_validated` retries once with an explicit reminder; persistent failures raise `LLMError`. Don't silently skip — surface to the user.
+- **Validation**: the generator scripts validate model-owned tags before writing `data/stories/*.txt` and `data/char_v3/*.txt`. `query_llm_validated` retries once with an explicit reminder; persistent failures raise `LLMError`. Don't silently skip — surface to the user.
 - **Cost**: existing chars with N events already cached only re-summarize *new* events in `get_char_wiki_v3.py` step 2. Don't pass `--force` unless asked — it nukes `tmp/char_v3_cache/<file>/` and re-bills every event.
 - **Resume**: step 2 of `get_char_wiki_v3.py` checkpoints each event to `tmp/char_v3_cache/<file>/<event_id>.txt` immediately. Re-running the same command resumes mid-batch. Step 3 (synthesis) cache lives at `data/char_v3/prompt_<file>.txt`.
 
@@ -80,13 +80,13 @@ scripts/
 - `get_simple_filename` falls back to a 6-char sha hash when the input has non-`[a-zA-Z0-9_.]` chars. Used both for non-playable char filenames and as a story-id sanitizer.
 - File writes for cached LLM outputs use `os.replace` for atomicity; treat that as load-bearing if you refactor.
 
-## Known issues / landmines (real, untriaged)
+## Recently Fixed Landmines
 
 When working on `libs/game_data.py` or auditing existing wiki content, be aware:
 
-- **`clean_script` drops `Sticker` text.** The line `re.sub(r"^\s*\[[^\]]*\]\s*$", "", ...)` removes any pure-bracket line, but `[Sticker(...text="…")]` lines carry meaningful narration / inscriptions / scripture. ~3,600 such lines exist across the corpus, including major lore (e.g. the act46side opening religious passage). `Subtitle` and `Decision` are extracted before this strip; `Sticker` should be too.
-- **Chapter-name collisions.** `get_all_text_from_event` emits `<章节名称>{storyName}</章节名称>` but ignores `avgTag`. 539 of 1909 chapters across all events share their `storyName` with another chapter in the same event (always `_beg` vs `_end`). The LLM sees identical chapter headings. Fix: include `avgTag` in the heading.
-- **`storySort` is not enforced.** Chapter order relies on raw JSON ordering. Sort by `storySort` to be safe.
+- **`clean_script` used to drop `Sticker` text.** The catch-all pure-bracket strip removed `[Sticker(...text="…")]` lines before this branch extracted them. Existing wiki outputs written before commit `8dfb2f7` may therefore miss meaningful narration / inscriptions / scripture, including lore-heavy passages such as the act46side opening.
+- **Chapter names used to collide inside an event.** `get_all_text_from_event` previously emitted `<章节名称>{storyName}</章节名称>` and ignored `avgTag`, so `_beg` and `_end` chapters with the same `storyName` were indistinguishable to the LLM. This branch appends `（avgTag）`, but older summaries were generated before that fix.
+- **`storySort` used to be ignored.** Chapter order previously relied on raw JSON ordering instead of `storySort`. This branch sorts stages defensively, but older summaries may still reflect the pre-fix ordering.
 
 ## Status of past LLM outputs
 
