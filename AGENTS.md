@@ -29,6 +29,19 @@ When the upstream `ArknightsGameData` updates, the user runs the update flow. **
 
 High-level: find new stories → confirm with user → LLM-summarize each → extract candidate chars from summaries → confirm with user (alias-resolve, prune) → LLM-generate per-char wiki → compile site → commit & PR.
 
+## For knowledge-base / Q&A / audit work
+
+A separate, in-progress effort builds an agent-facing knowledge base over the raw game data (lore Q&A, audit new wiki updates, audit existing pages). When a task involves any of those, **start with `docs/README.md`** — it indexes:
+
+- `docs/REQUIREMENTS.md` — user intent for the KB.
+- `docs/DESIGN.md` — architecture: `libs/kb/`, `data/kb/` (gitignored raw chunks), `kb_summaries/` (committed LLM aids), four source families, deterministic vs inferred char↔event edges.
+- `docs/AGENTS_GUIDE.md` — how to use the KB CLIs (`kb_query`, `kb_audit_wiki`, `kb_summarize`).
+- `docs/PROMPTS.md` — Chinese prompt templates for summary / audit flows.
+- `docs/DECISIONS.md` — substantial-decision log.
+- `docs/reviews/` — review feedback applied to the design.
+
+The KB layer is **independent** of the wiki update flow above. They share `libs/game_data.py` and the LLM backends but the directories don't overlap.
+
 ## Layout
 
 ```
