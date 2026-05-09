@@ -1,10 +1,8 @@
 import json
 import re
 import os
-import subprocess
 from datetime import datetime
 import hashlib
-import time
 
 KEY_FILE = "keys.json"
 
@@ -12,7 +10,7 @@ RETRY_LIMIT = 5
 RETRY_SLEEP_TIME = 60
 
 DEFAULT_GAI_MODEL = "gemini-2.5-flash"
-DEFAULT_CLI_MODEL = "gemini-3.1-flash"
+DEFAULT_CLI_MODEL = "gemini-3-flash-preview"
 
 char_wiki_tags = [
     "version",
@@ -115,79 +113,34 @@ class LLMError(RuntimeError):
     pass
 
 
-def query_llm_gai(
-    gai_client, system_prompt, prompt_pre, prompt_post, text, model=DEFAULT_GAI_MODEL
-):
-    contents = system_prompt + prompt_pre + text + prompt_post
-    last_exc = None
-    for it in range(RETRY_LIMIT):
-        try:
-            response = gai_client.models.generate_content(
-                model=model,
-                contents=contents,
-            )
-            return response, response.text
-        except Exception as e:
-            last_exc = e
-            print(f"Query failed {e}\nwith text (len: {len(text)}): {text[:100]}")
-            time.sleep(RETRY_SLEEP_TIME * (it + 1))
-    raise LLMError(f"gai backend exhausted {RETRY_LIMIT} retries: {last_exc}")
-
-
-def query_llm_cli(
-    system_prompt,
-    prompt_pre,
-    prompt_post,
-    text,
-    model=DEFAULT_CLI_MODEL,
-    cli_path="gemini",
-):
-    full_prompt = system_prompt + prompt_pre + text + prompt_post
-    last_exc = None
-    for it in range(RETRY_LIMIT):
-        try:
-            proc = subprocess.run(
-                [cli_path, "-m", model, "-p", full_prompt, "-y", "-o", "text"],
-                capture_output=True,
-                text=True,
-                timeout=600,
-            )
-            if proc.returncode != 0:
-                raise RuntimeError(
-                    f"gemini cli exit {proc.returncode}: {proc.stderr.strip()[:500]}"
-                )
-            out = proc.stdout
-            if not out.strip():
-                raise RuntimeError("gemini cli returned empty output")
-            return None, out
-        except Exception as e:
-            last_exc = e
-            print(
-                f"CLI query failed {e}\nwith text (len: {len(text)}): {text[:100]}"
-            )
-            time.sleep(RETRY_SLEEP_TIME * (it + 1))
-    raise LLMError(f"cli backend exhausted {RETRY_LIMIT} retries: {last_exc}")
-
-
 def query_llm(backend, system_prompt, prompt_pre, prompt_post, text, **kwargs):
     """Dispatch to the configured backend.
 
-    backend: "cli" (gemini CLI) or "gai" (google.genai SDK).
-    For "gai" pass gai_client=... via kwargs; for "cli" optionally pass model/cli_path.
-    Returns (raw_response_or_none, text).
+    backend: "cli" (gemini CLI), "gai" (google.genai SDK), or "claude" (Claude CLI).
+    For "gai" pass gai_client=... via kwargs. Optional: model, cli_path.
+    Returns (raw_response_or_none, text) for backwards compatibility — the raw
+    response slot is now always None since clients return text only.
     """
+    # Imported here to avoid a circular import (llm_clients imports from this module).
+    from libs.llm_clients import make_client
+
+    model = kwargs.pop("model", None)
+    client_kwargs = {}
     if backend == "cli":
-        return query_llm_cli(system_prompt, prompt_pre, prompt_post, text, **kwargs)
-    if backend == "gai":
-        return query_llm_gai(
-            kwargs.pop("gai_client"),
-            system_prompt,
-            prompt_pre,
-            prompt_post,
-            text,
-            **kwargs,
-        )
-    raise ValueError(f"unknown llm backend: {backend!r}")
+        if "cli_path" in kwargs:
+            client_kwargs["cli_path"] = kwargs.pop("cli_path")
+    elif backend == "gai":
+        client_kwargs["gai_client"] = kwargs.pop("gai_client")
+    elif backend == "claude":
+        if "cli_path" in kwargs:
+            client_kwargs["cli_path"] = kwargs.pop("cli_path")
+    if kwargs:
+        raise TypeError(f"unexpected query_llm kwargs: {sorted(kwargs)}")
+
+    client = make_client(backend, **client_kwargs)
+    full_prompt = prompt_pre + text + prompt_post
+    out = client.query(system_prompt, full_prompt, model=model)
+    return None, out
 
 
 def query_llm_validated(
