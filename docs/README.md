@@ -25,8 +25,8 @@ This folder is the agent working area: requirements, design docs, prompts, decis
 | Requirements + design docs | ✅ written + revised across Codex reviews 01-07. |
 | Codex reviews | ✅ in `reviews/` (8 files: 01, 02, 03, 04, 05, 06, 07-consistency, 07-independent). All findings folded into DESIGN.md / AGENTS_GUIDE.md / PROMPTS.md. |
 | Prompt drafts | ✅ written, **not yet run against any model**. |
-| `libs/kb/` package | 🟡 partial — Phase 1 landed: `paths.py`, `chunker.py`. Pending: `indexer.py`, `query.py`, `summarize.py`, `llm_clients.py`. |
-| `tests/` | 🟡 partial — `tests/conftest.py`, `test_paths.py`, `test_chunker.py`, `tests/fixtures/mini_gamedata/`. **62 passing.** Pending: `test_indexer.py`, `test_query.py`, `test_llm_clients.py`. |
+| `libs/kb/` package | 🟡 partial — Phases 1-2 landed: `paths.py`, `chunker.py`, `indexer.py`, `query.py`. Pending: `summarize.py`, `llm_clients.py`. |
+| `tests/` | 🟡 partial — `tests/conftest.py`, `test_paths.py`, `test_chunker.py`, `test_indexer.py`, `test_query.py`, `tests/fixtures/mini_gamedata/`. **127 passing.** Pending: `test_llm_clients.py`. |
 | `scripts/kb_*.py` | ❌ not implemented (Phase 3+). |
 | `data/kb/` raw chunks | ❌ not built. |
 | `kb_summaries/` (in git) | ❌ folder doesn't exist yet (Phase 5). |

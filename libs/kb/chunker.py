@@ -7,34 +7,13 @@ as it does per event.
 
 from __future__ import annotations
 
-import json
-import os
-import tempfile
 from pathlib import Path
 from typing import Callable, Iterable
 
 from libs import game_data
 from libs.kb import paths
+from libs.kb._io import atomic_write_json, atomic_write_text
 from libs.kb.paths import Family, Section
-
-
-def _atomic_write_text(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(prefix=".tmp_", dir=str(path.parent))
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(content)
-        os.replace(tmp, path)
-    except Exception:
-        try:
-            os.unlink(tmp)
-        except FileNotFoundError:
-            pass
-        raise
-
-
-def _atomic_write_json(path: Path, obj) -> None:
-    _atomic_write_text(path, json.dumps(obj, ensure_ascii=False, indent=2) + "\n")
 
 
 def _prune_stale_files(directory: Path, glob_pattern: str, keep: set[str]) -> None:
@@ -120,7 +99,7 @@ def write_event(
         raw = game_data.get_raw_story_txt(game_data_path, stage["storyTxt"])
         chunk = format_stage_chunk(event_id, name, idx, stage, raw)
         fname = paths.stage_filename(idx, stage["name"], stage.get("avgTag"))
-        _atomic_write_text(event_dir / fname, chunk)
+        atomic_write_text(event_dir / fname, chunk)
         stage_records.append(
             {
                 "idx": idx,
@@ -145,7 +124,7 @@ def write_event(
         "total_length": total_length,
         "source_data_version": source_data_version,
     }
-    _atomic_write_json(paths.event_json_path(kb_root, event_id), manifest)
+    atomic_write_json(paths.event_json_path(kb_root, event_id), manifest)
     return manifest
 
 
@@ -353,7 +332,7 @@ def write_char(
 
     section_texts = extract_section_texts(char)
     for section, text in section_texts.items():
-        _atomic_write_text(paths.char_section_path(kb_root, char_id, section), text)
+        atomic_write_text(paths.char_section_path(kb_root, char_id, section), text)
 
     # Section files must match `manifest.sections` exactly — a section that
     # disappeared between builds cannot leave its old file behind.
@@ -361,7 +340,7 @@ def write_char(
         paths.char_section_path(kb_root, char_id, section).unlink(missing_ok=True)
 
     linked, warnings = resolve_storysets(char, storytxt_index)
-    _atomic_write_json(paths.char_storysets_path(kb_root, char_id), linked)
+    atomic_write_json(paths.char_storysets_path(kb_root, char_id), linked)
 
     aliases = compute_char_aliases(
         char,
@@ -377,5 +356,5 @@ def write_char(
         "sections": list(section_texts.keys()),
         "storyset_count": len(linked),
     }
-    _atomic_write_json(paths.char_manifest_path(kb_root, char_id), manifest)
+    atomic_write_json(paths.char_manifest_path(kb_root, char_id), manifest)
     return manifest, warnings

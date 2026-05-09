@@ -104,3 +104,17 @@
 - `pytest` added to `requirements.txt`; installed in `.venv`.
 - M1–M5 measurement snippets re-run against full game data; numbers match DESIGN.md (461 events / 1937 stages, 372 storyset linked / 0 ambiguous, 444 named chars, etc.).
 - **`source_family` classifier amended** to honor `entryType=MAINLINE` ahead of `storyTxt` prefix. Real data has `main_0` (the prologue, entryType=MAINLINE) whose first stage is `obt/guide/beg/0_welcome_to_guide` — a prefix-only rule misclassified it as `other`. Doc rule "mainline | storyTxt starts with `obt/main/` (also matches entryType=MAINLINE)" was implementable as either; now the classifier and DESIGN.md docstring both spell out entryType-first.
+
+### 2026-05-08 — Phase 2 implementation landed (indexer + query)
+
+**User intent:** Continue Phase 2 from the entry points the prior session left in `docs/README.md` and `docs/DESIGN.md#implementation-phases-proposed` — `libs/kb/indexer.py`, `libs/kb/query.py`, and the matching tests, with no LLM use.
+
+**Outcome:** Phase 2 landed:
+
+- `libs/kb/indexer.py` — pure-code builders for the six (or seven, with curated aliases) `data/kb/indexes/*.json` files. Implements: curated alias-file parser, ambiguous-canonical computation, `events_by_family` grouping, deterministic edges from `chars/<id>/storysets.json`, inferred-edge grep with the three-class match floor (canonical / canonical_short / curated; fuzzy reserved as a future class), per-(char, event) deterministic-subtraction rule, the highest-precision-class-wins aggregation per `(char, stage)` row, the flat one-row-per-(char, stage) `event_to_chars.json` shape, the resolver `alias_to_char_ids` index that attaches curated aliases to *all* owners when the canonical collides (so the resolver returns `Ambiguous` rather than picking arbitrarily). Atomic JSON writes via `os.replace`.
+- `libs/kb/query.py` — pure-function retrieval API on top of a loaded `KB` dataclass: `load_kb`, family-aware `list_events` / `list_families`, `get_event` / `get_stage_text`, `list_chars` (nation filter), `resolve_operator_name` returning `Resolved | Ambiguous | Missing`, `get_char_section` (single section or `all`), `char_storysets`, `char_appearances` / `event_chars` / `stage_chars` returning `Appearance` (carrying `stage_idx`, `source`, `count`, `match_class`, `story_set_name` per the flat shape), `grep_text` literal-by-default with `regex=True` opt-in, `group_by_event` rollup helper, `get_event_summary` reading from optional `summaries_root`.
+- `tests/test_indexer.py` (32 tests) + `tests/test_query.py` (33 tests) — full unit coverage of every public function, plus integration tests that build a real KB on disk via `chunker.write_event` / `write_char` against the mini fixture and exercise the indexer + query end-to-end. Hand-built KB helpers cover the ambiguous-canonical / collision cases that the mini fixture can't reproduce.
+- Smoke-tested `parse_curated_alias_file` against the live `arknights_lore_wiki/data/char_alias.txt`: 265 canonicals (matches DESIGN.md "Aliases" measurement); spot-checks for `临光`, `凯尔希`, `暮落` parse correctly.
+- Total test count: **127 passing.**
+
+The KB is now retrieval-ready end-to-end *modulo* a `kb_build.py` script (Phase 3) that wires `chunker.write_event` + `write_char` + `indexer.build_all_indexes` into a single command. The `query.load_kb` / `query.*` API can already drive an agent against any KB built by hand; Phase 3 just packages the builder.

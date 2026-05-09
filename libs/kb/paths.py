@@ -34,6 +34,8 @@ SECTIONS: tuple[Section, ...] = (
     "modules",
 )
 
+MatchClass = Literal["canonical", "canonical_short", "curated", "fuzzy"]
+
 
 def default_kb_root() -> Path:
     return Path.cwd() / KB_DIRNAME
