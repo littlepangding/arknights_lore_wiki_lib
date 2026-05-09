@@ -1,0 +1,8 @@
+[HEADER(key="title_test", is_skippable=true)]
+[Dialog]
+[Delay(time=1)]
+[name="艾莉亚"]早上好，{@nickname}。
+[name="布利欧"]你来得正好。
+[Sticker(id="st1", text="石碑铭文：群山为证")]
+[Decision(options="同意;拒绝", values="0;1")]
+[Dialog]

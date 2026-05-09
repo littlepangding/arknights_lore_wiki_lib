@@ -1,0 +1,4 @@
+[HEADER(key="title_test_end")]
+[Dialog]
+[name="艾莉亚"]我们成功了。
+[name="布利欧"]这次合作很愉快。

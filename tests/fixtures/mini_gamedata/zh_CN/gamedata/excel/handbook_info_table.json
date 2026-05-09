@@ -1,0 +1,38 @@
+{
+  "handbookDict": {
+    "char_test_001": {
+      "charID": "char_test_001",
+      "storyTextAudio": [
+        {
+          "storyTitle": "基础档案",
+          "stories": [
+            {"storyText": "【代号】艾莉亚\n【出身地】测试村"}
+          ]
+        }
+      ],
+      "handbookAvgList": [
+        {
+          "storySetName": "故乡的山",
+          "avgList": [
+            {
+              "storyTxt": "obt/memory/story_aria_1",
+              "storyInfo": "info/obt/memory/story_aria_1"
+            }
+          ]
+        }
+      ]
+    },
+    "npc_test_npc": {
+      "charID": "npc_test_npc",
+      "storyTextAudio": [
+        {
+          "storyTitle": "情报",
+          "stories": [
+            {"storyText": "测试村的无名村民。"}
+          ]
+        }
+      ],
+      "handbookAvgList": []
+    }
+  }
+}

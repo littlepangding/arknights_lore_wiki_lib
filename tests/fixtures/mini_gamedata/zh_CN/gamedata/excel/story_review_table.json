@@ -1,0 +1,71 @@
+{
+  "act_test": {
+    "id": "act_test",
+    "name": "测试活动",
+    "entryType": "ACTIVITY",
+    "infoUnlockDatas": [
+      {
+        "storyId": "act_test_level_test_01_beg",
+        "storySort": 1,
+        "storyName": "测试一",
+        "storyInfo": "info/activities/test/level_test_01_beg",
+        "storyTxt": "activities/test/level_test_01_beg",
+        "avgTag": "行动前"
+      },
+      {
+        "storyId": "act_test_level_test_01_end",
+        "storySort": 2,
+        "storyName": "测试一",
+        "storyInfo": "info/activities/test/level_test_01_end",
+        "storyTxt": "activities/test/level_test_01_end",
+        "avgTag": "行动后"
+      },
+      {
+        "storyId": "act_test_level_test_02",
+        "storySort": 3,
+        "storyName": "测试二",
+        "storyInfo": null,
+        "storyTxt": "activities/test/level_test_02",
+        "avgTag": null
+      }
+    ]
+  },
+  "main_01": {
+    "id": "main_01",
+    "name": "主线第一章",
+    "entryType": "MAINLINE",
+    "infoUnlockDatas": [
+      {
+        "storyId": "main_01_level_main_01_01",
+        "storySort": 1,
+        "storyName": "起点",
+        "storyInfo": null,
+        "storyTxt": "obt/main/level_main_01_01",
+        "avgTag": null
+      },
+      {
+        "storyId": "main_01_level_main_01_02",
+        "storySort": 2,
+        "storyName": "起点",
+        "storyInfo": null,
+        "storyTxt": "obt/main/level_main_01_02",
+        "avgTag": "幕间"
+      }
+    ]
+  },
+  "mem_aria": {
+    "id": "mem_aria",
+    "name": "艾莉亚的记忆",
+    "entryType": "NONE",
+    "infoUnlockDatas": [
+      {
+        "storyId": "mem_aria_story_aria_1",
+        "storySort": 1,
+        "storyName": "故乡的山",
+        "storyInfo": "info/obt/memory/story_aria_1",
+        "storyTxt": "obt/memory/story_aria_1",
+        "avgTag": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "char_test_001": {
+    "name": "艾莉亚",
+    "appellation": "Aria",
+    "itemUsage": "干员艾莉亚现在战备状态。",
+    "itemDesc": "来自测试村的女性干员。",
+    "nationId": "testland"
+  },
+  "char_test_002": {
+    "name": "布利欧",
+    "appellation": "Brio",
+    "itemUsage": "干员布利欧已就位。",
+    "itemDesc": "来自隔壁村的男性干员。",
+    "nationId": "testland"
+  },
+  "token_skip_me": {
+    "name": "should be filtered",
+    "appellation": "x"
+  }
+}
