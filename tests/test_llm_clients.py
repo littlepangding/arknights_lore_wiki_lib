@@ -398,17 +398,46 @@ def _stub_keys(monkeypatch, mapping):
 def test_build_llm_kwargs_cli_default(monkeypatch):
     from libs.bases import build_llm_kwargs
     _stub_keys(monkeypatch, {"llm_backend": "cli"})
-    kwargs, model = build_llm_kwargs()
-    assert kwargs == {"backend": "cli", "model": "gemini-3-flash-preview"}
+    backend, kwargs, model = build_llm_kwargs()
+    assert backend == "cli"
+    assert kwargs == {"model": "gemini-3-flash-preview"}
     assert model == "gemini-3-flash-preview"
 
 
 def test_build_llm_kwargs_cli_custom_model(monkeypatch):
     from libs.bases import build_llm_kwargs
     _stub_keys(monkeypatch, {"llm_backend": "cli", "llm_model": "gemini-3-pro"})
-    kwargs, model = build_llm_kwargs()
+    backend, kwargs, model = build_llm_kwargs()
     assert kwargs["model"] == "gemini-3-pro"
     assert model == "gemini-3-pro"
+
+
+def test_build_llm_kwargs_omits_backend_key(monkeypatch):
+    """Bug fix: `backend` must NOT be in the splat-kwargs dict, otherwise
+    `query_llm_validated(backend, ..., **kwargs)` raises 'multiple values
+    for argument backend'."""
+    from libs.bases import build_llm_kwargs
+
+    monkeypatch.setattr(
+        llm_clients.shutil, "which", lambda name: f"/fake/bin/{name}"
+    )
+    for be in ("cli", "claude"):
+        _stub_keys(monkeypatch, {"llm_backend": be})
+        _, kwargs, _ = build_llm_kwargs()
+        assert "backend" not in kwargs
+
+    # Sanity: kwargs are accepted by query_llm_validated without collision.
+    _stub_keys(monkeypatch, {"llm_backend": "claude"})
+    backend, kwargs, _ = build_llm_kwargs()
+    monkeypatch.setattr(
+        llm_clients.subprocess, "run",
+        lambda argv, **kw: _completed(stdout="<a>1</a>"),
+    )
+    from libs import bases
+    out = bases.query_llm_validated(
+        backend, "S", "PRE ", "", "T", required_tags=["a"], **kwargs
+    )
+    assert "<a>1</a>" in out
 
 
 def test_build_llm_kwargs_claude_passes_clean_kwargs(monkeypatch):
@@ -416,8 +445,8 @@ def test_build_llm_kwargs_claude_passes_clean_kwargs(monkeypatch):
     gai_client into kwargs when backend is claude."""
     from libs.bases import build_llm_kwargs
     _stub_keys(monkeypatch, {"llm_backend": "claude"})
-    kwargs, model = build_llm_kwargs()
-    assert kwargs["backend"] == "claude"
+    backend, kwargs, model = build_llm_kwargs()
+    assert backend == "claude"
     assert "gai_client" not in kwargs
     assert model == "claude-haiku-4-5"
 
@@ -428,7 +457,7 @@ def test_build_llm_kwargs_claude_honors_claude_model(monkeypatch):
         "llm_backend": "claude",
         "claude_model": "claude-sonnet-4-6",
     })
-    kwargs, model = build_llm_kwargs()
+    _, kwargs, model = build_llm_kwargs()
     assert kwargs["model"] == "claude-sonnet-4-6"
     assert model == "claude-sonnet-4-6"
 
@@ -441,7 +470,7 @@ def test_build_llm_kwargs_claude_falls_back_to_llm_model(monkeypatch):
         "llm_backend": "claude",
         "llm_model": "shared-override",
     })
-    _, model = build_llm_kwargs()
+    _, _, model = build_llm_kwargs()
     assert model == "shared-override"
 
 
@@ -451,14 +480,14 @@ def test_build_llm_kwargs_claude_cli_path_threaded(monkeypatch):
         "llm_backend": "claude",
         "claude_cli_path": "/opt/claude/bin/claude",
     })
-    kwargs, _ = build_llm_kwargs()
+    _, kwargs, _ = build_llm_kwargs()
     assert kwargs["cli_path"] == "/opt/claude/bin/claude"
 
 
 def test_build_llm_kwargs_explicit_args_win(monkeypatch):
     from libs.bases import build_llm_kwargs
     _stub_keys(monkeypatch, {"llm_backend": "claude", "claude_model": "from-keys"})
-    _, model = build_llm_kwargs(llm_arg="claude", model_arg="from-arg")
+    _, _, model = build_llm_kwargs(llm_arg="claude", model_arg="from-arg")
     assert model == "from-arg"
 
 

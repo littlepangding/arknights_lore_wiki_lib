@@ -523,8 +523,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    llm_kwargs, model = build_llm_kwargs(args.llm, args.model)
-    backend = llm_kwargs["backend"]
+    backend, llm_kwargs, model = build_llm_kwargs(args.llm, args.model)
     print(f"param\t llm:{backend} model:{model}")
 
     wiki_path = args.wiki_path or get_value("lore_wiki_path")
