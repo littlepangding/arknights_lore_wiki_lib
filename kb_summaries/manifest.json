@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "events": {
+    "story_12fce_set_1": {
+      "source_hash": "31b8c9c1b0b8fb5b9a542a1ff746243b249ebb9d6fe1fc2b6474ff2d93fe735a",
+      "summary_path": "events/story_12fce_set_1.md",
+      "passes": "single",
+      "total_length": 3156,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-08T21:08:57"
+    }
+  },
+  "generated_at": "2026-05-08T21:08:57"
+}
