@@ -243,58 +243,60 @@ def summarize_event(
     backend_label: str = "",
     model: Optional[str] = None,
 ) -> SummaryResult:
-    """Summarize a single event. Returns a SummaryResult either way; LLM
-    failures land in `status='error'` with the message in `.error` so the
-    caller can keep going on the next event."""
-    event_id = event_meta["event_id"]
-    stages = event_meta.get("stages", [])
-    stage_texts = _read_stage_texts(event_dir, stages)
-    src_hash = hash_stage_texts(stage_texts)
-
-    out_path = paths.event_summary_path(summaries_root, event_id)
-
-    if (
-        not force
-        and prior_manifest_entry
-        and prior_manifest_entry.get("source_hash") == src_hash
-        and out_path.exists()
-    ):
-        return SummaryResult(
-            event_id=event_id,
-            status="skipped_unchanged",
-            summary_path=out_path,
-            passes=prior_manifest_entry.get("passes", ""),
-            source_hash=src_hash,
-        )
-
-    multi = should_multi_pass(event_meta["total_length"], len(stages))
-    passes = "multi" if multi else "single"
+    """Summarize a single event. Returns a SummaryResult either way;
+    failures (LLM, missing/malformed stage files, manifest schema gaps,
+    write errors) land in `status='error'` with the message in `.error`
+    so `summarize_all` can keep going on the next event."""
+    event_id = event_meta.get("event_id", "<unknown>")
     try:
+        stages = event_meta["stages"]
+        stage_texts = _read_stage_texts(event_dir, stages)
+        src_hash = hash_stage_texts(stage_texts)
+
+        out_path = paths.event_summary_path(summaries_root, event_id)
+
+        if (
+            not force
+            and prior_manifest_entry
+            and prior_manifest_entry.get("source_hash") == src_hash
+            and out_path.exists()
+        ):
+            return SummaryResult(
+                event_id=event_id,
+                status="skipped_unchanged",
+                summary_path=out_path,
+                passes=prior_manifest_entry.get("passes", ""),
+                source_hash=src_hash,
+            )
+
+        multi = should_multi_pass(event_meta["total_length"], len(stages))
+        passes = "multi" if multi else "single"
         body = (
             _summarize_multi_pass(stage_texts, client, model=model)
             if multi
             else _summarize_single_pass(stage_texts, client, model=model)
         )
         validated = validate_and_rebuild(body, EVENT_REQUIRED_TAGS)
-    except LLMError as e:
-        return SummaryResult(event_id=event_id, status="error", error=str(e))
-
-    md = _format_summary_md(
-        event_meta,
-        src_hash,
-        passes,
-        validated,
-        backend_label=backend_label,
-        model_label=model or client.default_model,
-    )
-    _io.atomic_write_text(out_path, md)
-    return SummaryResult(
-        event_id=event_id,
-        status="wrote",
-        summary_path=out_path,
-        passes=passes,
-        source_hash=src_hash,
-    )
+        md = _format_summary_md(
+            event_meta,
+            src_hash,
+            passes,
+            validated,
+            backend_label=backend_label,
+            model_label=model or client.default_model,
+        )
+        _io.atomic_write_text(out_path, md)
+        return SummaryResult(
+            event_id=event_id,
+            status="wrote",
+            summary_path=out_path,
+            passes=passes,
+            source_hash=src_hash,
+        )
+    except (LLMError, OSError, KeyError, ValueError) as e:
+        return SummaryResult(
+            event_id=event_id, status="error", error=f"{type(e).__name__}: {e}"
+        )
 
 
 def load_summaries_manifest(summaries_root: Path) -> dict:

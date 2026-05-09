@@ -438,6 +438,36 @@ def test_summarize_all_continues_after_per_event_error(tmp_path, build_real_kb):
     assert len(report.wrote) == 2
 
 
+def test_summarize_all_continues_when_stage_file_missing(tmp_path, build_real_kb):
+    """Regression for P2: a missing stage file (event.json references a
+    file that was deleted) used to abort the batch with FileNotFoundError.
+    Should now record an error and keep going."""
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    event_ids = sorted(p.name for p in (kb_root / "events").iterdir() if p.is_dir())
+    victim = event_ids[0]
+    victim_meta = json.loads(paths.event_json_path(kb_root, victim).read_text("utf-8"))
+    (paths.event_dir(kb_root, victim) / victim_meta["stages"][0]["file"]).unlink()
+
+    client = FakeClient(responses=[_full_event_body()] * 10)
+    report = summarize_all(kb_root, summaries_root, client, backend_label="cli")
+    assert len(report.errors) == 1
+    assert report.errors[0][0] == victim
+    assert "FileNotFoundError" in report.errors[0][1]
+    assert len(report.wrote) == len(event_ids) - 1
+
+
+def test_summarize_event_returns_error_on_malformed_event_meta(tmp_path):
+    """event_meta with a missing required key should surface as an error,
+    not propagate KeyError up to the caller."""
+    summaries_root = tmp_path / "kb_summaries"
+    bogus = {"event_id": "bad"}
+    client = FakeClient(responses=[])
+    result = summarize_event(bogus, tmp_path / "nonexistent", summaries_root, client)
+    assert result.status == "error"
+    assert "KeyError" in (result.error or "")
+
+
 def test_summarize_all_raises_when_kb_is_empty(tmp_path):
     summaries_root = tmp_path / "kb_summaries"
     kb_root = tmp_path / "kb"

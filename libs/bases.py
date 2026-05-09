@@ -75,6 +75,49 @@ def try_get_value(key, default=None):
         return default
 
 
+def build_llm_kwargs(llm_arg=None, model_arg=None):
+    """Build the kwargs dict that legacy scripts (get_story_wiki,
+    get_char_wiki_v3) hand to `query_llm` / `query_llm_validated`.
+
+    Honors the per-backend model keys with `llm_model` as a shared
+    fallback so a one-line keys.json override still works.
+
+    Returns (llm_kwargs, model_for_print).
+    """
+    backend = llm_arg or try_get_value("llm_backend", "cli")
+    if backend == "cli":
+        model = model_arg or try_get_value("llm_model", DEFAULT_CLI_MODEL)
+        kwargs = {"backend": backend, "model": model}
+        cli_path = try_get_value("gemini_cli_path")
+        if cli_path:
+            kwargs["cli_path"] = cli_path
+        return kwargs, model
+    if backend == "gai":
+        from google import genai  # type: ignore[import-not-found]
+
+        gai_client = genai.Client(api_key=try_get_value("genai_api_key"))
+        model = (
+            model_arg
+            or try_get_value("gai_model")
+            or try_get_value("llm_model")
+            or DEFAULT_GAI_MODEL
+        )
+        return {"backend": backend, "gai_client": gai_client, "model": model}, model
+    if backend == "claude":
+        model = (
+            model_arg
+            or try_get_value("claude_model")
+            or try_get_value("llm_model")
+            or "claude-haiku-4-5"
+        )
+        kwargs = {"backend": backend, "model": model}
+        cli_path = try_get_value("claude_cli_path")
+        if cli_path:
+            kwargs["cli_path"] = cli_path
+        return kwargs, model
+    raise ValueError(f"unknown llm backend: {backend!r}")
+
+
 def ckp_stamp():
     """Creates a checkpoint with a timestamp."""
     now = datetime.now()

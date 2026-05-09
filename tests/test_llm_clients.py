@@ -349,6 +349,27 @@ def test_bases_query_llm_validated_retries_on_missing_tag(monkeypatch):
     assert "<b>2</b>" in out
 
 
+def test_bases_query_llm_validated_works_with_claude_backend(monkeypatch):
+    """Regression: legacy generators (get_story_wiki, get_char_wiki_v3)
+    used to take a binary cli/else branch that built a Gemini gai_client
+    even when llm_backend was 'claude'. The mismatched kwargs would now
+    fail dispatch. After build_llm_kwargs, claude must work cleanly
+    through the legacy entrypoint."""
+    from libs import bases
+
+    monkeypatch.setattr(
+        llm_clients.shutil, "which", lambda name: f"/fake/bin/{name}"
+    )
+    monkeypatch.setattr(
+        llm_clients.subprocess, "run",
+        lambda argv, **kw: _completed(stdout="<a>1</a>\n<b>2</b>"),
+    )
+    out = bases.query_llm_validated(
+        "claude", "S", "PRE ", "", "T", required_tags=["a", "b"]
+    )
+    assert "<a>1</a>" in out and "<b>2</b>" in out
+
+
 def test_bases_query_llm_validated_raises_after_retry(monkeypatch):
     from libs import bases
 
@@ -360,3 +381,89 @@ def test_bases_query_llm_validated_raises_after_retry(monkeypatch):
         bases.query_llm_validated(
             "cli", "S", "PRE ", "", "T", required_tags=["a", "b"]
         )
+
+
+# ---------- build_llm_kwargs (legacy script entrypoint) ----------
+
+
+def _stub_keys(monkeypatch, mapping):
+    """Replace bases.try_get_value with a dict lookup so build_llm_kwargs
+    sees a controlled keys.json without touching the real file."""
+    from libs import bases
+    monkeypatch.setattr(
+        bases, "try_get_value", lambda key, default=None: mapping.get(key, default)
+    )
+
+
+def test_build_llm_kwargs_cli_default(monkeypatch):
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {"llm_backend": "cli"})
+    kwargs, model = build_llm_kwargs()
+    assert kwargs == {"backend": "cli", "model": "gemini-3-flash-preview"}
+    assert model == "gemini-3-flash-preview"
+
+
+def test_build_llm_kwargs_cli_custom_model(monkeypatch):
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {"llm_backend": "cli", "llm_model": "gemini-3-pro"})
+    kwargs, model = build_llm_kwargs()
+    assert kwargs["model"] == "gemini-3-pro"
+    assert model == "gemini-3-pro"
+
+
+def test_build_llm_kwargs_claude_passes_clean_kwargs(monkeypatch):
+    """Regression for P1: legacy script entrypoint must NOT mix a
+    gai_client into kwargs when backend is claude."""
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {"llm_backend": "claude"})
+    kwargs, model = build_llm_kwargs()
+    assert kwargs["backend"] == "claude"
+    assert "gai_client" not in kwargs
+    assert model == "claude-haiku-4-5"
+
+
+def test_build_llm_kwargs_claude_honors_claude_model(monkeypatch):
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {
+        "llm_backend": "claude",
+        "claude_model": "claude-sonnet-4-6",
+    })
+    kwargs, model = build_llm_kwargs()
+    assert kwargs["model"] == "claude-sonnet-4-6"
+    assert model == "claude-sonnet-4-6"
+
+
+def test_build_llm_kwargs_claude_falls_back_to_llm_model(monkeypatch):
+    """Regression for P3: when only llm_model is set, claude/gai must
+    pick it up rather than dropping to the built-in default."""
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {
+        "llm_backend": "claude",
+        "llm_model": "shared-override",
+    })
+    _, model = build_llm_kwargs()
+    assert model == "shared-override"
+
+
+def test_build_llm_kwargs_claude_cli_path_threaded(monkeypatch):
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {
+        "llm_backend": "claude",
+        "claude_cli_path": "/opt/claude/bin/claude",
+    })
+    kwargs, _ = build_llm_kwargs()
+    assert kwargs["cli_path"] == "/opt/claude/bin/claude"
+
+
+def test_build_llm_kwargs_explicit_args_win(monkeypatch):
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {"llm_backend": "claude", "claude_model": "from-keys"})
+    _, model = build_llm_kwargs(llm_arg="claude", model_arg="from-arg")
+    assert model == "from-arg"
+
+
+def test_build_llm_kwargs_unknown_backend(monkeypatch):
+    from libs.bases import build_llm_kwargs
+    _stub_keys(monkeypatch, {"llm_backend": "openai"})
+    with pytest.raises(ValueError, match="unknown llm backend"):
+        build_llm_kwargs()

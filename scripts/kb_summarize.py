@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Optional
 
 from libs.bases import try_get_value
 from libs.kb import paths, summarize
@@ -29,16 +30,26 @@ from libs.llm_clients import make_client
 
 
 def _build_client(args: argparse.Namespace):
+    """Backend precedence for default_model: --model > <backend>_model >
+    llm_model > the client's built-in default. `llm_model` is the legacy
+    shared key kept for backward compatibility."""
     backend = args.llm or try_get_value("llm_backend", "cli")
+
+    def _resolve_model(specific_key: str) -> Optional[str]:
+        return (
+            args.model
+            or try_get_value(specific_key)
+            or try_get_value("llm_model")
+        )
 
     if backend == "cli":
         kwargs = {}
         cli_path = try_get_value("gemini_cli_path")
         if cli_path:
             kwargs["cli_path"] = cli_path
-        default_model = args.model or try_get_value("llm_model")
-        if default_model:
-            kwargs["default_model"] = default_model
+        model = _resolve_model("llm_model")
+        if model:
+            kwargs["default_model"] = model
         return make_client("cli", **kwargs), backend
 
     if backend == "gai":
@@ -47,11 +58,10 @@ def _build_client(args: argparse.Namespace):
         api_key = try_get_value("genai_api_key")
         if not api_key:
             raise SystemExit("--llm gai requires `genai_api_key` in keys.json")
-        gai_client = genai.Client(api_key=api_key)
-        kwargs = {"gai_client": gai_client}
-        default_model = args.model or try_get_value("gai_model")
-        if default_model:
-            kwargs["default_model"] = default_model
+        kwargs = {"gai_client": genai.Client(api_key=api_key)}
+        model = _resolve_model("gai_model")
+        if model:
+            kwargs["default_model"] = model
         return make_client("gai", **kwargs), backend
 
     if backend == "claude":
@@ -59,9 +69,9 @@ def _build_client(args: argparse.Namespace):
         cli_path = try_get_value("claude_cli_path")
         if cli_path:
             kwargs["cli_path"] = cli_path
-        default_model = args.model or try_get_value("claude_model")
-        if default_model:
-            kwargs["default_model"] = default_model
+        model = _resolve_model("claude_model")
+        if model:
+            kwargs["default_model"] = model
         return make_client("claude", **kwargs), backend
 
     raise SystemExit(f"unknown --llm backend: {backend!r}")
