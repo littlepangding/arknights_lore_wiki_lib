@@ -66,6 +66,15 @@ def get_value(key, default=None):
     return data.get(key, default)
 
 
+def try_get_value(key, default=None):
+    """`get_value` but tolerates a missing keys.json — useful for scripts
+    invoked with all paths on the command line, before keys.json exists."""
+    try:
+        return get_value(key, default)
+    except FileNotFoundError:
+        return default
+
+
 def ckp_stamp():
     """Creates a checkpoint with a timestamp."""
     now = datetime.now()
@@ -80,13 +89,11 @@ def extract_tagged_contents(text, tag="TAG"):
 
 
 def validate_and_rebuild(txt, tags):
-
     lines = []
     for tag in tags:
         contents = extract_tagged_contents(txt, tag)
-        assert (
-            len(contents) >= 1
-        ), f"{tag}\t{len(contents)}"  # f"{tag}\t{len(contents)}\n {txt}"
+        if not contents:
+            raise LLMError(f"output missing required tag <{tag}>")
         lines.append(f"<{tag}>\n{contents[0].strip()}\n</{tag}>\n")
     return "\n".join(lines)
 
@@ -113,6 +120,23 @@ class LLMError(RuntimeError):
     pass
 
 
+def _dispatch_legacy(backend, **kwargs):
+    """Pop the (backend, **kwargs) signature shared by query_llm and
+    query_llm_validated into an LLMClient + model pair."""
+    # Imported here to avoid a circular import (llm_clients imports from this module).
+    from libs.llm_clients import make_client
+
+    model = kwargs.pop("model", None)
+    client_kwargs = {}
+    if backend == "gai":
+        client_kwargs["gai_client"] = kwargs.pop("gai_client")
+    elif backend in ("cli", "claude") and "cli_path" in kwargs:
+        client_kwargs["cli_path"] = kwargs.pop("cli_path")
+    if kwargs:
+        raise TypeError(f"unexpected query_llm kwargs: {sorted(kwargs)}")
+    return make_client(backend, **client_kwargs), model
+
+
 def query_llm(backend, system_prompt, prompt_pre, prompt_post, text, **kwargs):
     """Dispatch to the configured backend.
 
@@ -121,49 +145,22 @@ def query_llm(backend, system_prompt, prompt_pre, prompt_post, text, **kwargs):
     Returns (raw_response_or_none, text) for backwards compatibility — the raw
     response slot is now always None since clients return text only.
     """
-    # Imported here to avoid a circular import (llm_clients imports from this module).
-    from libs.llm_clients import make_client
-
-    model = kwargs.pop("model", None)
-    client_kwargs = {}
-    if backend == "cli":
-        if "cli_path" in kwargs:
-            client_kwargs["cli_path"] = kwargs.pop("cli_path")
-    elif backend == "gai":
-        client_kwargs["gai_client"] = kwargs.pop("gai_client")
-    elif backend == "claude":
-        if "cli_path" in kwargs:
-            client_kwargs["cli_path"] = kwargs.pop("cli_path")
-    if kwargs:
-        raise TypeError(f"unexpected query_llm kwargs: {sorted(kwargs)}")
-
-    client = make_client(backend, **client_kwargs)
-    full_prompt = prompt_pre + text + prompt_post
-    out = client.query(system_prompt, full_prompt, model=model)
+    client, model = _dispatch_legacy(backend, **kwargs)
+    out = client.query(system_prompt, prompt_pre + text + prompt_post, model=model)
     return None, out
 
 
 def query_llm_validated(
     backend, system_prompt, prompt_pre, prompt_post, text, required_tags, **kwargs
 ):
-    """Like query_llm but retries once if the response is missing required tags.
+    """Like query_llm but retries once if the response is missing required tags."""
+    from libs.llm_clients import query_with_validated_tags
 
-    Catches a common LLM failure where output drops a required <tag> section,
-    which would otherwise crash compile_website downstream.
-    """
-    _, out = query_llm(backend, system_prompt, prompt_pre, prompt_post, text, **kwargs)
-    missing = [t for t in required_tags if not extract_tagged_contents(out, t)]
-    if not missing:
-        return out
-    print(f"LLM output missing tags {missing}; retrying once with explicit reminder")
-    reminder = (
-        f"\n注意：上一次输出缺少必须的标签 {missing}。"
-        f"请确保输出严格包含所有需要的标签：{required_tags}。\n"
+    client, model = _dispatch_legacy(backend, **kwargs)
+    return query_with_validated_tags(
+        client,
+        system_prompt,
+        prompt_pre + text + prompt_post,
+        required_tags,
+        model=model,
     )
-    _, out = query_llm(
-        backend, system_prompt, prompt_pre + reminder, prompt_post, text, **kwargs
-    )
-    still_missing = [t for t in required_tags if not extract_tagged_contents(out, t)]
-    if still_missing:
-        raise LLMError(f"output missing required tags after retry: {still_missing}")
-    return out

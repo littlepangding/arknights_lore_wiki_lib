@@ -23,27 +23,20 @@ import argparse
 import sys
 from pathlib import Path
 
-from libs import bases
+from libs.bases import try_get_value
 from libs.kb import paths, summarize
 from libs.llm_clients import make_client
 
 
-def _try_get_value(key: str, default=None):
-    try:
-        return bases.get_value(key, default)
-    except FileNotFoundError:
-        return default
-
-
 def _build_client(args: argparse.Namespace):
-    backend = args.llm or _try_get_value("llm_backend", "cli")
+    backend = args.llm or try_get_value("llm_backend", "cli")
 
     if backend == "cli":
         kwargs = {}
-        cli_path = _try_get_value("gemini_cli_path")
+        cli_path = try_get_value("gemini_cli_path")
         if cli_path:
             kwargs["cli_path"] = cli_path
-        default_model = args.model or _try_get_value("llm_model")
+        default_model = args.model or try_get_value("llm_model")
         if default_model:
             kwargs["default_model"] = default_model
         return make_client("cli", **kwargs), backend
@@ -51,22 +44,22 @@ def _build_client(args: argparse.Namespace):
     if backend == "gai":
         from google import genai  # type: ignore[import-not-found]
 
-        api_key = _try_get_value("genai_api_key")
+        api_key = try_get_value("genai_api_key")
         if not api_key:
             raise SystemExit("--llm gai requires `genai_api_key` in keys.json")
         gai_client = genai.Client(api_key=api_key)
         kwargs = {"gai_client": gai_client}
-        default_model = args.model or _try_get_value("gai_model")
+        default_model = args.model or try_get_value("gai_model")
         if default_model:
             kwargs["default_model"] = default_model
         return make_client("gai", **kwargs), backend
 
     if backend == "claude":
         kwargs = {}
-        cli_path = _try_get_value("claude_cli_path")
+        cli_path = try_get_value("claude_cli_path")
         if cli_path:
             kwargs["cli_path"] = cli_path
-        default_model = args.model or _try_get_value("claude_model")
+        default_model = args.model or try_get_value("claude_model")
         if default_model:
             kwargs["default_model"] = default_model
         return make_client("claude", **kwargs), backend
@@ -133,7 +126,7 @@ def main() -> int:
         print(f"summarizing {len(only)} event(s): {', '.join(only)}")
     else:
         print("summarizing all events under", paths.events_root(kb_root))
-    print(f"backend={backend}  model={model or getattr(client, 'default_model', '?')}  force={args.force}  prune={not args.no_prune}")
+    print(f"backend={backend}  model={model or client.default_model}  force={args.force}  prune={not args.no_prune}")
 
     report = summarize.summarize_all(
         kb_root,

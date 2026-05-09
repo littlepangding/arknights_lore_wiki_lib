@@ -58,3 +58,18 @@ def load_dir_manifests(root: Path, basename: str) -> dict[str, dict]:
         if f.is_file():
             out[d.name] = read_json(f)
     return out
+
+
+def prune_stale_files(directory: Path, glob_pattern: str, keep: set[str]) -> list[str]:
+    """Delete files in `directory` matching `glob_pattern` whose name is not
+    in `keep`. Returns sorted list of removed filenames. Used after a build
+    rewrites an entity to drop renamed/removed chunks before they leak into
+    later grep / filesystem scans."""
+    if not directory.is_dir():
+        return []
+    removed: list[str] = []
+    for p in sorted(directory.glob(glob_pattern)):
+        if p.name not in keep:
+            p.unlink()
+            removed.append(p.name)
+    return removed

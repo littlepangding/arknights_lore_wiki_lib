@@ -26,8 +26,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from libs import bases
 from libs import game_data
+from libs.bases import try_get_value
 from libs.kb import chunker, indexer, paths
 from libs.kb._io import atomic_write_json
 from libs.kb.paths import FAMILIES
@@ -47,16 +47,6 @@ def _clean_script_hash() -> str:
     return hashlib.sha256(src.encode("utf-8")).hexdigest()[:12]
 
 
-def _try_get_value(key: str) -> str | None:
-    """`bases.get_value` opens `keys.json` unconditionally; a flag-only
-    invocation in a clean cwd would otherwise crash before the build
-    can start."""
-    try:
-        return bases.get_value(key)
-    except FileNotFoundError:
-        return None
-
-
 def _resolve_curated_path(args: argparse.Namespace) -> Path | None:
     if args.curated_aliases:
         p = Path(args.curated_aliases).expanduser()
@@ -68,7 +58,7 @@ def _resolve_curated_path(args: argparse.Namespace) -> Path | None:
             )
             return None
         return p
-    wiki_path = args.wiki_path or _try_get_value("lore_wiki_path")
+    wiki_path = args.wiki_path or try_get_value("lore_wiki_path")
     if wiki_path:
         candidate = Path(wiki_path).expanduser() / "data" / "char_alias.txt"
         if candidate.is_file():
@@ -108,7 +98,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    game_data_path = args.game_data_path or _try_get_value("game_data_path")
+    game_data_path = args.game_data_path or try_get_value("game_data_path")
     if not game_data_path:
         parser.error(
             "game_data_path is not set: pass --game-data-path or fill keys.json"

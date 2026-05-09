@@ -30,19 +30,37 @@ DEFAULT_CLAUDE_CLI_PATH = "claude"
 
 
 class LLMClient(Protocol):
+    default_model: str
+
     def query(self, system: str, prompt: str, *, model: Optional[str] = None) -> str: ...
 
 
 def _retry(call, *, label: str) -> str:
     last_exc: Optional[BaseException] = None
-    for it in range(RETRY_LIMIT):
+    for attempt in range(RETRY_LIMIT):
         try:
             return call()
         except Exception as e:
             last_exc = e
             print(f"{label} query failed: {e}")
-            time.sleep(RETRY_SLEEP_TIME * (it + 1))
+            time.sleep(RETRY_SLEEP_TIME * (attempt + 1))
     raise LLMError(f"{label} exhausted {RETRY_LIMIT} retries: {last_exc}")
+
+
+def _run_cli(label: str, argv: list[str]) -> str:
+    """Common CLI subprocess body shared by GeminiCLIClient and ClaudeCLIClient.
+    Wraps the run + returncode-check + empty-stdout-check in `_retry`."""
+    def _call() -> str:
+        proc = subprocess.run(argv, capture_output=True, text=True, timeout=600)
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"{label} exit {proc.returncode}: {proc.stderr.strip()[:500]}"
+            )
+        if not proc.stdout.strip():
+            raise RuntimeError(f"{label} returned empty output")
+        return proc.stdout
+
+    return _retry(_call, label=label)
 
 
 @dataclass
@@ -51,33 +69,16 @@ class GeminiCLIClient:
     default_model: str = DEFAULT_CLI_MODEL
 
     def query(self, system: str, prompt: str, *, model: Optional[str] = None) -> str:
-        full_prompt = system + prompt
-        m = model or self.default_model
         # `--approval-mode plan` is read-only: the CLI refuses to call any
-        # tool. We want pure text-in / text-out for summarization, so
-        # disabling tool execution outright is strictly safer than `-y`
-        # (YOLO, auto-approve everything) and silences the YOLO banner.
-        argv = [
+        # tool. Strictly safer than `-y` (YOLO auto-approve) for batch
+        # text-in / text-out summarization, and silences the YOLO banner.
+        return _run_cli("gemini cli", [
             self.cli_path,
-            "-m", m,
-            "-p", full_prompt,
+            "-m", model or self.default_model,
+            "-p", system + prompt,
             "--approval-mode", "plan",
             "-o", "text",
-        ]
-
-        def _call() -> str:
-            proc = subprocess.run(
-                argv, capture_output=True, text=True, timeout=600
-            )
-            if proc.returncode != 0:
-                raise RuntimeError(
-                    f"gemini cli exit {proc.returncode}: {proc.stderr.strip()[:500]}"
-                )
-            if not proc.stdout.strip():
-                raise RuntimeError("gemini cli returned empty output")
-            return proc.stdout
-
-        return _retry(_call, label="gemini cli")
+        ])
 
 
 @dataclass
@@ -115,33 +116,18 @@ class ClaudeCLIClient:
             )
 
     def query(self, system: str, prompt: str, *, model: Optional[str] = None) -> str:
-        m = model or self.default_model
-        # --bare keeps the system context minimal so summarization isn't polluted
-        # by CLAUDE.md auto-discovery, hooks, plugin sync, etc.
-        argv = [
+        # --bare keeps the per-call system context minimal so summarization
+        # isn't polluted by CLAUDE.md auto-discovery, hooks, or plugin sync.
+        return _run_cli("claude cli", [
             self.cli_path,
             "--print",
-            "--model", m,
+            "--model", model or self.default_model,
             "--system-prompt", system,
             "--bare",
             "--output-format", "text",
             *self.extra_args,
             prompt,
-        ]
-
-        def _call() -> str:
-            proc = subprocess.run(
-                argv, capture_output=True, text=True, timeout=600
-            )
-            if proc.returncode != 0:
-                raise RuntimeError(
-                    f"claude cli exit {proc.returncode}: {proc.stderr.strip()[:500]}"
-                )
-            if not proc.stdout.strip():
-                raise RuntimeError("claude cli returned empty output")
-            return proc.stdout
-
-        return _retry(_call, label="claude cli")
+        ])
 
 
 def query_with_validated_tags(

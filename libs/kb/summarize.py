@@ -127,8 +127,6 @@ class SummaryResult:
     summary_path: Optional[Path] = None
     passes: str = ""  # "single" | "multi" | ""
     source_hash: str = ""
-    total_length: int = 0
-    stage_count: int = 0
     error: Optional[str] = None
 
 
@@ -143,14 +141,22 @@ class SummarizeReport:
 # --- core helpers -----------------------------------------------------------
 
 
-def hash_event_source(stage_files: Iterable[Path]) -> str:
-    """Stable hash over stage files (filename + content). Used for
+def _read_stage_texts(event_dir: Path, stages: list[dict]) -> list[tuple[str, str]]:
+    """Read each stage file once. Returns [(filename, text), ...] in stage order."""
+    return [
+        (s["file"], (event_dir / s["file"]).read_text(encoding="utf-8"))
+        for s in stages
+    ]
+
+
+def hash_stage_texts(stage_texts: Iterable[tuple[str, str]]) -> str:
+    """Stable hash over (filename, text) pairs sorted by filename. Used for
     skip-on-unchanged detection."""
     h = hashlib.sha256()
-    for p in sorted(stage_files, key=lambda x: x.name):
-        h.update(p.name.encode("utf-8"))
+    for name, text in sorted(stage_texts, key=lambda x: x[0]):
+        h.update(name.encode("utf-8"))
         h.update(b"\0")
-        h.update(p.read_bytes())
+        h.update(text.encode("utf-8"))
         h.update(b"\0")
     return h.hexdigest()
 
@@ -190,14 +196,13 @@ def _format_summary_md(
     return "\n".join(fm) + "\n\n" + validated_body.rstrip() + "\n"
 
 
-def _read_stage_text(stage_file: Path) -> str:
-    return stage_file.read_text(encoding="utf-8")
-
-
 def _summarize_single_pass(
-    stage_files: list[Path], client: LLMClient, *, model: Optional[str] = None
+    stage_texts: list[tuple[str, str]],
+    client: LLMClient,
+    *,
+    model: Optional[str] = None,
 ) -> str:
-    event_text = "\n\n".join(_read_stage_text(p) for p in stage_files)
+    event_text = "\n\n".join(text for _, text in stage_texts)
     prompt = USER_PROMPT_SINGLE_PASS.format(event_text=event_text)
     return query_with_validated_tags(
         client, SYSTEM_PROMPT, prompt, EVENT_REQUIRED_TAGS, model=model
@@ -205,11 +210,13 @@ def _summarize_single_pass(
 
 
 def _summarize_multi_pass(
-    stage_files: list[Path], client: LLMClient, *, model: Optional[str] = None
+    stage_texts: list[tuple[str, str]],
+    client: LLMClient,
+    *,
+    model: Optional[str] = None,
 ) -> str:
     stage_blocks: list[str] = []
-    for p in stage_files:
-        stage_text = _read_stage_text(p)
+    for _, stage_text in stage_texts:
         stage_prompt = USER_PROMPT_STAGE_REDUCE.format(stage_text=stage_text)
         out = query_with_validated_tags(
             client, SYSTEM_PROMPT, stage_prompt, STAGE_REDUCE_REQUIRED_TAGS, model=model
@@ -241,8 +248,8 @@ def summarize_event(
     caller can keep going on the next event."""
     event_id = event_meta["event_id"]
     stages = event_meta.get("stages", [])
-    stage_files = [event_dir / s["file"] for s in stages]
-    src_hash = hash_event_source(stage_files)
+    stage_texts = _read_stage_texts(event_dir, stages)
+    src_hash = hash_stage_texts(stage_texts)
 
     out_path = paths.event_summary_path(summaries_root, event_id)
 
@@ -258,43 +265,35 @@ def summarize_event(
             summary_path=out_path,
             passes=prior_manifest_entry.get("passes", ""),
             source_hash=src_hash,
-            total_length=event_meta["total_length"],
-            stage_count=len(stages),
         )
 
     multi = should_multi_pass(event_meta["total_length"], len(stages))
+    passes = "multi" if multi else "single"
     try:
-        if multi:
-            body = _summarize_multi_pass(stage_files, client, model=model)
-        else:
-            body = _summarize_single_pass(stage_files, client, model=model)
+        body = (
+            _summarize_multi_pass(stage_texts, client, model=model)
+            if multi
+            else _summarize_single_pass(stage_texts, client, model=model)
+        )
         validated = validate_and_rebuild(body, EVENT_REQUIRED_TAGS)
     except LLMError as e:
         return SummaryResult(event_id=event_id, status="error", error=str(e))
-    except AssertionError as e:
-        # validate_and_rebuild uses assert; surface as LLMError-shaped failure
-        return SummaryResult(
-            event_id=event_id, status="error", error=f"tag validation failed: {e}"
-        )
 
-    model_label = model or getattr(client, "default_model", "") or ""
     md = _format_summary_md(
         event_meta,
         src_hash,
-        "multi" if multi else "single",
+        passes,
         validated,
         backend_label=backend_label,
-        model_label=model_label,
+        model_label=model or client.default_model,
     )
     _io.atomic_write_text(out_path, md)
     return SummaryResult(
         event_id=event_id,
         status="wrote",
         summary_path=out_path,
-        passes="multi" if multi else "single",
+        passes=passes,
         source_hash=src_hash,
-        total_length=event_meta["total_length"],
-        stage_count=len(stages),
     )
 
 
@@ -314,18 +313,23 @@ def prune_stale_summaries(
 ) -> list[str]:
     """Remove kb_summaries/events/<id>.md files for events not in
     current_event_ids. Returns the list of removed event_ids."""
-    events_dir = summaries_root / "events"
-    if not events_dir.is_dir():
-        return []
-    removed: list[str] = []
-    for f in sorted(events_dir.iterdir()):
-        if not f.is_file() or f.suffix != ".md":
-            continue
-        eid = f.stem
-        if eid not in current_event_ids:
-            f.unlink()
-            removed.append(eid)
-    return removed
+    keep = {f"{eid}.md" for eid in current_event_ids}
+    removed = _io.prune_stale_files(summaries_root / "events", "*.md", keep)
+    return [Path(name).stem for name in removed]
+
+
+def _load_events_meta(kb_root: Path, only: Optional[Iterable[str]]) -> dict[str, dict]:
+    """Load event.json manifests. With `only`, read just those subdirs
+    (saves ~460 disk reads when filtering to one event)."""
+    events_root = paths.events_root(kb_root)
+    if only:
+        out: dict[str, dict] = {}
+        for eid in only:
+            path = paths.event_json_path(kb_root, eid)
+            if path.is_file():
+                out[eid] = _io.read_json(path)
+        return out
+    return _io.load_dir_manifests(events_root, "event.json")
 
 
 def summarize_all(
@@ -344,44 +348,44 @@ def summarize_all(
     `only`: restrict to these event_ids (otherwise: all).
     `force`: ignore source-hash cache and re-run.
     `prune`: drop kb_summaries/events/<id>.md not in the current build.
-    """
-    events_meta = _io.load_dir_manifests(paths.events_root(kb_root), "event.json")
-    if not events_meta:
-        raise FileNotFoundError(
-            f"no events under {paths.events_root(kb_root)} — run kb_build first"
-        )
 
-    only_set = set(only) if only else None
+    `prune` only runs when iterating the full corpus (`only is None`); a
+    filtered run shouldn't be able to remove summaries it didn't consider.
+    """
+    only_list = list(only) if only else None
+    events_meta = _load_events_meta(kb_root, only_list)
+    if not events_meta:
+        if only_list is None:
+            raise FileNotFoundError(
+                f"no events under {paths.events_root(kb_root)} — run kb_build first"
+            )
+        raise FileNotFoundError(f"none of the requested events exist: {only_list}")
+
     manifest = load_summaries_manifest(summaries_root)
     manifest_events = manifest.setdefault("events", {})
+    model_label = model or client.default_model
     report = SummarizeReport()
 
     for event_id, event_meta in sorted(events_meta.items()):
-        if only_set is not None and event_id not in only_set:
-            continue
-        event_dir = paths.event_dir(kb_root, event_id)
-        prior = manifest_events.get(event_id)
         result = summarize_event(
             event_meta,
-            event_dir,
+            paths.event_dir(kb_root, event_id),
             summaries_root,
             client,
             force=force,
-            prior_manifest_entry=prior,
+            prior_manifest_entry=manifest_events.get(event_id),
             backend_label=backend_label,
             model=model,
         )
         if result.status == "wrote":
             manifest_events[event_id] = {
                 "source_hash": result.source_hash,
-                "summary_path": str(
-                    result.summary_path.relative_to(summaries_root)
-                ) if result.summary_path else "",
+                "summary_path": str(result.summary_path.relative_to(summaries_root)),
                 "passes": result.passes,
-                "total_length": result.total_length,
-                "stage_count": result.stage_count,
+                "total_length": event_meta["total_length"],
+                "stage_count": len(event_meta["stages"]),
                 "backend": backend_label,
-                "model": model or getattr(client, "default_model", "") or "",
+                "model": model_label,
                 "generated_at": dt.datetime.now().isoformat(timespec="seconds"),
             }
             report.wrote.append(event_id)
@@ -390,12 +394,15 @@ def summarize_all(
         else:
             report.errors.append((event_id, result.error or "unknown error"))
 
-    if prune:
-        # prune from disk
+    manifest_changed = bool(report.wrote or report.errors)
+    if prune and only_list is None:
         report.pruned = prune_stale_summaries(summaries_root, set(events_meta.keys()))
-        # prune stale entries from manifest too
-        for stale in [eid for eid in manifest_events if eid not in events_meta]:
+        stale_in_manifest = [eid for eid in manifest_events if eid not in events_meta]
+        for stale in stale_in_manifest:
             del manifest_events[stale]
+        if report.pruned or stale_in_manifest:
+            manifest_changed = True
 
-    save_summaries_manifest(summaries_root, manifest)
+    if manifest_changed:
+        save_summaries_manifest(summaries_root, manifest)
     return report

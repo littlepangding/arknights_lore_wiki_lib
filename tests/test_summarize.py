@@ -30,7 +30,7 @@ from libs.kb.summarize import (
     MULTI_PASS_STAGE_THRESHOLD,
     STAGE_REDUCE_REQUIRED_TAGS,
     SummaryResult,
-    hash_event_source,
+    hash_stage_texts,
     prune_stale_summaries,
     should_multi_pass,
     summarize_all,
@@ -95,31 +95,20 @@ def test_should_multi_pass_either_triggers():
     assert not should_multi_pass(0, 0)
 
 
-def test_hash_event_source_stable(tmp_path):
-    a = tmp_path / "a.txt"
-    b = tmp_path / "b.txt"
-    a.write_text("alpha", encoding="utf-8")
-    b.write_text("beta", encoding="utf-8")
-    h1 = hash_event_source([a, b])
-    h2 = hash_event_source([b, a])  # input order doesn't matter (sorted internally)
+def test_hash_stage_texts_stable():
+    h1 = hash_stage_texts([("a.txt", "alpha"), ("b.txt", "beta")])
+    h2 = hash_stage_texts([("b.txt", "beta"), ("a.txt", "alpha")])
     assert h1 == h2
 
 
-def test_hash_event_source_changes_on_content(tmp_path):
-    a = tmp_path / "a.txt"
-    a.write_text("alpha", encoding="utf-8")
-    h1 = hash_event_source([a])
-    a.write_text("alpha2", encoding="utf-8")
-    h2 = hash_event_source([a])
+def test_hash_stage_texts_changes_on_content():
+    h1 = hash_stage_texts([("a.txt", "alpha")])
+    h2 = hash_stage_texts([("a.txt", "alpha2")])
     assert h1 != h2
 
 
-def test_hash_event_source_changes_on_filename(tmp_path):
-    a = tmp_path / "a.txt"
-    b = tmp_path / "b.txt"
-    a.write_text("same", encoding="utf-8")
-    b.write_text("same", encoding="utf-8")
-    assert hash_event_source([a]) != hash_event_source([b])
+def test_hash_stage_texts_changes_on_filename():
+    assert hash_stage_texts([("a.txt", "same")]) != hash_stage_texts([("b.txt", "same")])
 
 
 # -------- single-pass --------------------------------------------------------
@@ -320,7 +309,6 @@ def test_summarize_event_retries_once_with_reminder(tmp_path, make_event):
     result = summarize_event(meta, paths.event_dir(kb_root, "evt"), summaries_root, client)
     assert result.status == "wrote"
     assert len(client.calls) == 2
-    # Reminder appears in the second prompt.
     second_prompt = client.calls[1][1]
     assert "缺少必须的标签" in second_prompt
     assert "场景标签" in second_prompt
@@ -357,12 +345,10 @@ def test_summarize_all_writes_one_per_event(tmp_path, build_real_kb):
 
     report = summarize_all(kb_root, summaries_root, client, backend_label="cli")
 
-    # 3 events — wrote for each
     assert len(report.wrote) == 3
     assert report.errors == []
     assert report.skipped == []
 
-    # manifest exists and lists all three
     manifest = json.loads(
         paths.summaries_manifest_path(summaries_root).read_text("utf-8")
     )
@@ -410,7 +396,6 @@ def test_summarize_all_prune_drops_stale(tmp_path, build_real_kb):
     client = FakeClient(responses=[_full_event_body()] * 10)
     summarize_all(kb_root, summaries_root, client, backend_label="cli")
 
-    # Inject an orphan summary file
     orphan = paths.event_summary_path(summaries_root, "ghost_event")
     orphan.parent.mkdir(parents=True, exist_ok=True)
     orphan.write_text("---\n---\nstale\n", encoding="utf-8")
@@ -460,6 +445,72 @@ def test_summarize_all_raises_when_kb_is_empty(tmp_path):
     client = FakeClient(responses=[])
     with pytest.raises(FileNotFoundError):
         summarize_all(kb_root, summaries_root, client)
+
+
+def test_summarize_all_no_manifest_write_when_nothing_changed(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    summarize_all(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * 10),
+        backend_label="cli",
+    )
+    manifest_path = paths.summaries_manifest_path(summaries_root)
+    mtime_before = manifest_path.stat().st_mtime_ns
+
+    summarize_all(
+        kb_root, summaries_root, FakeClient(responses=[]), backend_label="cli"
+    )
+    assert manifest_path.stat().st_mtime_ns == mtime_before
+
+
+def test_summarize_all_only_filter_lazy_loads(tmp_path, build_real_kb, monkeypatch):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    event_ids = sorted(p.name for p in (kb_root / "events").iterdir() if p.is_dir())
+    target = event_ids[0]
+
+    from libs.kb import _io
+    calls: list = []
+    real_load = _io.load_dir_manifests
+    def spy(*a, **kw):
+        calls.append(a)
+        return real_load(*a, **kw)
+    monkeypatch.setattr(_io, "load_dir_manifests", spy)
+
+    summarize_all(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()]),
+        only=[target],
+    )
+    assert calls == []  # full-corpus loader bypassed when filter is set
+
+
+def test_summarize_all_only_filter_skips_prune(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    summarize_all(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * 10),
+        backend_label="cli",
+    )
+    orphan = paths.event_summary_path(summaries_root, "ghost_event")
+    orphan.parent.mkdir(parents=True, exist_ok=True)
+    orphan.write_text("---\n---\n", encoding="utf-8")
+
+    target = sorted(p.name for p in (kb_root / "events").iterdir() if p.is_dir())[0]
+    report = summarize_all(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()]),
+        only=[target], force=True,
+    )
+    assert report.pruned == []
+    assert orphan.exists()
+
+
+def test_summarize_all_raises_when_filter_matches_no_event(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    with pytest.raises(FileNotFoundError, match="none of the requested events"):
+        summarize_all(
+            kb_root, summaries_root, FakeClient(responses=[]), only=["does_not_exist"]
+        )
 
 
 # -------- prune_stale_summaries direct ---------------------------------------
