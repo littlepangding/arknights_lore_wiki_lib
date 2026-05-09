@@ -26,6 +26,17 @@ SectionOrAll = Literal["profile", "voice", "archive", "skins", "modules", "all"]
 SourceFilter = Literal["deterministic", "inferred", "both"]
 GrepScope = Literal["events", "chars", "all"]
 
+SOURCE_FILTERS: tuple[SourceFilter, ...] = ("deterministic", "inferred", "both")
+GREP_SCOPES: tuple[GrepScope, ...] = ("events", "chars", "all")
+SECTIONS_OR_ALL: tuple[SectionOrAll, ...] = (
+    "profile",
+    "voice",
+    "archive",
+    "skins",
+    "modules",
+    "all",
+)
+
 
 # --- API dataclasses ---------------------------------------------------
 
@@ -217,15 +228,25 @@ def get_event(kb: KB, event_id: str) -> EventMeta | None:
     return _event_meta(ev) if ev else None
 
 
-def get_stage_text(kb: KB, event_id: str, stage_idx: int) -> str | None:
+def get_stage_meta(kb: KB, event_id: str, stage_idx: int) -> dict | None:
+    """Stage row from `event.json` (`name`, `avgTag`, `file`, `length`,
+    `story_txt`). Returned as the raw dict so callers stay decoupled
+    from `EventMeta`'s frozen-dataclass shape."""
     ev = kb.event_manifests.get(event_id)
     if not ev:
         return None
     for s in ev["stages"]:
         if s["idx"] == stage_idx:
-            p = paths.event_dir(kb.root, event_id) / s["file"]
-            return p.read_text(encoding="utf-8") if p.is_file() else None
+            return s
     return None
+
+
+def get_stage_text(kb: KB, event_id: str, stage_idx: int) -> str | None:
+    s = get_stage_meta(kb, event_id, stage_idx)
+    if not s:
+        return None
+    p = paths.event_dir(kb.root, event_id) / s["file"]
+    return p.read_text(encoding="utf-8") if p.is_file() else None
 
 
 # --- character data ----------------------------------------------------

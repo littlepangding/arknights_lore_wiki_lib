@@ -497,6 +497,8 @@ def build_all_indexes(
     return {
         "events": len(event_manifests),
         "chars": len(char_manifests),
+        "events_by_family": events_by_family,
+        "deterministic_link_count": sum(len(v) for v in deterministic.values()),
         "deterministic_chars_with_edges": sum(1 for v in deterministic.values() if v),
         "inferred_chars_with_edges": sum(1 for v in inferred.values() if v),
         "ambiguous_canonicals": sorted(ambiguous),

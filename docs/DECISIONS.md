@@ -118,3 +118,15 @@
 - Total test count: **127 passing.**
 
 The KB is now retrieval-ready end-to-end *modulo* a `kb_build.py` script (Phase 3) that wires `chunker.write_event` + `write_char` + `indexer.build_all_indexes` into a single command. The `query.load_kb` / `query.*` API can already drive an agent against any KB built by hand; Phase 3 just packages the builder.
+
+
+### 2026-05-08 — Phase 3 implementation landed (build + query CLIs)
+
+**User intent:** After Phase 2 indexer + query went green, ship Phase 3 alone (no Phase 4 bundling) — the design called this out as the natural validation checkpoint where assumptions either survive contact with the full corpus or get revised before the LLM-using phases pile on. Branch was renamed `kb-phase-1` → `kb-build` to match scope.
+
+**Outcome:** Phase 3 landed:
+
+- `scripts/kb_build.py` — end-to-end deterministic build. Reads `keys.json` (fallback flags `--game-data-path`, `--wiki-path`, `--curated-aliases`, `--kb-root`). Snapshots `data_version.txt` and a 12-char SHA of `clean_script`'s source into `data/kb/manifest.json` so a future build can detect parser-driven cache staleness. Pre-computes ambiguous canonicals once and threads them into both `chunker.write_char` and the indexer so curated-alias attachment is consistent across both passes. Skips the 5 nameless `npc_*` records and lists them in the manifest. Prunes any leftover `events/<id>/` or `chars/<id>/` directory not in the new build (default on; `--no-prune` skips). Emits a printed report + a complete `manifest.json`.
+- `scripts/kb_query.py` — argparse subcommand surface mirroring DESIGN.md§"Retrieval pipeline": `event {list,get,chars,stage_chars,stage}`, `family list`, `char {resolve,get,appearances,storysets}`, `grep`, `summary event`. JSON output by default, `--text` flag returns raw chunk text on the three text-returning commands. `char resolve` exits 2 on `Missing` so an agent can branch on exit code alone. Dataclasses + `Resolution` types serialize via `dataclasses.asdict` so the `kind` discriminator is preserved end-to-end.
+- Real-data validation: `kb_build` runs in 8.2s against the live corpus and produces exactly the M-series numbers from DESIGN.md — 461 events (`mainline`:18, `activity`:51, `mini_activity`:20, `operator_record`:372, `other`:0), 444 named chars + 5 nameless skipped, 372 deterministic edges across 323 chars, 360 chars with inferred edges, 9 ambiguous canonicals (the documented `暮落 / 郁金香 / Sharp / Stormeye / Pith / Touch / 预备干员-{术师,狙击,重装}` set), 265 curated alias canonicals loaded, 0 storyset warnings. `main_0` correctly carries `storyTxt_prefixes: ["obt/guide", "obt/main"]` (the multi-prefix case). The `圣巡` Sticker-text canary surfaces in `act46side` stage 4 — confirms the `clean_script` Sticker fix flows through to the KB. Idempotent rebuild leaves the file count unchanged. Prune contract verified by injecting fake `events/zzz_dead_event/` + `chars/char_dead_xyz/` and confirming both disappear after rebuild.
+- Test suite still **132 passing** — Phase 3 didn't perturb the libs.

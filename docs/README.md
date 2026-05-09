@@ -26,9 +26,10 @@ This folder is the agent working area: requirements, design docs, prompts, decis
 | Codex reviews | ✅ in `reviews/` (8 files: 01, 02, 03, 04, 05, 06, 07-consistency, 07-independent). All findings folded into DESIGN.md / AGENTS_GUIDE.md / PROMPTS.md. |
 | Prompt drafts | ✅ written, **not yet run against any model**. |
 | `libs/kb/` package | 🟡 partial — Phases 1-2 landed: `paths.py`, `chunker.py`, `indexer.py`, `query.py`. Pending: `summarize.py`, `llm_clients.py`. |
-| `tests/` | 🟡 partial — `tests/conftest.py`, `test_paths.py`, `test_chunker.py`, `test_indexer.py`, `test_query.py`, `tests/fixtures/mini_gamedata/`. **127 passing.** Pending: `test_llm_clients.py`. |
-| `scripts/kb_*.py` | ❌ not implemented (Phase 3+). |
-| `data/kb/` raw chunks | ❌ not built. |
+| `tests/` | 🟡 partial — `tests/conftest.py`, `test_paths.py`, `test_chunker.py`, `test_indexer.py`, `test_query.py`, `tests/fixtures/mini_gamedata/`. **132 passing.** Pending: `test_llm_clients.py`. |
+| `scripts/kb_build.py`, `scripts/kb_query.py` | ✅ Phase 3 landed. End-to-end build runs in ~8s against the live corpus (461 events / 444 named chars / 372 deterministic links / 9 ambiguous canonicals / 265 curated alias canonicals). |
+| `scripts/kb_summarize.py`, `scripts/kb_audit_wiki.py` | ❌ Phase 5 / 6. |
+| `data/kb/` raw chunks | ✅ built locally; gitignored per design. |
 | `kb_summaries/` (in git) | ❌ folder doesn't exist yet (Phase 5). |
 
 Implementation phases are listed in `DESIGN.md#implementation-phases-proposed`.
