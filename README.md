@@ -98,6 +98,17 @@ Optional layer — small zh summaries committed to git as a navigation aid.
 
 Source-hash cache: re-runs over unchanged events are no-ops (no token re-spend).
 
+## Skills (Claude Code)
+
+Repo-local skills under `.claude/skills/` orchestrate the multi-step flows so you don't have to piece them together by hand. Invoke from a Claude Code session by mentioning the skill name (or just describing the task — the trigger phrases in each `SKILL.md` will match):
+
+| Skill | What it does |
+|---|---|
+| `update-lore-wiki` | The end-to-end wiki update flow after game data lands: find new stories → confirm → LLM-summarize → discover candidate chars → confirm → LLM-generate char wikis → compile → PR. Enforces the human review gates before any LLM call. |
+| `refresh-kb` | Bring `data/kb/` (deterministic build) and `kb_summaries/` (LLM event summaries) up to date. Same flow handles first-time full builds and later incremental refreshes; `kb_build` is idempotent and `kb_summarize` is hash-skip cached, so running it freely costs nothing for unchanged content. |
+
+Each skill lives in its own folder under `.claude/skills/`. Read the `SKILL.md` to see the exact preconditions, workflow, and trigger phrases.
+
 ## Layout
 
 ```
