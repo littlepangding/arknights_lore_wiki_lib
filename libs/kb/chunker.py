@@ -12,19 +12,8 @@ from typing import Callable, Iterable
 
 from libs import game_data
 from libs.kb import paths
-from libs.kb._io import atomic_write_json, atomic_write_text
+from libs.kb._io import atomic_write_json, atomic_write_text, prune_stale_files
 from libs.kb.paths import Family, Section
-
-
-def _prune_stale_files(directory: Path, glob_pattern: str, keep: set[str]) -> None:
-    """Delete files in `directory` matching `glob_pattern` whose name is not
-    in `keep`. Used after rewriting an entity to drop renamed/removed
-    chunks before they leak into later grep / filesystem scans."""
-    if not directory.is_dir():
-        return
-    for p in directory.glob(glob_pattern):
-        if p.name not in keep:
-            p.unlink()
 
 
 # --- per-stage chunks -----------------------------------------------------
@@ -112,7 +101,7 @@ def write_event(
         )
         total_length += len(chunk)
 
-    _prune_stale_files(event_dir, "stage_*.txt", {s["file"] for s in stage_records})
+    prune_stale_files(event_dir, "stage_*.txt", {s["file"] for s in stage_records})
 
     manifest = {
         "event_id": event_id,

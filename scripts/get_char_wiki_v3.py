@@ -3,14 +3,13 @@ import argparse
 import shutil
 
 from libs.bases import (
+    build_llm_kwargs,
     get_value,
     ckp_stamp,
     get_txt_files,
     extract_tagged_contents,
     query_llm,
     query_llm_validated,
-    DEFAULT_CLI_MODEL,
-    DEFAULT_GAI_MODEL,
     CHAR_LLM_TAGS,
 )
 
@@ -516,7 +515,7 @@ if __name__ == "__main__":
     parser.add_argument("--version", default=None, help="the version for this update")
     parser.add_argument(
         "--llm",
-        choices=["cli", "gai"],
+        choices=["cli", "gai", "claude"],
         default=None,
         help="LLM backend; default reads keys.json llm_backend or 'cli'",
     )
@@ -524,16 +523,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    backend = args.llm or get_value("llm_backend", "cli")
-    if backend == "cli":
-        model = args.model or get_value("llm_model", DEFAULT_CLI_MODEL)
-        llm_kwargs = {"backend": backend, "model": model}
-    else:
-        from google import genai
-
-        gai_client = genai.Client(api_key=get_value("genai_api_key"))
-        model = args.model or DEFAULT_GAI_MODEL
-        llm_kwargs = {"backend": backend, "gai_client": gai_client, "model": model}
+    backend, llm_kwargs, model = build_llm_kwargs(args.llm, args.model)
     print(f"param\t llm:{backend} model:{model}")
 
     wiki_path = args.wiki_path or get_value("lore_wiki_path")

@@ -3,12 +3,11 @@ import sys
 import argparse
 
 from libs.bases import (
+    build_llm_kwargs,
     get_value,
     ckp_stamp,
     query_llm_validated,
     get_simple_filename,
-    DEFAULT_CLI_MODEL,
-    DEFAULT_GAI_MODEL,
     STORY_LLM_TAGS,
 )
 
@@ -112,23 +111,14 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--llm",
-        choices=["cli", "gai"],
+        choices=["cli", "gai", "claude"],
         default=None,
         help="LLM backend; default reads keys.json llm_backend or 'cli'",
     )
     parser.add_argument("--model", default=None, help="model id, overrides default")
     args = parser.parse_args()
 
-    backend = args.llm or get_value("llm_backend", "cli")
-    if backend == "cli":
-        model = args.model or get_value("llm_model", DEFAULT_CLI_MODEL)
-        llm_kwargs = {"backend": backend, "model": model}
-    else:
-        from google import genai
-
-        gai_client = genai.Client(api_key=get_value("genai_api_key"))
-        model = args.model or DEFAULT_GAI_MODEL
-        llm_kwargs = {"backend": backend, "gai_client": gai_client, "model": model}
+    backend, llm_kwargs, model = build_llm_kwargs(args.llm, args.model)
     print(f"param\t llm:{backend} model:{model}")
 
     wiki_path = args.wiki_path or get_value("lore_wiki_path")
