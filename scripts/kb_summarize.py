@@ -31,16 +31,14 @@ from libs.llm_clients import make_client
 
 def _build_client(args: argparse.Namespace):
     """Backend precedence for default_model: --model > <backend>_model >
-    llm_model > the client's built-in default. `llm_model` is the legacy
-    shared key kept for backward compatibility."""
+    the client's built-in default. The cli (gemini) backend's specific key
+    *is* `llm_model`, so the legacy shared key still resolves there; other
+    backends do not cross-fall back, to avoid leaking a gemini model name
+    to claude or vice versa."""
     backend = args.llm or try_get_value("llm_backend", "cli")
 
     def _resolve_model(specific_key: str) -> Optional[str]:
-        return (
-            args.model
-            or try_get_value(specific_key)
-            or try_get_value("llm_model")
-        )
+        return args.model or try_get_value(specific_key)
 
     if backend == "cli":
         kwargs = {}
