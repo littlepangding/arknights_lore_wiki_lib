@@ -378,7 +378,7 @@ def make_client(backend: str = "cli", **kwargs) -> LLMClient
 Implementations:
 - `GeminiCLIClient` — wraps existing `query_llm_cli`; default `gemini-3.1-flash`.
 - `GeminiSDKClient` — wraps `query_llm_gai`; default `gemini-2.5-flash`.
-- `ClaudeCLIClient` — new. Shells out to `claude -p <prompt>` (the same CLI on this machine; we'll capture stdout). Defaults: read from `keys.json` `claude_cli_path` and `claude_model` (e.g. `claude-haiku-4-5`).
+- `ClaudeCLIClient` — new. Shells out to the local Claude CLI in print mode, passes the user prompt on stdin, requests JSON output, and checks the returned `is_error` flag so rate-limit / blocked / model-not-found responses that exit 0 still surface as failures. Defaults: read from `keys.json` `claude_cli_path` and `claude_model` (e.g. `claude-haiku-4-5`).
 - All clients honor `RETRY_LIMIT` / `RETRY_SLEEP_TIME` and surface `LLMError` on persistent failure (consistent with existing behavior).
 
 `bases.query_llm` and `query_llm_validated` keep their signatures; internally delegate to `llm_clients`. No existing scripts change.

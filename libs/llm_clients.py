@@ -10,6 +10,7 @@ generator scripts (`get_story_wiki`, `get_char_wiki_v3`) don't need to change.
 
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import time
@@ -54,7 +55,9 @@ def _run_cli(label: str, argv: list[str]) -> str:
         proc = subprocess.run(argv, capture_output=True, text=True, timeout=600)
         if proc.returncode != 0:
             raise RuntimeError(
-                f"{label} exit {proc.returncode}: {proc.stderr.strip()[:500]}"
+                f"{label} exit {proc.returncode}: "
+                f"stderr={proc.stderr.strip()[:300]!r} "
+                f"stdout={proc.stdout.strip()[:300]!r}"
             )
         if not proc.stdout.strip():
             raise RuntimeError(f"{label} returned empty output")
@@ -116,18 +119,52 @@ class ClaudeCLIClient:
             )
 
     def query(self, system: str, prompt: str, *, model: Optional[str] = None) -> str:
-        # --bare keeps the per-call system context minimal so summarization
-        # isn't polluted by CLAUDE.md auto-discovery, hooks, or plugin sync.
-        return _run_cli("claude cli", [
+        # --bare would force ANTHROPIC_API_KEY-only auth and skip OAuth/keychain,
+        # which fails when the user is logged in via subscription. Run without it
+        # so OAuth credentials are honored; CLAUDE.md auto-discovery is acceptable
+        # noise since the summary output is tag-validated.
+        argv = [
             self.cli_path,
             "--print",
             "--model", model or self.default_model,
             "--system-prompt", system,
-            "--bare",
-            "--output-format", "text",
+            "--output-format", "json",
+            "--no-session-persistence",
             *self.extra_args,
-            prompt,
-        ])
+        ]
+
+        def _call() -> str:
+            proc = subprocess.run(
+                argv,
+                input=prompt,
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+            if proc.returncode != 0:
+                raise RuntimeError(
+                    f"claude cli exit {proc.returncode}: "
+                    f"stderr={proc.stderr.strip()[:300]!r} "
+                    f"stdout={proc.stdout.strip()[:300]!r}"
+                )
+            if not proc.stdout.strip():
+                raise RuntimeError("claude cli returned empty output")
+            try:
+                payload = json.loads(proc.stdout)
+            except json.JSONDecodeError as e:
+                raise RuntimeError(
+                    "claude cli returned invalid json: "
+                    f"{proc.stdout.strip()[:300]!r}"
+                ) from e
+            if payload.get("is_error"):
+                result = payload.get("result", "Unknown Claude CLI error")
+                raise RuntimeError(f"claude cli reported error: {result!r}")
+            result = payload.get("result")
+            if not isinstance(result, str) or not result.strip():
+                raise RuntimeError("claude cli returned empty result")
+            return result
+
+        return _retry(_call, label="claude cli")
 
 
 def query_with_validated_tags(

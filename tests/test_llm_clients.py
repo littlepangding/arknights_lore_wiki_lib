@@ -6,6 +6,7 @@ time.sleep is patched out so the retry loop doesn't slow tests down.
 
 from __future__ import annotations
 
+import json
 import subprocess
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -43,6 +44,10 @@ def _completed(stdout: str = "ok", returncode: int = 0, stderr: str = "") -> sub
     return subprocess.CompletedProcess(
         args=[], returncode=returncode, stdout=stdout, stderr=stderr
     )
+
+
+def _claude_json(result: str, *, is_error: bool = False) -> str:
+    return json.dumps({"result": result, "is_error": is_error})
 
 
 # ---------- make_client dispatch ----------
@@ -212,7 +217,8 @@ def test_claude_cli_query_success_argv_shape(monkeypatch):
     captured = {}
     def fake_run(argv, **kw):
         captured["argv"] = argv
-        return _completed(stdout="haiku said hi")
+        captured["kw"] = kw
+        return _completed(stdout=_claude_json("haiku said hi"))
     monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
 
     out = ClaudeCLIClient().query("SYSTEM", "USER PROMPT")
@@ -221,23 +227,26 @@ def test_claude_cli_query_success_argv_shape(monkeypatch):
     argv = captured["argv"]
     assert argv[0] == DEFAULT_CLAUDE_CLI_PATH
     assert "--print" in argv
-    assert "--bare" in argv
-    assert "--output-format" in argv and "text" in argv
+    assert "--bare" not in argv
+    assert "--output-format" in argv and "json" in argv
+    assert "--no-session-persistence" in argv
     assert "--model" in argv
     model_val = argv[argv.index("--model") + 1]
     assert model_val == DEFAULT_CLAUDE_MODEL
     assert "--system-prompt" in argv
     sys_val = argv[argv.index("--system-prompt") + 1]
     assert sys_val == "SYSTEM"
-    # prompt is the trailing positional
-    assert argv[-1] == "USER PROMPT"
+    assert "USER PROMPT" not in argv
+    assert captured["kw"]["input"] == "USER PROMPT"
+    assert captured["kw"]["timeout"] == 600
+    assert captured["kw"]["text"] is True
 
 
 def test_claude_cli_model_override(monkeypatch):
     seen = {}
     def fake_run(argv, **kw):
         seen["argv"] = argv
-        return _completed(stdout="ok")
+        return _completed(stdout=_claude_json("ok"))
     monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
     ClaudeCLIClient().query("S", "P", model="claude-opus-4-7")
     assert seen["argv"][seen["argv"].index("--model") + 1] == "claude-opus-4-7"
@@ -247,7 +256,7 @@ def test_claude_cli_extra_args_threaded(monkeypatch):
     seen = {}
     def fake_run(argv, **kw):
         seen["argv"] = argv
-        return _completed(stdout="ok")
+        return _completed(stdout=_claude_json("ok"))
     monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
     ClaudeCLIClient(extra_args=["--max-budget-usd", "0.50"]).query("S", "P")
     assert "--max-budget-usd" in seen["argv"]
@@ -271,10 +280,32 @@ def test_claude_cli_recovers_after_transient_failure(monkeypatch):
         calls["n"] += 1
         if calls["n"] == 1:
             return _completed(stdout="", stderr="transient", returncode=1)
-        return _completed(stdout="ok now")
+        return _completed(stdout=_claude_json("ok now"))
     monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
     out = ClaudeCLIClient().query("S", "P")
     assert out == "ok now"
+
+
+def test_claude_cli_zero_exit_is_error_retries_then_raises(monkeypatch):
+    calls = []
+    def fake_run(argv, **kw):
+        calls.append(1)
+        return _completed(stdout=_claude_json("You've hit your limit", is_error=True))
+    monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
+    with pytest.raises(LLMError, match="exhausted"):
+        ClaudeCLIClient().query("S", "P")
+    assert len(calls) == RETRY_LIMIT
+
+
+def test_claude_cli_invalid_json_retries_then_raises(monkeypatch):
+    calls = []
+    def fake_run(argv, **kw):
+        calls.append(1)
+        return _completed(stdout="not json")
+    monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
+    with pytest.raises(LLMError, match="exhausted"):
+        ClaudeCLIClient().query("S", "P")
+    assert len(calls) == RETRY_LIMIT
 
 
 # ---------- bases.query_llm delegates correctly ----------
@@ -362,7 +393,7 @@ def test_bases_query_llm_validated_works_with_claude_backend(monkeypatch):
     )
     monkeypatch.setattr(
         llm_clients.subprocess, "run",
-        lambda argv, **kw: _completed(stdout="<a>1</a>\n<b>2</b>"),
+        lambda argv, **kw: _completed(stdout=_claude_json("<a>1</a>\n<b>2</b>")),
     )
     out = bases.query_llm_validated(
         "claude", "S", "PRE ", "", "T", required_tags=["a", "b"]
@@ -431,7 +462,7 @@ def test_build_llm_kwargs_omits_backend_key(monkeypatch):
     backend, kwargs, _ = build_llm_kwargs()
     monkeypatch.setattr(
         llm_clients.subprocess, "run",
-        lambda argv, **kw: _completed(stdout="<a>1</a>"),
+        lambda argv, **kw: _completed(stdout=_claude_json("<a>1</a>")),
     )
     from libs import bases
     out = bases.query_llm_validated(
