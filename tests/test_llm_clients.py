@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from libs.bases import LLMError, RETRY_LIMIT
+from libs.bases import LLMError, LLMTerminalError, RETRY_LIMIT
 from libs import llm_clients
 from libs.llm_clients import (
     ClaudeCLIClient,
@@ -267,11 +267,25 @@ def test_claude_cli_nonzero_exit_retries_then_raises(monkeypatch):
     calls = []
     def fake_run(argv, **kw):
         calls.append(1)
-        return _completed(stdout="", stderr="rate limited", returncode=1)
+        return _completed(stdout="", stderr="boom", returncode=1)
     monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
     with pytest.raises(LLMError, match="exhausted"):
         ClaudeCLIClient().query("S", "P")
     assert len(calls) == RETRY_LIMIT
+
+
+def test_cli_terminal_error_short_circuits_without_retrying(monkeypatch):
+    # stderr carrying a terminal pattern (quota / rate limit / bad model /
+    # auth) must raise LLMTerminalError on the first attempt — retrying
+    # against the same wall is pure waste.
+    calls = []
+    def fake_run(argv, **kw):
+        calls.append(1)
+        return _completed(stdout="", stderr="429 RESOURCE_EXHAUSTED: quota", returncode=1)
+    monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
+    with pytest.raises(LLMTerminalError):
+        GeminiCLIClient().query("S", "P")
+    assert len(calls) == 1
 
 
 def test_claude_cli_recovers_after_transient_failure(monkeypatch):
