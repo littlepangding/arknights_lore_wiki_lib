@@ -10,7 +10,1487 @@
       "backend": "cli",
       "model": "gemini-3-flash-preview",
       "generated_at": "2026-05-08T21:08:57"
+    },
+    "story_broca_set_1": {
+      "source_hash": "be3535e8c41582ef29251741b94a5523bda73d0fe9684b1aa642542be341f6b6",
+      "summary_path": "events/story_broca_set_1.md",
+      "passes": "single",
+      "total_length": 3270,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-09T17:49:48"
+    },
+    "1stact": {
+      "source_hash": "12741c3d74003fde07ed7b7645f440ce1593e40a50d5b94d7c0fb52f3ce6c134",
+      "summary_path": "events/1stact.md",
+      "passes": "multi",
+      "total_length": 26289,
+      "stage_count": 16,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T21:57:31"
+    },
+    "act10d5": {
+      "source_hash": "62c8b386261c713df08341323699f471c38bc559d9e474e1ab61dc7f7482ed44",
+      "summary_path": "events/act10d5.md",
+      "passes": "single",
+      "total_length": 67523,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:32:36"
+    },
+    "act10mini": {
+      "source_hash": "e878fdb0896f55a2331ddd1b941199f7ff25fca100d42bae18d1c851c27d20c8",
+      "summary_path": "events/act10mini.md",
+      "passes": "single",
+      "total_length": 59995,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:33:22"
+    },
+    "act11d0": {
+      "source_hash": "7d9cf14f0014fe0acf8d5510e3d9e761ad8a8b7f67325390fea1b183ac8a1b50",
+      "summary_path": "events/act11d0.md",
+      "passes": "multi",
+      "total_length": 80283,
+      "stage_count": 20,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:42:12"
+    },
+    "act11mini": {
+      "source_hash": "73624860d26a8a7dd887d47ea86dc5fbf6a0b129c8f2754392ec9095ff902889",
+      "summary_path": "events/act11mini.md",
+      "passes": "single",
+      "total_length": 44652,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:43:13"
+    },
+    "act12d0": {
+      "source_hash": "b114313836c1b0dda635bd0430b8a20ce99279990cb887bdebb2af1fd6b5fef7",
+      "summary_path": "events/act12d0.md",
+      "passes": "multi",
+      "total_length": 61249,
+      "stage_count": 21,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:48:57"
+    },
+    "act12mini": {
+      "source_hash": "cfb32c50ee460baeed49ca819de9fcc5532658077b9edb4be132e82c7e454f82",
+      "summary_path": "events/act12mini.md",
+      "passes": "single",
+      "total_length": 57518,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:49:25"
+    },
+    "act12side": {
+      "source_hash": "63996533f3369e8a5d370eadc992e328a692e10e6d24651ef5af31a514f9e108",
+      "summary_path": "events/act12side.md",
+      "passes": "multi",
+      "total_length": 66152,
+      "stage_count": 20,
+      "backend": "claude",
+      "model": "opus",
+      "generated_at": "2026-05-10T12:16:02"
+    },
+    "act13d0": {
+      "source_hash": "b05c9cc8aec021347a8e850846a33bf7930a095a6d2a9d6fd807e84c35f23103",
+      "summary_path": "events/act13d0.md",
+      "passes": "single",
+      "total_length": 51891,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:52:45"
+    },
+    "act13d5": {
+      "source_hash": "07535b6385889cb7e5f2286f70f946545049c169764e98e0f7af4be5e4bf8a31",
+      "summary_path": "events/act13d5.md",
+      "passes": "multi",
+      "total_length": 90092,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:59:28"
+    },
+    "act13mini": {
+      "source_hash": "2efd53b7d2d5e7d46e86fd2727890c644a69ecb3b7d70688ad58f5ff82e51c0b",
+      "summary_path": "events/act13mini.md",
+      "passes": "single",
+      "total_length": 46422,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T18:59:48"
+    },
+    "act13side": {
+      "source_hash": "e574e5b2621b8e37dcad818d6723af1a4b4a62b5e2845da6b8cd8464d43ddf55",
+      "summary_path": "events/act13side.md",
+      "passes": "multi",
+      "total_length": 186478,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T19:08:15"
+    },
+    "act14mini": {
+      "source_hash": "9e3f33b20df6bfcba114c17185773697a5c17ce1b5e7154576c8d1ba837fcffe",
+      "summary_path": "events/act14mini.md",
+      "passes": "single",
+      "total_length": 55349,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T19:10:26"
+    },
+    "act14side": {
+      "source_hash": "27e8609122db4ad627e696ec8bc1ecfa6b469497f6da2bf7c91ea0e65fc20660",
+      "summary_path": "events/act14side.md",
+      "passes": "multi",
+      "total_length": 125306,
+      "stage_count": 20,
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-10T19:18:33"
+    },
+    "act15d0": {
+      "source_hash": "8868a37e3ff7f5f0608558f43fbf716be5b4aa57fed6ccb8ce529880bf173683",
+      "summary_path": "events/act15d0.md",
+      "passes": "multi",
+      "total_length": 59095,
+      "stage_count": 18,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T21:47:16"
+    },
+    "act15d5": {
+      "source_hash": "f915e1d1145666632df94eb65e7afbaf4bd45614cae915aec8a82800c4f1e5bc",
+      "summary_path": "events/act15d5.md",
+      "passes": "single",
+      "total_length": 55940,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T21:47:29"
+    },
+    "act15mini": {
+      "source_hash": "4c968334cd1e42c8333e96718d6cfdac9d658527c7a750fb171daec099d309ea",
+      "summary_path": "events/act15mini.md",
+      "passes": "single",
+      "total_length": 63096,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T21:47:42"
+    },
+    "act16d5": {
+      "source_hash": "b5ea330b60fddab93562171fc8b73ac645c7af9cf7bf1d0e186a81a45129d568",
+      "summary_path": "events/act16d5.md",
+      "passes": "multi",
+      "total_length": 60138,
+      "stage_count": 17,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T21:56:14"
+    },
+    "act16side": {
+      "source_hash": "ffc40d17be36a40d05a0707aad56fdcdd4654aa21d5dbda5af7ac3de0eccb405",
+      "summary_path": "events/act16side.md",
+      "passes": "multi",
+      "total_length": 84754,
+      "stage_count": 18,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:00:25"
+    },
+    "act17d0": {
+      "source_hash": "442d204d15a447c2bfa48139dc909dd82b2694bcfe2d94d2fcd5ee3568ad684e",
+      "summary_path": "events/act17d0.md",
+      "passes": "multi",
+      "total_length": 57637,
+      "stage_count": 17,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:03:50"
+    },
+    "act17mini": {
+      "source_hash": "15f0a559c35b50e29b79e417ca6ddfd795796650cd585fb74ad3d0b6c1e22175",
+      "summary_path": "events/act17mini.md",
+      "passes": "single",
+      "total_length": 58442,
+      "stage_count": 6,
+      "backend": "claude",
+      "model": "opus",
+      "generated_at": "2026-05-10T14:45:04"
+    },
+    "act17side": {
+      "source_hash": "af290a8f8c4d1de8df40c2c07bcf998109da80a71048275d7316e04f3b281210",
+      "summary_path": "events/act17side.md",
+      "passes": "multi",
+      "total_length": 141937,
+      "stage_count": 24,
+      "backend": "claude",
+      "model": "opus",
+      "generated_at": "2026-05-10T14:50:42"
+    },
+    "act18d0": {
+      "source_hash": "eeaf68b70ab1fab2783f4dd85c7500d38ade18b88120d706d53d900131a8d9b3",
+      "summary_path": "events/act18d0.md",
+      "passes": "multi",
+      "total_length": 88033,
+      "stage_count": 14,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-08T23:08:59"
+    },
+    "act18d3": {
+      "source_hash": "511034340a130a91ee939655b3e176888e624bd217d0363b5e8265dd89509e06",
+      "summary_path": "events/act18d3.md",
+      "passes": "multi",
+      "total_length": 83917,
+      "stage_count": 18,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:18:47"
+    },
+    "act18mini": {
+      "source_hash": "61d5db885b9b25a38990be4a44d7365621b3ec6ff6e66f665c1f2c2ad29118f9",
+      "summary_path": "events/act18mini.md",
+      "passes": "single",
+      "total_length": 59338,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:19:02"
+    },
+    "act18side": {
+      "source_hash": "06e4b4bfd55693df857eaaa99ed7115d2f39d3022b8283806b077c7b27149874",
+      "summary_path": "events/act18side.md",
+      "passes": "multi",
+      "total_length": 91587,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:23:31"
+    },
+    "act19side": {
+      "source_hash": "f6e1aa274a99d64b15c055dec6f7a02c9e2376b8a960e00345e1e897e6bcf6b5",
+      "summary_path": "events/act19side.md",
+      "passes": "multi",
+      "total_length": 104343,
+      "stage_count": 20,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:29:38"
+    },
+    "act20mini": {
+      "source_hash": "d863f672da1bf54e45a94b311eb607e4c183e3a4e1ae1311ed93a49be705184e",
+      "summary_path": "events/act20mini.md",
+      "passes": "single",
+      "total_length": 57418,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-08T23:22:07"
+    },
+    "act20side": {
+      "source_hash": "b40af9440fbaf41cc9c416923e0ddf5a3eb5cd2acbdd4af6dc823f29885ee303",
+      "summary_path": "events/act20side.md",
+      "passes": "multi",
+      "total_length": 88943,
+      "stage_count": 18,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:34:19"
+    },
+    "act21side": {
+      "source_hash": "3d394c2261a1ec8050cdd9869a8f8e321c297ae68ef390fc61c34705e0d0adcc",
+      "summary_path": "events/act21side.md",
+      "passes": "multi",
+      "total_length": 147494,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:39:27"
+    },
+    "act22side": {
+      "source_hash": "4e8ced63dd70b7eb3c4da825a78fe4d1bcf679209ba48b0c33757bdc73f7844c",
+      "summary_path": "events/act22side.md",
+      "passes": "multi",
+      "total_length": 79359,
+      "stage_count": 18,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:43:10"
+    },
+    "act23side": {
+      "source_hash": "a24b73b036b63209632e15fd3999e0ed4da60462fe880e523f18423a0cb19422",
+      "summary_path": "events/act23side.md",
+      "passes": "multi",
+      "total_length": 99118,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:47:25"
+    },
+    "act24side": {
+      "source_hash": "9bf800ae93cd38e6073b648ef2d1852b96a255f1923495be368cb405bdf09d77",
+      "summary_path": "events/act24side.md",
+      "passes": "multi",
+      "total_length": 90012,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:51:09"
+    },
+    "act25side": {
+      "source_hash": "fa046a45dff0de85992ca83f3c78db8575fe08cac0034141b97262281a27b0da",
+      "summary_path": "events/act25side.md",
+      "passes": "multi",
+      "total_length": 191594,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T22:58:05"
+    },
+    "act26side": {
+      "source_hash": "2a566ad1e159fbad9252b08e696e67fdbac275b2b1205fff0aff29f39f08f85d",
+      "summary_path": "events/act26side.md",
+      "passes": "multi",
+      "total_length": 103870,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T23:02:25"
+    },
+    "act27side": {
+      "source_hash": "78a5fbd7d5236112540c6cfb4d326f43d351764d321950cae3bcf070447b7af2",
+      "summary_path": "events/act27side.md",
+      "passes": "multi",
+      "total_length": 113521,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-08T23:58:41"
+    },
+    "act28side": {
+      "source_hash": "6e6de36cb087703240887d50f6f2db789bd2bba40f14c600ff92726823dcd8d0",
+      "summary_path": "events/act28side.md",
+      "passes": "multi",
+      "total_length": 105748,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T23:12:04"
+    },
+    "act29side": {
+      "source_hash": "10a4bafd2959cc6b7597fca55f30cca1d9c15c8ac09fa2fc924e77d46f2abdc1",
+      "summary_path": "events/act29side.md",
+      "passes": "multi",
+      "total_length": 190566,
+      "stage_count": 23,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T23:17:08"
+    },
+    "act30side": {
+      "source_hash": "37f0445b5f7407fe49295bf58fcc3c347831faa185e42e8103e68090cb801a2e",
+      "summary_path": "events/act30side.md",
+      "passes": "multi",
+      "total_length": 128135,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T23:21:09"
+    },
+    "act32side": {
+      "source_hash": "71bb0473650ec61776c9695b5b72bddbb9786954ac76c7986d8578475846e5e0",
+      "summary_path": "events/act32side.md",
+      "passes": "multi",
+      "total_length": 91321,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T00:27:41"
+    },
+    "act33side": {
+      "source_hash": "ae397ecc673c87daeabd11b76ee280e7adb79c6a1c382799e0bf66344948e63f",
+      "summary_path": "events/act33side.md",
+      "passes": "multi",
+      "total_length": 124134,
+      "stage_count": 23,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T00:34:43"
+    },
+    "act34side": {
+      "source_hash": "1048293390ff796b3f41dba1a0b6f9c25ff216032628bb8842e9057d91a95407",
+      "summary_path": "events/act34side.md",
+      "passes": "multi",
+      "total_length": 125851,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T23:43:46"
+    },
+    "act35side": {
+      "source_hash": "db95de3fca83dc6d55f8c600ea3a237e8a9f2eb89cf5a8ec3039dab9aa284bf4",
+      "summary_path": "events/act35side.md",
+      "passes": "multi",
+      "total_length": 98927,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T00:43:22"
+    },
+    "act36side": {
+      "source_hash": "5968539df0cc30c454214b519085418b935c3a0996b487de1641742b0ae0198e",
+      "summary_path": "events/act36side.md",
+      "passes": "multi",
+      "total_length": 68616,
+      "stage_count": 16,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T23:52:57"
+    },
+    "act38side": {
+      "source_hash": "89f9a63de6761836561e13f89bba6a0656c75b3b5f35b165c2cdd17cf214ae60",
+      "summary_path": "events/act38side.md",
+      "passes": "multi",
+      "total_length": 162041,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:05:21"
+    },
+    "act39side": {
+      "source_hash": "3bd06de64a25194d43cfd2615f057af8aa481716c8842141aa06b1e58b24ad06",
+      "summary_path": "events/act39side.md",
+      "passes": "multi",
+      "total_length": 107004,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T01:01:53"
+    },
+    "act3d0": {
+      "source_hash": "2afc178e34621661826c14dd23a10616eae5e14aa3064ba13ddf3113a9cc9cc9",
+      "summary_path": "events/act3d0.md",
+      "passes": "multi",
+      "total_length": 58663,
+      "stage_count": 26,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:14:55"
+    },
+    "act40side": {
+      "source_hash": "2ecf42dc4d34f6b7cb7c4c6c8d02786fa16dbbf64ebb1401d4baeff825ea1a8a",
+      "summary_path": "events/act40side.md",
+      "passes": "multi",
+      "total_length": 116557,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:19:36"
+    },
+    "act41side": {
+      "source_hash": "033a698d210cc9a10ca0dd49113ebae2dafb47e535acd1411167df639b8037a0",
+      "summary_path": "events/act41side.md",
+      "passes": "multi",
+      "total_length": 97228,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-09T01:15:22"
+    },
+    "act42side": {
+      "source_hash": "15b29a23c7ffa26b4a86c406fae80fb2cb4a3c623fda530ea95d24433496bcf6",
+      "summary_path": "events/act42side.md",
+      "passes": "multi",
+      "total_length": 167566,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:29:59"
+    },
+    "act43side": {
+      "source_hash": "c3e75ffd4b59711126a288c125692ade6eaf4d96c967eafdc6ae79ec931b39f9",
+      "summary_path": "events/act43side.md",
+      "passes": "multi",
+      "total_length": 89808,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:34:03"
+    },
+    "act44side": {
+      "source_hash": "639f3fa86192496b393889ecb7c84bf5c11f93c34555ce0f0a46041c208370c7",
+      "summary_path": "events/act44side.md",
+      "passes": "multi",
+      "total_length": 113890,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:39:57"
+    },
+    "act45side": {
+      "source_hash": "f0da3e5e1b3a03a97b4d1c24a5155ffd8ae941787ae755558431dd11d97b5ac9",
+      "summary_path": "events/act45side.md",
+      "passes": "multi",
+      "total_length": 61384,
+      "stage_count": 17,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:43:34"
+    },
+    "act46side": {
+      "source_hash": "ebdcd4725f530ed97af95cd45e52de489c15a6ff1430f11f91533e36e1debb7b",
+      "summary_path": "events/act46side.md",
+      "passes": "multi",
+      "total_length": 158023,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T00:48:35"
+    },
+    "act19mini": {
+      "source_hash": "3a484e2b965abd2d1bd672da586386d853a785ec2b11e7bd6271277bb7da7e08",
+      "summary_path": "events/act19mini.md",
+      "passes": "single",
+      "total_length": 55674,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:06:49"
+    },
+    "act31side": {
+      "source_hash": "b533af6ade0eb8aaa36d3be21d891a4189f667f3168f326c87bc182377be7938",
+      "summary_path": "events/act31side.md",
+      "passes": "multi",
+      "total_length": 94393,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:11:38"
+    },
+    "act47side": {
+      "source_hash": "d18f5225acbd271ee98784a14547d5fbb0accd4fe0baa4a0e67d835f60ff6148",
+      "summary_path": "events/act47side.md",
+      "passes": "multi",
+      "total_length": 111392,
+      "stage_count": 19,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:20:33"
+    },
+    "act49side": {
+      "source_hash": "24fbacafac29149682570b30676efd86efedfc843c1e9612dcd5967c01f5ac13",
+      "summary_path": "events/act49side.md",
+      "passes": "multi",
+      "total_length": 145524,
+      "stage_count": 24,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:30:44"
+    },
+    "act51side": {
+      "source_hash": "e1f66c820880309a456fda9adddef7e1c44f147bfec970f9c8bb10c70332f9da",
+      "summary_path": "events/act51side.md",
+      "passes": "multi",
+      "total_length": 127764,
+      "stage_count": 18,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:37:45"
+    },
+    "act7d5": {
+      "source_hash": "e1d5639d301339a8af67ea41f9ee53e046e38034d3f2bfa4acc6444c4766f55f",
+      "summary_path": "events/act7d5.md",
+      "passes": "single",
+      "total_length": 58372,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:44:26"
+    },
+    "act7mini": {
+      "source_hash": "37a8092329a4e995592eff232c576424b985fabbd1e10c9864121062852af3d0",
+      "summary_path": "events/act7mini.md",
+      "passes": "single",
+      "total_length": 54549,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:44:40"
+    },
+    "act8mini": {
+      "source_hash": "1e70a855d21c51d2485792553d4cd7392e58f08f09069f78fc8110ad9d5f4db7",
+      "summary_path": "events/act8mini.md",
+      "passes": "single",
+      "total_length": 57115,
+      "stage_count": 6,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:45:17"
+    },
+    "act9d0": {
+      "source_hash": "0efe126c7b11a4521f5d7a36feb6989389825e0a0d0890f44d8f9f31910ee595",
+      "summary_path": "events/act9d0.md",
+      "passes": "multi",
+      "total_length": 53584,
+      "stage_count": 13,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:47:49"
+    },
+    "act9mini": {
+      "source_hash": "66ed6ad87846a52c7e6a88eb9a89f918b8f35779eea8fda772bd54fb217f59aa",
+      "summary_path": "events/act9mini.md",
+      "passes": "single",
+      "total_length": 53129,
+      "stage_count": 7,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:48:04"
+    },
+    "main_1": {
+      "source_hash": "fc1ba70db7ffbf96d07916f9521cc54f1bfb9b35cef95ff1d7d22841aaef1a78",
+      "summary_path": "events/main_1.md",
+      "passes": "multi",
+      "total_length": 18775,
+      "stage_count": 12,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T22:52:59"
+    },
+    "main_10": {
+      "source_hash": "ddf5360ac23d3d46ed4ab9ef33d8e63c1e95f28d738872560fa69bb337399192",
+      "summary_path": "events/main_10.md",
+      "passes": "multi",
+      "total_length": 159482,
+      "stage_count": 28,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T23:00:05"
+    },
+    "main_11": {
+      "source_hash": "a3b3b0c93e7d41ad46df2c1a4b79872a2aee28cb278bdcc529f919f09c8e65f2",
+      "summary_path": "events/main_11.md",
+      "passes": "multi",
+      "total_length": 124740,
+      "stage_count": 27,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T23:06:07"
+    },
+    "main_12": {
+      "source_hash": "307c6ba21be3269c75528feb3838ce8b9a542ff8712ff413b8dfa2f5bad36c7e",
+      "summary_path": "events/main_12.md",
+      "passes": "multi",
+      "total_length": 122766,
+      "stage_count": 27,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T23:15:00"
+    },
+    "main_13": {
+      "source_hash": "ba412d3693ed7414357d2a8107918bfcbd24749a9e9fc942df40632f203e6a66",
+      "summary_path": "events/main_13.md",
+      "passes": "multi",
+      "total_length": 187465,
+      "stage_count": 27,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T23:25:07"
+    },
+    "main_14": {
+      "source_hash": "593346d7fe92355533e5e7c58c078768de254e807d4f34f44639dc87def93e98",
+      "summary_path": "events/main_14.md",
+      "passes": "multi",
+      "total_length": 242130,
+      "stage_count": 41,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-10T23:38:10"
+    },
+    "main_2": {
+      "source_hash": "d9f044bfb6e36acc9370df5b9551f06b7ac0c36c2e71c5857a46a71c6f569347",
+      "summary_path": "events/main_2.md",
+      "passes": "multi",
+      "total_length": 27921,
+      "stage_count": 20,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:01:48"
+    },
+    "main_3": {
+      "source_hash": "528e11ea0cb0b9be4c555df237fa733868feadf257fa0380175d3b1e543726cb",
+      "summary_path": "events/main_3.md",
+      "passes": "multi",
+      "total_length": 28324,
+      "stage_count": 16,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:04:56"
+    },
+    "main_4": {
+      "source_hash": "344b8538de8c49887d2190d08aa6c54499c90fd1e6295ba403599f5e8f4560b1",
+      "summary_path": "events/main_4.md",
+      "passes": "multi",
+      "total_length": 33864,
+      "stage_count": 20,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:09:21"
+    },
+    "main_6": {
+      "source_hash": "a1646f298a0bfb3f70ded7034f18767dbfc34e5bdc1c1574451035c85bc16379",
+      "summary_path": "events/main_6.md",
+      "passes": "multi",
+      "total_length": 100798,
+      "stage_count": 27,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:18:31"
+    },
+    "main_7": {
+      "source_hash": "d269c7267a64e2fa4d7ce1c33d5f66272f56d148f8b600e25ee916a32ab0b08e",
+      "summary_path": "events/main_7.md",
+      "passes": "multi",
+      "total_length": 122567,
+      "stage_count": 20,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:23:17"
+    },
+    "story_acdrop_set_1": {
+      "source_hash": "a758ea27cce5eb34ffa25d50540a32bf904d930bce2aecac6563e122a11c5f53",
+      "summary_path": "events/story_acdrop_set_1.md",
+      "passes": "single",
+      "total_length": 7416,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:38:00"
+    },
+    "story_akafyu_set_1": {
+      "source_hash": "917ef3f1721fb73e946de8d04b0f8ed6cc0f9ef8da1d5a2a1e4a1908732dfbca",
+      "summary_path": "events/story_akafyu_set_1.md",
+      "passes": "single",
+      "total_length": 4686,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:39:31"
+    },
+    "story_almond_set_1": {
+      "source_hash": "cdc3adee398e96f08f2b03f12c6e37ba734cd586862813ce6c37e5f75804e66f",
+      "summary_path": "events/story_almond_set_1.md",
+      "passes": "single",
+      "total_length": 5427,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:40:06"
+    },
+    "story_amgoat_set_2": {
+      "source_hash": "b98d4fca453e11148e986d299be0aea4d8c6fc5cca40d37b6b1401b3ece82433",
+      "summary_path": "events/story_amgoat_set_2.md",
+      "passes": "single",
+      "total_length": 5560,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:40:43"
+    },
+    "story_ansel_set_1": {
+      "source_hash": "a82ab33614df122f92e3932e715ae9a88b278853d6ffb7d6d2f03cef9add224c",
+      "summary_path": "events/story_ansel_set_1.md",
+      "passes": "single",
+      "total_length": 6911,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:41:37"
+    },
+    "story_aosta_set_1": {
+      "source_hash": "54fbb6530f68ac25333d6d359f787fb368f736dec1ce09a5bfd535f65a8c415a",
+      "summary_path": "events/story_aosta_set_1.md",
+      "passes": "single",
+      "total_length": 4702,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:42:03"
+    },
+    "story_ardign_set_1": {
+      "source_hash": "87d1d292bd4c017baa639ad369ab1f195dd86426b1b9fac0a5df9c2674f42feb",
+      "summary_path": "events/story_ardign_set_1.md",
+      "passes": "single",
+      "total_length": 6400,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:43:28"
+    },
+    "story_asbest_set_1": {
+      "source_hash": "6e54e69c76a15c77f9efe22d8a17e643a370aafcf722100c3cb1e62bfc9442d5",
+      "summary_path": "events/story_asbest_set_1.md",
+      "passes": "single",
+      "total_length": 5800,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:44:10"
+    },
+    "story_ascln_set_1": {
+      "source_hash": "8d6e57c8dbc3823c188797bec4a8d2fe5d1aaae7d3d8c4e2222d10288eacaed7",
+      "summary_path": "events/story_ascln_set_1.md",
+      "passes": "single",
+      "total_length": 4541,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:44:21"
+    },
+    "story_astesi_set_1": {
+      "source_hash": "10ba263cfc2aa4a2301b272483e1de71c06a0e3cdc658a3c325f89325c1016ab",
+      "summary_path": "events/story_astesi_set_1.md",
+      "passes": "single",
+      "total_length": 7613,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:45:23"
+    },
+    "story_aurora_set_1": {
+      "source_hash": "56dfea88050866122a518bde13199a4c3c663f9dff7b45cb525250ff21426ce4",
+      "summary_path": "events/story_aurora_set_1.md",
+      "passes": "single",
+      "total_length": 5473,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:45:57"
+    },
+    "story_baslin_set_1": {
+      "source_hash": "3e12c8f58cdec4fdbf9cbe9f518406fa7a2e85cb7b3c9925a61248029cf598d3",
+      "summary_path": "events/story_baslin_set_1.md",
+      "passes": "single",
+      "total_length": 4210,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:46:28"
+    },
+    "story_beewax_set_1": {
+      "source_hash": "5b318cf216fdc7264f71a80a3615a4367eaceaa2a21c8575da9102d141e29734",
+      "summary_path": "events/story_beewax_set_1.md",
+      "passes": "single",
+      "total_length": 6443,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:47:01"
+    },
+    "story_bena_set_1": {
+      "source_hash": "50e947e836e5865c608bdcd8a6111d1c7b7ea64ea2cfc12b7e226859582d930e",
+      "summary_path": "events/story_bena_set_1.md",
+      "passes": "single",
+      "total_length": 7146,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:47:11"
+    },
+    "story_bgsnow_set_1": {
+      "source_hash": "f8860f8de4aa2d87efdef8dda47aad9d5ef7462953d37c1a1e076cdcfa247005",
+      "summary_path": "events/story_bgsnow_set_1.md",
+      "passes": "single",
+      "total_length": 7260,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:47:22"
+    },
+    "story_billro_set_1": {
+      "source_hash": "d5883f65c6547ce455ff3436c247798e7e8fdf4af1442397d3989be39a0ea4e9",
+      "summary_path": "events/story_billro_set_1.md",
+      "passes": "single",
+      "total_length": 6474,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:48:20"
+    },
+    "story_bison_set_1": {
+      "source_hash": "8b59e93dd2fb75c3ef9b243971fe7767a3f0d2932eb575d939bf198b83384571",
+      "summary_path": "events/story_bison_set_1.md",
+      "passes": "single",
+      "total_length": 5979,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:48:45"
+    },
+    "story_blackd_set_1": {
+      "source_hash": "a02bddd049e56556bf0714b192c67aeb3031a1c88353277e38f661c940e21b23",
+      "summary_path": "events/story_blackd_set_1.md",
+      "passes": "single",
+      "total_length": 7990,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:48:57"
+    },
+    "story_blkngt_set_1": {
+      "source_hash": "4fb40e3e853e53e59ec3c24081c2fc923750c187ecff115da6a77e47a6cbfd7b",
+      "summary_path": "events/story_blkngt_set_1.md",
+      "passes": "single",
+      "total_length": 6821,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:51:38"
+    },
+    "story_branch_set_1": {
+      "source_hash": "4322ac287f2e85deed8adcfdc1f66a5340fad00ca94285151ceed0b9803ee90d",
+      "summary_path": "events/story_branch_set_1.md",
+      "passes": "single",
+      "total_length": 6705,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:55:13"
+    },
+    "story_breeze_set_2": {
+      "source_hash": "8d92228382f689fac219c77f3f7db734d29807f91e7bc524e6f812edbd69f97e",
+      "summary_path": "events/story_breeze_set_2.md",
+      "passes": "single",
+      "total_length": 8396,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:56:03"
+    },
+    "story_bubble_set_1": {
+      "source_hash": "2e7cd2355dd847113f6fc08f5ba29f5a770226ecd54f7d2016c74c463842291a",
+      "summary_path": "events/story_bubble_set_1.md",
+      "passes": "single",
+      "total_length": 6942,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:58:17"
+    },
+    "story_buildr_set_1": {
+      "source_hash": "797fece43829113cc4c159a827772125289d35f62bca3112100d93254540a404",
+      "summary_path": "events/story_buildr_set_1.md",
+      "passes": "single",
+      "total_length": 7698,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:58:40"
+    },
+    "story_cammou_set_1": {
+      "source_hash": "ac2e9ceadfc66ffab2b7361d3efb8129354b2601af2b072079ca4a18fa015f77",
+      "summary_path": "events/story_cammou_set_1.md",
+      "passes": "single",
+      "total_length": 7807,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T00:59:01"
+    },
+    "story_catap_set_2": {
+      "source_hash": "098641fca3bfe09f36ae5e6b5918a2ffd0284afc40f5ab0fb1bf909bfa693ffa",
+      "summary_path": "events/story_catap_set_2.md",
+      "passes": "single",
+      "total_length": 6324,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:00:17"
+    },
+    "story_ccheal_set_1": {
+      "source_hash": "f0afcc2b39fdf42cc6c15b449b3745fef10ea52fbe41b87387d9656e67200a76",
+      "summary_path": "events/story_ccheal_set_1.md",
+      "passes": "single",
+      "total_length": 6202,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:01:03"
+    },
+    "story_ceylon_set_1": {
+      "source_hash": "ac61181db58f58766bd90e450dad5cb9ff0529f43be518233647869a8e1fc701",
+      "summary_path": "events/story_ceylon_set_1.md",
+      "passes": "single",
+      "total_length": 5548,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:04:51"
+    },
+    "story_cgbird_set_1": {
+      "source_hash": "bf38c84173766415122a79f775983ee0583ba0fd782e83c53b8281fed3cf858a",
+      "summary_path": "events/story_cgbird_set_1.md",
+      "passes": "single",
+      "total_length": 5868,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:05:25"
+    },
+    "story_chen2_set_2": {
+      "source_hash": "8cafbd5e0f88b7e7560d59d18a2493ad7c339ed77d7040bc07232867ba20d2be",
+      "summary_path": "events/story_chen2_set_2.md",
+      "passes": "single",
+      "total_length": 6341,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:06:11"
+    },
+    "story_chnut_set_1": {
+      "source_hash": "781c4f36f1690a2aa273cffa5d8fdd0ea55075d8fc949fe8e3ef2da8786daaab",
+      "summary_path": "events/story_chnut_set_1.md",
+      "passes": "single",
+      "total_length": 7059,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:07:42"
+    },
+    "story_christ_set_1": {
+      "source_hash": "8f0604d1081312b8363e405d7969b5982ab100f3235763bb31f60042bcdf1beb",
+      "summary_path": "events/story_christ_set_1.md",
+      "passes": "single",
+      "total_length": 6643,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:07:59"
+    },
+    "story_closur_set_1": {
+      "source_hash": "cbeac0e798c64686b93df051c3af0c79492c050dc583f37b8f0dd0df25d9c226",
+      "summary_path": "events/story_closur_set_1.md",
+      "passes": "single",
+      "total_length": 9451,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:08:48"
+    },
+    "story_clour_set_1": {
+      "source_hash": "41c2477ed032fa1f806ddac141249e9e583fe181f2dba12254b5ce934e771ff2",
+      "summary_path": "events/story_clour_set_1.md",
+      "passes": "single",
+      "total_length": 6722,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:08:57"
+    },
+    "story_crow_set_1": {
+      "source_hash": "591b4d946fe4641938e4edfb4848c3ab4b25f275ffbf3f01578c81bcdec67eb9",
+      "summary_path": "events/story_crow_set_1.md",
+      "passes": "single",
+      "total_length": 8234,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:10:16"
+    },
+    "story_cutter_set_1": {
+      "source_hash": "ff7931b656aff5098534c3d6652b1285b338c6db8d22a2e2d8d1fb257b5a1b4a",
+      "summary_path": "events/story_cutter_set_1.md",
+      "passes": "single",
+      "total_length": 6182,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:11:17"
+    },
+    "story_deepcl_set_1": {
+      "source_hash": "d1eebb9f2b13c63a56241118a76994c9b325fe014f88922309dec02f2b57b6e5",
+      "summary_path": "events/story_deepcl_set_1.md",
+      "passes": "single",
+      "total_length": 5677,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:12:08"
+    },
+    "story_demkni_set_1": {
+      "source_hash": "791a51e5dc03a45feafc68092bfc3ddd7b074c49e5c2858cd0847917cee40b89",
+      "summary_path": "events/story_demkni_set_1.md",
+      "passes": "single",
+      "total_length": 6974,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:12:40"
+    },
+    "story_doroth_set_1": {
+      "source_hash": "222ace73c7a118d66c9f3bfd07f509d4b0f4616c13e171b70ceb132526624d1a",
+      "summary_path": "events/story_doroth_set_1.md",
+      "passes": "single",
+      "total_length": 8103,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:12:51"
+    },
+    "story_durnar_set_2": {
+      "source_hash": "a4b38681b691bab132ba4852261385e8bc3642ff15c295b3d2ae095166a16fe3",
+      "summary_path": "events/story_durnar_set_2.md",
+      "passes": "single",
+      "total_length": 5556,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:13:51"
+    },
+    "story_dusk_set_1": {
+      "source_hash": "5bb844b8ccc1b1877bd79ca45aef3f5a426fb795bd83a88c4b2553aec2dd8335",
+      "summary_path": "events/story_dusk_set_1.md",
+      "passes": "single",
+      "total_length": 8211,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:14:17"
+    },
+    "story_ebnhlz_set_1": {
+      "source_hash": "089de56256358a1723a74ac077fe26c4d55c207146d1106cb35450b2707b9e0d",
+      "summary_path": "events/story_ebnhlz_set_1.md",
+      "passes": "single",
+      "total_length": 8059,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:14:29"
+    },
+    "story_erato_set_1": {
+      "source_hash": "3be9aa146cdd91aed35f4ce394bfdd4e60c1339a74193a205590e026222fd646",
+      "summary_path": "events/story_erato_set_1.md",
+      "passes": "single",
+      "total_length": 8020,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:17:30"
+    },
+    "story_estell_set_1": {
+      "source_hash": "c95bcf9ecd121d06a9ac6a39935103ff65d23729c5d7a98d55f178b4be4bebbd",
+      "summary_path": "events/story_estell_set_1.md",
+      "passes": "single",
+      "total_length": 8083,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:17:37"
+    },
+    "story_ethan_set_1": {
+      "source_hash": "8f8c87bb63a2a613eeafde0c60871e9f8d132e3ca591e5142cbd7a0b63884637",
+      "summary_path": "events/story_ethan_set_1.md",
+      "passes": "single",
+      "total_length": 6507,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:17:48"
+    },
+    "story_excu_set_1": {
+      "source_hash": "7577f5bc93c0c0889e285350563433c367490e999372f3de24684df83a5309f3",
+      "summary_path": "events/story_excu_set_1.md",
+      "passes": "single",
+      "total_length": 4034,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:18:35"
+    },
+    "story_excu_set_2": {
+      "source_hash": "9f60d6104d7bd39d2c5c00157ef7a009fec23119a706c7e87e75d92ebdae2484",
+      "summary_path": "events/story_excu_set_2.md",
+      "passes": "single",
+      "total_length": 8718,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:18:44"
+    },
+    "story_f12yin_set_1": {
+      "source_hash": "6fae3a42f4be7b801b105b3ea9c666907a2e88c2e45250cab6ebcf5e42676dad",
+      "summary_path": "events/story_f12yin_set_1.md",
+      "passes": "single",
+      "total_length": 5325,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:18:58"
+    },
+    "story_falco_set_1": {
+      "source_hash": "55dab6fbd9240f9062bee5bb53166e632db4d7d4b99e2b3b6c3e49ba32eb3ebd",
+      "summary_path": "events/story_falco_set_1.md",
+      "passes": "single",
+      "total_length": 5267,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:19:33"
+    },
+    "story_fang_set_1": {
+      "source_hash": "6d89804904188d9ff3b70f8593369bcc2b351f0fc5fcd6bb043fb9a985828bdc",
+      "summary_path": "events/story_fang_set_1.md",
+      "passes": "single",
+      "total_length": 6857,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:19:47"
+    },
+    "story_fartth_set_1": {
+      "source_hash": "2956377f72af84ee48acee5872c8a75dd02d3760a89b00cd59dcbe3bf4442223",
+      "summary_path": "events/story_fartth_set_1.md",
+      "passes": "single",
+      "total_length": 6366,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:19:58"
+    },
+    "story_finlpp_set_1": {
+      "source_hash": "bd78620ae2566a88363acda098fdd872b442582e5f700efac7057563c9394774",
+      "summary_path": "events/story_finlpp_set_1.md",
+      "passes": "single",
+      "total_length": 7738,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:20:10"
+    },
+    "story_flamtl_set_1": {
+      "source_hash": "35d6eca67958cff36eb762b1598ef91d20cbeb42570368522791ce12563a2852",
+      "summary_path": "events/story_flamtl_set_1.md",
+      "passes": "single",
+      "total_length": 7168,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:20:48"
+    },
+    "story_flower_set_2": {
+      "source_hash": "7eb56ce04ee32433b171837df84262bb34dbb2bee1860d1e5b4b4cbc72f92c9e",
+      "summary_path": "events/story_flower_set_2.md",
+      "passes": "single",
+      "total_length": 7292,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:21:48"
+    },
+    "story_franka_set_1": {
+      "source_hash": "3421ba86e66b5fd25c12e9515f6cc120b3dd4df947595361a7968416345501a4",
+      "summary_path": "events/story_franka_set_1.md",
+      "passes": "single",
+      "total_length": 4976,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:25:40"
+    },
+    "story_frncat_set_1": {
+      "source_hash": "fa3405de38e748100bef5b0951bac7ed88357ea3a8caab93d93ba787a8c0a52b",
+      "summary_path": "events/story_frncat_set_1.md",
+      "passes": "single",
+      "total_length": 7188,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:26:25"
+    },
+    "story_ghost_set_1": {
+      "source_hash": "d2f5e1978db51dcb4811371b9cfb6c23d2d7ecc10a58aa60264b719d2f9e4748",
+      "summary_path": "events/story_ghost_set_1.md",
+      "passes": "single",
+      "total_length": 7149,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:28:25"
+    },
+    "story_glacus_set_1": {
+      "source_hash": "7949b980a05e82c509465a26d565a5a36bc0033df719d22ab52b3ddef4bff78f",
+      "summary_path": "events/story_glacus_set_1.md",
+      "passes": "single",
+      "total_length": 7981,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:29:05"
+    },
+    "story_glady_set_1": {
+      "source_hash": "81e0a967c751da212717abc0ee08ddb179ef4e7cfc3a633666b3f177fe2a3513",
+      "summary_path": "events/story_glady_set_1.md",
+      "passes": "single",
+      "total_length": 5663,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:29:26"
+    },
+    "story_glaze_set_1": {
+      "source_hash": "a9b65b0f55a772b8d7da0ed57441263ff512463ee08fb23fa06e6c611b54fb64",
+      "summary_path": "events/story_glaze_set_1.md",
+      "passes": "single",
+      "total_length": 6159,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:30:27"
+    },
+    "story_glider_set_1": {
+      "source_hash": "e2e55b8fce4fed573412991b3cf289263614e268a37861554364cc8ccab7e3f6",
+      "summary_path": "events/story_glider_set_1.md",
+      "passes": "single",
+      "total_length": 8263,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:30:38"
+    },
+    "story_greyy2_set_1": {
+      "source_hash": "0a1f216b693771ea9366aa17ef7ae5caa20b2d1ee2e2375e2c694999ed2bb2b5",
+      "summary_path": "events/story_greyy2_set_1.md",
+      "passes": "single",
+      "total_length": 6856,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:32:25"
+    },
+    "story_gvial2_set_1": {
+      "source_hash": "b71398ad079a24258bcccb822f80c4e3d5d95dfcfa4b88de76b9e6be4f080566",
+      "summary_path": "events/story_gvial2_set_1.md",
+      "passes": "single",
+      "total_length": 9581,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:32:58"
+    },
+    "story_gyuki_set_1": {
+      "source_hash": "c373366b965dd1ae8f5abe1d38726f171c4dd63f6154dda9587e3db7b091ad9c",
+      "summary_path": "events/story_gyuki_set_1.md",
+      "passes": "single",
+      "total_length": 7304,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:33:22"
+    },
+    "story_hadiya_set_1": {
+      "source_hash": "a7aa2374139fe114136ca4f3aba4fceff6d367ebd35f062e0570ac33d19e4f46",
+      "summary_path": "events/story_hadiya_set_1.md",
+      "passes": "single",
+      "total_length": 6908,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:33:56"
+    },
+    "story_hbisc2_set_1": {
+      "source_hash": "76859691fa686a1f784331476665919434876acd444aa768e63dfaec0732f64f",
+      "summary_path": "events/story_hbisc2_set_1.md",
+      "passes": "single",
+      "total_length": 7037,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:36:06"
+    },
+    "story_headb2_set_1": {
+      "source_hash": "577c8f6384a0039afe32494a6704eb20f036845e5ef000d60fb020692c17f1b1",
+      "summary_path": "events/story_headb2_set_1.md",
+      "passes": "single",
+      "total_length": 10779,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:36:16"
+    },
+    "story_headbr_set_1": {
+      "source_hash": "e813eb08e047d6d6f5908599f9f41486e24eef881483ebe943abfe437c5b2c3e",
+      "summary_path": "events/story_headbr_set_1.md",
+      "passes": "single",
+      "total_length": 7234,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:36:26"
+    },
+    "story_heidi_set_1": {
+      "source_hash": "16001859eec50bc07808e7cb2a805156127c483786c0f6b8dd60c40fc00e11e1",
+      "summary_path": "events/story_heidi_set_1.md",
+      "passes": "single",
+      "total_length": 7624,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:37:01"
+    },
+    "story_hibisc_set_1": {
+      "source_hash": "4f4d65c6bb96f9e9164cfda8d3c54c9dc5d6cf08cd83eb4c74961466de0db838",
+      "summary_path": "events/story_hibisc_set_1.md",
+      "passes": "single",
+      "total_length": 7395,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:37:47"
+    },
+    "story_horn_set_1": {
+      "source_hash": "72aac57d12d7e96cde10f086cdbb41e26419d14389f74a2689f283fe7a7f51f3",
+      "summary_path": "events/story_horn_set_1.md",
+      "passes": "single",
+      "total_length": 7541,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:38:50"
+    },
+    "story_hsguma_set_1": {
+      "source_hash": "0647762471d6d4f64957089b756819fedf3e6d4685008e795a67e2ddd097aacb",
+      "summary_path": "events/story_hsguma_set_1.md",
+      "passes": "single",
+      "total_length": 7339,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:39:53"
+    },
+    "story_humus_set_1": {
+      "source_hash": "f5daa754091b82929753893420488af4cbb435553f3d8b952e558e278417ea8c",
+      "summary_path": "events/story_humus_set_1.md",
+      "passes": "single",
+      "total_length": 7189,
+      "stage_count": 1,
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-11T01:40:26"
     }
   },
-  "generated_at": "2026-05-08T21:08:57"
+  "generated_at": "2026-05-11T01:40:26"
 }

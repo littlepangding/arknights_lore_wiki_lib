@@ -165,6 +165,14 @@ class LLMError(RuntimeError):
     pass
 
 
+class LLMTerminalError(LLMError):
+    """LLM failure that retrying cannot fix — wrong/missing model, exhausted
+    quota, auth failure. Surfaces from `_retry` immediately and bubbles past
+    `summarize_event`'s catch-all so the batch can bail instead of burning
+    5 retries × N events against a wall."""
+    pass
+
+
 def _dispatch_legacy(backend, **kwargs):
     """Pop the (backend, **kwargs) signature shared by query_llm and
     query_llm_validated into an LLMClient + model pair."""

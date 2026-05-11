@@ -94,9 +94,10 @@ Optional layer — small zh summaries committed to git as a navigation aid.
 .venv/bin/python -m scripts.kb_summarize --event story_12fce_set_1   # one event
 .venv/bin/python -m scripts.kb_summarize                              # all events (token cost)
 .venv/bin/python -m scripts.kb_summarize --llm claude                 # use Claude CLI
+.venv/bin/python -m scripts.kb_summarize --estimate                   # dry-run: how many events / LLM calls / ~tokens are left
 ```
 
-Source-hash cache: re-runs over unchanged events are no-ops (no token re-spend).
+Source-hash cache: re-runs over unchanged events are no-ops (no token re-spend). A real run streams a per-event progress line (`[i/N] <event_id>  done X/Y ev  ~tok_done/tok_total  elapsed  ETA ~…`) so a multi-hour bake isn't silent. `--estimate` calls no LLM — it just prints the projected cost (events to run, single vs multi pass, LLM calls, input/output/total chars ≈ tokens) of the run that *would* happen; honors `--event` / `--force`.
 
 ## Skills (Claude Code)
 

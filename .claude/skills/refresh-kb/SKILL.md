@@ -58,6 +58,18 @@ This is the **scope preview** the user wants to see before any LLM cost is incur
 - **First-time run** → `already_summarized=0`, `new_to_run` = all events (~461). Wall time on Gemini CLI: roughly 1–2 hours single-pass + a multi-pass tail of ~70–90 events.
 - **Incremental run** → typically a small `new_to_run`; `stale_to_prune` is event_ids the upstream removed. Cost scales linearly with `new_to_run` only (changed-content detection is via per-event source hash inside `kb_summarize`, so renames/changes are caught for free on the next step).
 
+#### Token-cost estimate
+
+For "how many tokens to finish the bake?" — `kb_summarize` has a no-LLM dry-run:
+
+```bash
+.venv/bin/python -m scripts.kb_summarize --estimate                      # full corpus
+.venv/bin/python -m scripts.kb_summarize --estimate --event act46side    # one event
+.venv/bin/python -m scripts.kb_summarize --estimate --force              # cost of re-baking everything
+```
+
+Prints: events that would run (split single-pass / multi-pass), already-done count (skipped, $0), total LLM calls, and projected input / output / total chars ≈ tokens (~1 token/char for this CJK-heavy text — a slight over-estimate; excludes tag-revalidation retries and content-changed re-bills). Selection mirrors the real run: an event counts if it has no manifest entry or its `.md` is missing (it does NOT re-hash stage text, so a content change in an already-summarized event won't show — that's caught & re-billed at run time). Implemented in `summarize.estimate_remaining`; the `EST_*` size guesses + `EST_CHARS_PER_TOKEN` divisor live at the top of `libs/kb/summarize.py` — tune if real usage diverges. As of 2026-05-11, from a 149/461 baseline: ~312 events, ~559 calls, ~4.2M tokens (~3.8M in, ~0.4M out).
+
 ### Step 3 — Confirm scope with the user
 
 Always confirm before kicking off the LLM step. Quote the numbers from Step 2 and the backend that will be used (read `keys.json llm_backend`, default `cli`). Offer:
@@ -81,7 +93,7 @@ For a filtered subset:
 .venv/bin/python -u -m scripts.kb_summarize --event <id1> --event <id2> ...
 ```
 
-Use `python -u` (unbuffered) and `tee /tmp/kb_summarize.log` if running in the background, so per-event progress is visible. The tool is hash-skip cached — re-running is free for unchanged events. Per-event errors don't abort the batch; they land in the final report.
+A real run streams a per-event line: `[i/N] <event_id>  +single|+multi  done X/Y ev  ~tok_done/tok_total  elapsed  ETA ~…` for writes, `· cached` for hash-cache hits, and `✗ TERMINAL …` then stops on a quota / bad-model / auth error. Token figures and ETA are estimates extrapolated from events written so far. Still use `python -u` + `tee /tmp/kb_summarize.log` for a backgrounded run. Per-event errors (non-terminal) don't abort the batch; they land in the final report.
 
 If the user said "skip LLM step", end here.
 

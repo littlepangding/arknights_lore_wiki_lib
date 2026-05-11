@@ -26,21 +26,59 @@ from typing import Optional
 
 from libs.bases import try_get_value
 from libs.kb import paths, summarize
+from libs.kb.summarize import ProgressEvent
 from libs.llm_clients import make_client
+
+
+def _fmt_dur(s: Optional[float]) -> str:
+    if s is None:
+        return "?"
+    s = int(s)
+    h, rem = divmod(s, 3600)
+    m, sec = divmod(rem, 60)
+    if h:
+        return f"{h}h{m:02d}m"
+    if m:
+        return f"{m}m{sec:02d}s"
+    return f"{sec}s"
+
+
+def _fmt_count(n: int) -> str:
+    if n >= 1_000_000:
+        return f"{n / 1_000_000:.1f}M"
+    if n >= 1_000:
+        return f"{n / 1_000:.0f}k"
+    return str(n)
+
+
+def _print_progress(ev: ProgressEvent) -> None:
+    head = f"[{ev.index}/{ev.total}] {ev.event_id}"
+    if ev.status == "wrote":
+        tail = (
+            f"  done {ev.run_done}/{ev.run_total} ev"
+            f"  ~{_fmt_count(ev.tokens_done)}/{_fmt_count(ev.tokens_total)} tok"
+            f"  {_fmt_dur(ev.elapsed_s)} elapsed  ETA ~{_fmt_dur(ev.eta_s)}"
+        )
+        head = f"{head}  +{ev.passes}"
+    elif ev.status == "skipped_unchanged":
+        tail = "  · cached"
+    elif ev.status == "terminal_error":
+        tail = "  ✗ TERMINAL (quota / bad model / auth) — batch stopped"
+    else:
+        tail = f"  ! {ev.status}"
+    print(head + tail, flush=True)
 
 
 def _build_client(args: argparse.Namespace):
     """Backend precedence for default_model: --model > <backend>_model >
-    llm_model > the client's built-in default. `llm_model` is the legacy
-    shared key kept for backward compatibility."""
+    the client's built-in default. The cli (gemini) backend's specific key
+    *is* `llm_model`, so the legacy shared key still resolves there; other
+    backends do not cross-fall back, to avoid leaking a gemini model name
+    to claude or vice versa."""
     backend = args.llm or try_get_value("llm_backend", "cli")
 
     def _resolve_model(specific_key: str) -> Optional[str]:
-        return (
-            args.model
-            or try_get_value(specific_key)
-            or try_get_value("llm_model")
-        )
+        return args.model or try_get_value(specific_key)
 
     if backend == "cli":
         kwargs = {}
@@ -102,6 +140,13 @@ def main() -> int:
         help="Ignore source-hash cache and re-summarize every selected event.",
     )
     parser.add_argument(
+        "--estimate",
+        action="store_true",
+        help="Don't call any LLM — just print the projected cost (events, "
+        "LLM calls, chars, ~tokens) of the run that would happen. Honors "
+        "--event / --force / --kb-root / --summaries-root.",
+    )
+    parser.add_argument(
         "--no-prune",
         action="store_true",
         help="Keep kb_summaries/events/<id>.md files for events absent from the current KB.",
@@ -128,10 +173,29 @@ def main() -> int:
         )
     summaries_root.mkdir(parents=True, exist_ok=True)
 
+    only = args.event or None
+
+    if args.estimate:
+        est = summarize.estimate_remaining(
+            kb_root, summaries_root, only=only, force=args.force
+        )
+        scope = f"{len(only)} requested event(s)" if only else "full corpus"
+        print(f"cost estimate — {scope}  (force={args.force})")
+        print(f"  events to run:   {est.n_to_run}  (single-pass: {est.n_single}, multi-pass: {est.n_multi})")
+        print(f"  already done:    {len(est.already_done)}  (skipped — no token spend)")
+        print(f"  LLM calls:       ~{est.llm_calls}")
+        print(f"  input:           ~{est.in_chars:,} chars   ≈ ~{est.in_tokens:,} tokens")
+        print(f"  output:          ~{est.out_chars:,} chars   ≈ ~{est.out_tokens:,} tokens")
+        print(f"  total:           ~{est.total_chars:,} chars   ≈ ~{est.total_tokens:,} tokens")
+        print(
+            "  note: ~1 token/char for this CJK-heavy text; excludes retry "
+            "re-tries and content-changed re-bills. Treat as a slight over-estimate."
+        )
+        return 0
+
     client, backend = _build_client(args)
     model = args.model or None
 
-    only = args.event or None
     if only:
         print(f"summarizing {len(only)} event(s): {', '.join(only)}")
     else:
@@ -147,13 +211,11 @@ def main() -> int:
         prune=not args.no_prune,
         backend_label=backend,
         model=model,
+        progress=_print_progress,
     )
 
     print()
     print(f"wrote:   {len(report.wrote)}")
-    if report.wrote:
-        for eid in report.wrote:
-            print(f"  + {eid}")
     print(f"skipped (unchanged): {len(report.skipped)}")
     if report.errors:
         print(f"errors: {len(report.errors)}")

@@ -25,7 +25,7 @@
 2. **Design multiple LLM access points.** Summarization work should be offloadable to:
    - **Gemini CLI** (`gemini -m ... -p ...`) — default, already wired into `bases.py`.
    - **Gemini API** (`google.genai` SDK) — already wired.
-   - **Claude CLI** (`claude -p ...`) — new, to be added.
+   - **Claude CLI** (`claude --print ...`) — supported backend for offloaded batch work.
    The agent's own context window is reserved for code/prompt writing, not bulk summarization.
 3. **Write LLM prompts in Chinese.** The source material is Chinese; prompts and outputs should match to keep the model in-language.
 4. **Document everything.** Requirements, design, and decisions live in `arknights_lore_wiki_lib/docs/`, **committed to git**, so that future agent sessions (and human reviewers) have full historical context. The design doc is reviewable by another agent before any implementation starts.
