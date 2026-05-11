@@ -15,9 +15,10 @@ from __future__ import annotations
 
 import datetime as dt
 import hashlib
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Callable, Iterable, Optional
 
 from libs.bases import LLMError, LLMTerminalError, validate_and_rebuild
 from libs.kb import _io, paths
@@ -461,6 +462,54 @@ def estimate_event_cost(
     )
 
 
+def est_tokens(row: EventCostEstimate) -> int:
+    return round(row.total_chars / EST_CHARS_PER_TOKEN)
+
+
+def _classify_run(
+    events_meta: dict[str, dict],
+    manifest_events: dict,
+    summaries_root: Path,
+    force: bool,
+) -> tuple[dict[str, EventCostEstimate], dict[str, EventCostEstimate]]:
+    """Split events into (to_run, already_done) keyed by event_id, each value
+    an `EventCostEstimate`. "Would run" iff `force`, or no manifest entry, or
+    the summary `.md` is missing. Does NOT re-hash stage text — a content
+    change in an already-summarized event is invisible here and gets caught
+    (and re-billed) inside `summarize_event` at run time. Shared by
+    `estimate_remaining` (the dry-run) and `summarize_all` (live progress)."""
+    to_run: dict[str, EventCostEstimate] = {}
+    done: dict[str, EventCostEstimate] = {}
+    for event_id, meta in sorted(events_meta.items()):
+        row = estimate_event_cost(event_id, meta["total_length"], len(meta["stages"]))
+        prior = manifest_events.get(event_id)
+        out_path = paths.event_summary_path(summaries_root, event_id)
+        if force or prior is None or not out_path.exists():
+            to_run[event_id] = row
+        else:
+            done[event_id] = row
+    return to_run, done
+
+
+@dataclass
+class ProgressEvent:
+    """One per event as `summarize_all` works through the batch — fed to the
+    optional `progress` callback so the caller can print a live status line.
+    Token counts are estimates (see `_classify_run`); `eta_s` is None until at
+    least one event has actually been written this run."""
+    index: int            # 1-based position in the iteration
+    total: int            # total events iterated this run
+    event_id: str
+    status: str           # "wrote" | "skipped_unchanged" | "error" | "terminal_error"
+    passes: str           # "single" | "multi" | ""
+    run_done: int         # events written so far this run
+    run_total: int        # events that will be written this run (est.)
+    tokens_done: int      # est. tokens spent so far this run
+    tokens_total: int     # est. tokens this run will spend
+    elapsed_s: float
+    eta_s: Optional[float]
+
+
 def estimate_remaining(
     kb_root: Path,
     summaries_root: Path,
@@ -479,19 +528,8 @@ def estimate_remaining(
     only_list = list(only) if only else None
     events_meta = _load_events_meta(kb_root, only_list)
     manifest_events = load_summaries_manifest(summaries_root).get("events", {})
-
-    est = CostEstimate()
-    for event_id, meta in sorted(events_meta.items()):
-        total_length = meta["total_length"]
-        stage_count = len(meta["stages"])
-        row = estimate_event_cost(event_id, total_length, stage_count)
-        prior = manifest_events.get(event_id)
-        out_path = paths.event_summary_path(summaries_root, event_id)
-        if force or prior is None or not out_path.exists():
-            est.to_run.append(row)
-        else:
-            est.already_done.append(row)
-    return est
+    to_run, done = _classify_run(events_meta, manifest_events, summaries_root, force)
+    return CostEstimate(to_run=list(to_run.values()), already_done=list(done.values()))
 
 
 def summarize_all(
@@ -504,12 +542,17 @@ def summarize_all(
     prune: bool = True,
     backend_label: str = "",
     model: Optional[str] = None,
+    progress: Optional[Callable[[ProgressEvent], None]] = None,
 ) -> SummarizeReport:
     """Summarize every event under `events_root(kb_root)`.
 
     `only`: restrict to these event_ids (otherwise: all).
     `force`: ignore source-hash cache and re-run.
     `prune`: drop kb_summaries/events/<id>.md not in the current build.
+    `progress`: optional callback invoked once per event with a `ProgressEvent`
+        (position, status, running token estimate, ETA) — for live CLI output.
+        Token figures are estimates; ETA is token-rate extrapolation from the
+        events written so far this run.
 
     `prune` only runs when iterating the full corpus (`only is None`); a
     filtered run shouldn't be able to remove summaries it didn't consider.
@@ -528,8 +571,30 @@ def summarize_all(
     model_label = model or client.default_model
     report = SummarizeReport()
 
+    run_plan, _ = _classify_run(events_meta, manifest_events, summaries_root, force)
+    run_total = len(run_plan)
+    tokens_total = sum(est_tokens(r) for r in run_plan.values())
+    total_iter = len(events_meta)
+    run_done = 0
+    tokens_done = 0
+    t0 = time.monotonic()
+
+    def _emit(idx: int, eid: str, status: str, passes: str) -> None:
+        if progress is None:
+            return
+        elapsed = time.monotonic() - t0
+        eta: Optional[float] = None
+        if tokens_done > 0 and tokens_total > tokens_done:
+            eta = (elapsed / tokens_done) * (tokens_total - tokens_done)
+        progress(ProgressEvent(
+            index=idx, total=total_iter, event_id=eid, status=status, passes=passes,
+            run_done=run_done, run_total=run_total,
+            tokens_done=tokens_done, tokens_total=tokens_total,
+            elapsed_s=elapsed, eta_s=eta,
+        ))
+
     terminal_error: Optional[str] = None
-    for event_id, event_meta in sorted(events_meta.items()):
+    for idx, (event_id, event_meta) in enumerate(sorted(events_meta.items()), 1):
         try:
             result = summarize_event(
                 event_meta,
@@ -547,6 +612,7 @@ def summarize_all(
             # every write, see below).
             terminal_error = f"{type(e).__name__}: {e}"
             report.errors.append((event_id, terminal_error))
+            _emit(idx, event_id, "terminal_error", "")
             break
 
         if result.status == "wrote":
@@ -564,10 +630,19 @@ def summarize_all(
             # crash mid-batch never loses what we already paid the LLM for.
             save_summaries_manifest(summaries_root, manifest)
             report.wrote.append(event_id)
+            run_done += 1
+            tokens_done += est_tokens(
+                run_plan.get(event_id)
+                or estimate_event_cost(
+                    event_id, event_meta["total_length"], len(event_meta["stages"])
+                )
+            )
         elif result.status == "skipped_unchanged":
             report.skipped.append(event_id)
         else:
             report.errors.append((event_id, result.error or "unknown error"))
+
+        _emit(idx, event_id, result.status, result.passes)
 
     if terminal_error:
         # Skip pruning on a terminal bail — `only_list is None` runs prune

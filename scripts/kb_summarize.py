@@ -26,7 +26,47 @@ from typing import Optional
 
 from libs.bases import try_get_value
 from libs.kb import paths, summarize
+from libs.kb.summarize import ProgressEvent
 from libs.llm_clients import make_client
+
+
+def _fmt_dur(s: Optional[float]) -> str:
+    if s is None:
+        return "?"
+    s = int(s)
+    h, rem = divmod(s, 3600)
+    m, sec = divmod(rem, 60)
+    if h:
+        return f"{h}h{m:02d}m"
+    if m:
+        return f"{m}m{sec:02d}s"
+    return f"{sec}s"
+
+
+def _fmt_count(n: int) -> str:
+    if n >= 1_000_000:
+        return f"{n / 1_000_000:.1f}M"
+    if n >= 1_000:
+        return f"{n / 1_000:.0f}k"
+    return str(n)
+
+
+def _print_progress(ev: ProgressEvent) -> None:
+    head = f"[{ev.index}/{ev.total}] {ev.event_id}"
+    if ev.status == "wrote":
+        tail = (
+            f"  done {ev.run_done}/{ev.run_total} ev"
+            f"  ~{_fmt_count(ev.tokens_done)}/{_fmt_count(ev.tokens_total)} tok"
+            f"  {_fmt_dur(ev.elapsed_s)} elapsed  ETA ~{_fmt_dur(ev.eta_s)}"
+        )
+        head = f"{head}  +{ev.passes}"
+    elif ev.status == "skipped_unchanged":
+        tail = "  · cached"
+    elif ev.status == "terminal_error":
+        tail = "  ✗ TERMINAL (quota / bad model / auth) — batch stopped"
+    else:
+        tail = f"  ! {ev.status}"
+    print(head + tail, flush=True)
 
 
 def _build_client(args: argparse.Namespace):
@@ -171,13 +211,11 @@ def main() -> int:
         prune=not args.no_prune,
         backend_label=backend,
         model=model,
+        progress=_print_progress,
     )
 
     print()
     print(f"wrote:   {len(report.wrote)}")
-    if report.wrote:
-        for eid in report.wrote:
-            print(f"  + {eid}")
     print(f"skipped (unchanged): {len(report.skipped)}")
     if report.errors:
         print(f"errors: {len(report.errors)}")

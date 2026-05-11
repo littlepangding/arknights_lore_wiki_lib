@@ -93,7 +93,7 @@ For a filtered subset:
 .venv/bin/python -u -m scripts.kb_summarize --event <id1> --event <id2> ...
 ```
 
-Use `python -u` (unbuffered) and `tee /tmp/kb_summarize.log` if running in the background, so per-event progress is visible. The tool is hash-skip cached — re-running is free for unchanged events. Per-event errors don't abort the batch; they land in the final report.
+A real run streams a per-event line: `[i/N] <event_id>  +single|+multi  done X/Y ev  ~tok_done/tok_total  elapsed  ETA ~…` for writes, `· cached` for hash-cache hits, and `✗ TERMINAL …` then stops on a quota / bad-model / auth error. Token figures and ETA are estimates extrapolated from events written so far. Still use `python -u` + `tee /tmp/kb_summarize.log` for a backgrounded run. Per-event errors (non-terminal) don't abort the batch; they land in the final report.
 
 If the user said "skip LLM step", end here.
 
