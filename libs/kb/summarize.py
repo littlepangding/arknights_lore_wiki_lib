@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Optional
 
-from libs.bases import LLMError, validate_and_rebuild
+from libs.bases import LLMError, LLMTerminalError, validate_and_rebuild
 from libs.kb import _io, paths
 from libs.llm_clients import LLMClient, query_with_validated_tags
 
@@ -293,6 +293,11 @@ def summarize_event(
             passes=passes,
             source_hash=src_hash,
         )
+    except LLMTerminalError:
+        # Re-raise terminal LLM errors (quota / bad model / auth). The batch
+        # caller bails the whole loop on these — retrying every remaining
+        # event against the same wall is pure waste.
+        raise
     except (LLMError, OSError, KeyError, ValueError) as e:
         return SummaryResult(
             event_id=event_id, status="error", error=f"{type(e).__name__}: {e}"
@@ -368,17 +373,27 @@ def summarize_all(
     model_label = model or client.default_model
     report = SummarizeReport()
 
+    terminal_error: Optional[str] = None
     for event_id, event_meta in sorted(events_meta.items()):
-        result = summarize_event(
-            event_meta,
-            paths.event_dir(kb_root, event_id),
-            summaries_root,
-            client,
-            force=force,
-            prior_manifest_entry=manifest_events.get(event_id),
-            backend_label=backend_label,
-            model=model,
-        )
+        try:
+            result = summarize_event(
+                event_meta,
+                paths.event_dir(kb_root, event_id),
+                summaries_root,
+                client,
+                force=force,
+                prior_manifest_entry=manifest_events.get(event_id),
+                backend_label=backend_label,
+                model=model,
+            )
+        except LLMTerminalError as e:
+            # Quota / wrong model / auth — bail the batch. Manifest is
+            # already up-to-date through the prior event (we persist on
+            # every write, see below).
+            terminal_error = f"{type(e).__name__}: {e}"
+            report.errors.append((event_id, terminal_error))
+            break
+
         if result.status == "wrote":
             manifest_events[event_id] = {
                 "source_hash": result.source_hash,
@@ -390,11 +405,20 @@ def summarize_all(
                 "model": model_label,
                 "generated_at": dt.datetime.now().isoformat(timespec="seconds"),
             }
+            # Persist after every successful event so a kill / quota wall /
+            # crash mid-batch never loses what we already paid the LLM for.
+            save_summaries_manifest(summaries_root, manifest)
             report.wrote.append(event_id)
         elif result.status == "skipped_unchanged":
             report.skipped.append(event_id)
         else:
             report.errors.append((event_id, result.error or "unknown error"))
+
+    if terminal_error:
+        # Skip pruning on a terminal bail — `only_list is None` runs prune
+        # against the in-memory events_meta, but we didn't actually finish
+        # the batch, so removing "stale" entries would be premature.
+        return report
 
     manifest_changed = bool(report.wrote or report.errors)
     if prune and only_list is None:

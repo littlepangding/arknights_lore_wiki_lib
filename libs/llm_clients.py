@@ -21,10 +21,28 @@ from libs.bases import (
     DEFAULT_CLI_MODEL,
     DEFAULT_GAI_MODEL,
     LLMError,
+    LLMTerminalError,
     RETRY_LIMIT,
     RETRY_SLEEP_TIME,
     extract_tagged_contents,
 )
+
+_TERMINAL_PATTERNS = (
+    "may not exist or you may not have access to it",  # claude/gemini wrong model
+    "rate limit",
+    "RATE_LIMIT",
+    "RESOURCE_EXHAUSTED",
+    "quota",
+    "429",
+    "PERMISSION_DENIED",
+    "invalid api key",
+    "UNAUTHENTICATED",
+)
+
+
+def _is_terminal_error(exc: BaseException) -> bool:
+    msg = str(exc)
+    return any(p in msg for p in _TERMINAL_PATTERNS)
 
 DEFAULT_CLAUDE_MODEL = "claude-haiku-4-5"
 DEFAULT_CLAUDE_CLI_PATH = "claude"
@@ -42,6 +60,8 @@ def _retry(call, *, label: str) -> str:
         try:
             return call()
         except Exception as e:
+            if _is_terminal_error(e):
+                raise LLMTerminalError(f"{label} terminal error: {e}") from e
             last_exc = e
             print(f"{label} query failed: {e}")
             time.sleep(RETRY_SLEEP_TIME * (attempt + 1))
