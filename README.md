@@ -97,7 +97,7 @@ Optional layer — small zh summaries committed to git as a navigation aid.
 .venv/bin/python -m scripts.kb_summarize --estimate                   # dry-run: how many events / LLM calls / ~tokens are left
 ```
 
-Source-hash cache: re-runs over unchanged events are no-ops (no token re-spend). A real run streams a per-event progress line (`[i/N] <event_id>  done X/Y ev  ~tok_done/tok_total  elapsed  ETA ~…`) so a multi-hour bake isn't silent. `--estimate` calls no LLM — it just prints the projected cost (events to run, single vs multi pass, LLM calls, input/output/total chars ≈ tokens) of the run that *would* happen; honors `--event` / `--force`.
+Source-hash cache: re-runs over unchanged events are no-ops (no token re-spend). A real run streams a per-event progress line (`[i/N] <event_id>  done X/Y ev  ~tok_done/tok_total  elapsed  ETA ~…`) so a multi-hour bake isn't silent. Malformed-tag responses are first repaired heuristically (unclosed trailing tag, full-width brackets, markdown labels) before any re-ask; the raw text of *every* model response is archived under `llm_archive/<date>/` (gitignored — they cost tokens and the committed `.md` keeps only a canonicalized subset; `--no-archive` to skip, `--archive-dir` / `keys.json llm_archive_path` to relocate). `--estimate` calls no LLM — it just prints the projected cost (events to run, single vs multi pass, LLM calls, input/output/total chars ≈ tokens) of the run that *would* happen; honors `--event` / `--force`.
 
 ## Skills (Claude Code)
 

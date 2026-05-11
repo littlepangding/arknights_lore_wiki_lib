@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from libs.bases import try_get_value
+from libs.bases import set_llm_archive_dir, try_get_value
 from libs.kb import paths, summarize
 from libs.kb.summarize import ProgressEvent
 from libs.llm_clients import make_client
@@ -152,6 +152,18 @@ def main() -> int:
         help="Keep kb_summaries/events/<id>.md files for events absent from the current KB.",
     )
     parser.add_argument(
+        "--archive-dir",
+        default="",
+        help="Where to stash every raw LLM response (these cost tokens; the "
+        "kept summary is only a canonicalized subset). Default: keys.json "
+        "`llm_archive_path`, else ./llm_archive. Gitignored.",
+    )
+    parser.add_argument(
+        "--no-archive",
+        action="store_true",
+        help="Don't archive raw LLM responses.",
+    )
+    parser.add_argument(
         "--kb-root",
         default="",
         help=f"KB input root. Defaults to ./{paths.KB_DIRNAME}.",
@@ -196,11 +208,20 @@ def main() -> int:
     client, backend = _build_client(args)
     model = args.model or None
 
+    if args.no_archive:
+        archive_dir: Optional[str] = None
+    elif args.archive_dir:
+        archive_dir = args.archive_dir
+    else:
+        archive_dir = try_get_value("llm_archive_path", "llm_archive")
+    set_llm_archive_dir(archive_dir)
+
     if only:
         print(f"summarizing {len(only)} event(s): {', '.join(only)}")
     else:
         print("summarizing all events under", paths.events_root(kb_root))
     print(f"backend={backend}  model={model or client.default_model}  force={args.force}  prune={not args.no_prune}")
+    print(f"raw-output archive: {archive_dir or 'off'}")
 
     report = summarize.summarize_all(
         kb_root,

@@ -24,7 +24,8 @@ from libs.bases import (
     LLMTerminalError,
     RETRY_LIMIT,
     RETRY_SLEEP_TIME,
-    extract_tagged_contents,
+    archive_llm_output,
+    repair_tag_format,
 )
 
 _TERMINAL_PATTERNS = (
@@ -194,24 +195,41 @@ def query_with_validated_tags(
     required_tags: list[str],
     *,
     model: Optional[str] = None,
+    archive_label: Optional[str] = None,
 ) -> str:
-    """Like bases.query_llm_validated but takes an LLMClient. Retries once
-    with an explicit reminder if the first response is missing required tags.
+    """Query `client`, repairing malformed tag output (`bases.repair_tag_format`)
+    before falling back to one re-ask-with-reminder, then raising `LLMError`.
+
+    The `raw head: …` logging is here because the offending response is
+    otherwise thrown away — these failures are a pain to debug after the fact.
+    `archive_label`, if set and archiving is enabled (`bases.set_llm_archive_dir`),
+    stashes every raw response under that label (they cost tokens; the kept
+    summary is only a canonicalized subset).
     """
     out = client.query(system, prompt, model=model)
-    missing = [t for t in required_tags if not extract_tagged_contents(out, t)]
+    if archive_label:
+        archive_llm_output(archive_label, out, kind="try1")
+    repaired, missing = repair_tag_format(out, required_tags)
     if not missing:
-        return out
-    print(f"LLM output missing tags {missing}; retrying once with explicit reminder")
+        return repaired
+    print(
+        f"LLM output still missing tags {missing} after lenient repair; "
+        f"raw head: {out[:300]!r} — retrying once with explicit reminder"
+    )
     reminder = (
         f"\n注意：上一次输出缺少必须的标签 {missing}。"
-        f"请确保输出严格包含所有需要的标签：{required_tags}。\n"
+        f"请确保输出严格包含所有需要的标签，每个都用 <标签名>...</标签名> 完整包裹（包括闭合标签）：{required_tags}。\n"
     )
-    out = client.query(system, prompt + reminder, model=model)
-    still = [t for t in required_tags if not extract_tagged_contents(out, t)]
+    out2 = client.query(system, prompt + reminder, model=model)
+    if archive_label:
+        archive_llm_output(archive_label, out2, kind="try2")
+    repaired2, still = repair_tag_format(out2, required_tags)
     if still:
-        raise LLMError(f"output missing required tags after retry: {still}")
-    return out
+        raise LLMError(
+            f"output missing required tags after retry: {still}; "
+            f"raw head: {out2[:300]!r}"
+        )
+    return repaired2
 
 
 def make_client(backend: str = "cli", **kwargs) -> LLMClient:

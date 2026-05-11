@@ -1,5 +1,6 @@
 data/
 tmp/
+llm_archive/
 keys.json
 test.py
 *.pkl
