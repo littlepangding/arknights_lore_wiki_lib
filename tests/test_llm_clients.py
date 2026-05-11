@@ -428,6 +428,159 @@ def test_bases_query_llm_validated_raises_after_retry(monkeypatch):
         )
 
 
+# ---------- lenient tag-format repair (bases.repair_tag_format) ----------
+
+
+def test_repair_passthrough_when_already_clean():
+    from libs.bases import repair_tag_format
+
+    txt = "<a>1</a>\n<b>2</b>"
+    out, missing = repair_tag_format(txt, ["a", "b"])
+    assert missing == []
+    assert out is txt  # untouched, not even rebuilt
+
+
+def test_repair_unclosed_trailing_tag():
+    from libs.bases import repair_tag_format
+
+    # the dominant real failure: model opens the last tag and just stops
+    out, missing = repair_tag_format("<a>first</a>\n<b>second value", ["a", "b"])
+    assert missing == []
+    assert "<b>\nsecond value\n</b>" in out
+    assert "<a>\nfirst\n</a>" in out
+
+
+def test_repair_fullwidth_brackets():
+    from libs.bases import repair_tag_format
+
+    out, missing = repair_tag_format("【a】one【/a】\n【b】two【/b】", ["a", "b"])
+    assert missing == []
+    assert "<a>\none\n</a>" in out and "<b>\ntwo\n</b>" in out
+
+
+def test_repair_whitespace_inside_delimiters():
+    from libs.bases import repair_tag_format
+
+    out, missing = repair_tag_format("< a >one</ a >\n< b >two</ b >", ["a", "b"])
+    assert missing == []
+    assert "<a>\none\n</a>" in out and "<b>\ntwo\n</b>" in out
+
+
+def test_repair_markdown_label_for_trailing_tag():
+    from libs.bases import repair_tag_format
+
+    txt = "<a>summary text</a>\n**b**\nvalue one；value two"
+    out, missing = repair_tag_format(txt, ["a", "b"])
+    assert missing == []
+    assert "<b>\nvalue one；value two\n</b>" in out
+
+
+def test_repair_colon_label_inline():
+    from libs.bases import repair_tag_format
+
+    out, missing = repair_tag_format("<a>x</a>\nb：alpha；beta；gamma", ["a", "b"])
+    assert missing == []
+    assert "<b>\nalpha；beta；gamma\n</b>" in out
+
+
+def test_repair_does_not_grab_bare_prose_line():
+    from libs.bases import repair_tag_format
+
+    # "b" appears as a prose word with no decoration/colon — must NOT be
+    # mistaken for the tag body; b is genuinely missing.
+    out, missing = repair_tag_format("<a>b 在这一章里出场了，然后离开</a>", ["a", "b"])
+    assert missing == ["b"]
+
+
+def test_repair_reports_still_missing():
+    from libs.bases import repair_tag_format
+
+    out, missing = repair_tag_format("<a>only a</a>", ["a", "b"])
+    assert missing == ["b"]
+
+
+def test_validated_tags_repair_avoids_a_second_call(monkeypatch):
+    """An unclosed trailing tag should be salvaged in-place — no re-ask."""
+    calls = []
+
+    def fake_run(argv, **kw):
+        calls.append(argv)
+        return _completed(stdout="<a>first</a>\n<b>second")
+
+    monkeypatch.setattr(llm_clients.subprocess, "run", fake_run)
+    out = llm_clients.query_with_validated_tags(
+        GeminiCLIClient(), "S", "P", ["a", "b"]
+    )
+    assert len(calls) == 1  # repaired without retrying
+    assert "<b>\nsecond\n</b>" in out
+
+
+# ---------- raw-output archiving ----------
+
+
+def test_archive_llm_output_disabled_by_default(tmp_path, monkeypatch):
+    from libs import bases
+
+    # ensure it's off (other tests / runtime may have set it)
+    monkeypatch.setattr(bases, "_llm_archive_dir", None)
+    assert bases.archive_llm_output("evt", "raw text") is None
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_archive_llm_output_writes_when_enabled(tmp_path, monkeypatch):
+    from libs import bases
+
+    monkeypatch.setattr(bases, "_llm_archive_dir", str(tmp_path))
+    p = bases.archive_llm_output("act46side", "the raw model output", kind="try1")
+    assert p is not None
+    written = list(tmp_path.rglob("*.txt"))
+    assert len(written) == 1
+    assert written[0].read_text(encoding="utf-8") == "the raw model output"
+    assert "act46side__try1__" in written[0].name
+
+
+def test_archive_llm_output_never_raises_on_bad_dir(monkeypatch):
+    from libs import bases
+
+    # a path under a file → makedirs fails; must swallow and return None
+    monkeypatch.setattr(bases, "_llm_archive_dir", "/dev/null/nope")
+    assert bases.archive_llm_output("evt", "x") is None
+
+
+def test_query_with_validated_tags_archives_raw_output(monkeypatch):
+    captured = []
+    monkeypatch.setattr(
+        llm_clients, "archive_llm_output",
+        lambda label, content, *, kind="out": captured.append((label, content, kind)),
+    )
+    monkeypatch.setattr(
+        llm_clients.subprocess, "run",
+        lambda argv, **kw: _completed(stdout="<a>1</a>\n<b>2</b>"),
+    )
+    llm_clients.query_with_validated_tags(
+        GeminiCLIClient(), "S", "P", ["a", "b"], archive_label="evt1"
+    )
+    assert captured == [("evt1", "<a>1</a>\n<b>2</b>", "try1")]
+
+
+def test_query_with_validated_tags_archives_both_attempts_on_retry(monkeypatch):
+    captured = []
+    monkeypatch.setattr(
+        llm_clients, "archive_llm_output",
+        lambda label, content, *, kind="out": captured.append((kind, content)),
+    )
+    responses = ["<a>1</a>", "<a>1</a>\n<b>2</b>"]
+    monkeypatch.setattr(
+        llm_clients.subprocess, "run",
+        lambda argv, **kw: _completed(stdout=responses.pop(0)),
+    )
+    llm_clients.query_with_validated_tags(
+        GeminiCLIClient(), "S", "P", ["a", "b"], archive_label="evt1"
+    )
+    assert [k for k, _ in captured] == ["try1", "try2"]
+    assert captured[0][1] == "<a>1</a>" and captured[1][1] == "<a>1</a>\n<b>2</b>"
+
+
 # ---------- build_llm_kwargs (legacy script entrypoint) ----------
 
 

@@ -197,16 +197,24 @@ def _format_summary_md(
     return "\n".join(fm) + "\n\n" + validated_body.rstrip() + "\n"
 
 
+def _sub_label(base: Optional[str], suffix: str) -> Optional[str]:
+    """Per-call archive label for a sub-step of an event (`act46side__merge`),
+    or None when archiving for this event is off."""
+    return f"{base}__{suffix}" if base else None
+
+
 def _summarize_single_pass(
     stage_texts: list[tuple[str, str]],
     client: LLMClient,
     *,
     model: Optional[str] = None,
+    archive_label: Optional[str] = None,
 ) -> str:
     event_text = "\n\n".join(text for _, text in stage_texts)
     prompt = USER_PROMPT_SINGLE_PASS.format(event_text=event_text)
     return query_with_validated_tags(
-        client, SYSTEM_PROMPT, prompt, EVENT_REQUIRED_TAGS, model=model
+        client, SYSTEM_PROMPT, prompt, EVENT_REQUIRED_TAGS,
+        model=model, archive_label=archive_label,
     )
 
 
@@ -215,18 +223,21 @@ def _summarize_multi_pass(
     client: LLMClient,
     *,
     model: Optional[str] = None,
+    archive_label: Optional[str] = None,
 ) -> str:
     stage_blocks: list[str] = []
-    for _, stage_text in stage_texts:
+    for i, (_, stage_text) in enumerate(stage_texts, 1):
         stage_prompt = USER_PROMPT_STAGE_REDUCE.format(stage_text=stage_text)
         out = query_with_validated_tags(
-            client, SYSTEM_PROMPT, stage_prompt, STAGE_REDUCE_REQUIRED_TAGS, model=model
+            client, SYSTEM_PROMPT, stage_prompt, STAGE_REDUCE_REQUIRED_TAGS,
+            model=model, archive_label=_sub_label(archive_label, f"stage{i:02d}"),
         )
         stage_blocks.append(validate_and_rebuild(out, STAGE_REDUCE_REQUIRED_TAGS))
     merged = "\n\n---\n\n".join(stage_blocks)
     merge_prompt = USER_PROMPT_MERGE.format(stage_summaries=merged)
     return query_with_validated_tags(
-        client, SYSTEM_PROMPT, merge_prompt, EVENT_REQUIRED_TAGS, model=model
+        client, SYSTEM_PROMPT, merge_prompt, EVENT_REQUIRED_TAGS,
+        model=model, archive_label=_sub_label(archive_label, "merge"),
     )
 
 
@@ -273,9 +284,9 @@ def summarize_event(
         multi = should_multi_pass(event_meta["total_length"], len(stages))
         passes = "multi" if multi else "single"
         body = (
-            _summarize_multi_pass(stage_texts, client, model=model)
+            _summarize_multi_pass(stage_texts, client, model=model, archive_label=event_id)
             if multi
-            else _summarize_single_pass(stage_texts, client, model=model)
+            else _summarize_single_pass(stage_texts, client, model=model, archive_label=event_id)
         )
         validated = validate_and_rebuild(body, EVENT_REQUIRED_TAGS)
         md = _format_summary_md(

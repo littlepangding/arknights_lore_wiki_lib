@@ -102,7 +102,7 @@ If the user said "skip LLM step", end here.
 After `kb_summarize` returns, summarize what changed:
 - `wrote: N` (new or re-run summaries)
 - `skipped (unchanged): N` (hash-cache hits)
-- `errors: N` — list each `(event_id, message)`. Common causes: model returned malformed tags twice (validate-and-rebuild raised), missing stage file (kb_build prune mismatch — re-run kb_build), or transient network failures (re-run; hash-cache resumes).
+- `errors: N` — list each `(event_id, message)`. Common causes: model emitted malformed tags that even the lenient repair (see below) couldn't salvage *and* the one re-ask also failed (the message now includes a `raw head: …` snippet of the bad output — use it), missing stage file (kb_build prune mismatch — re-run kb_build), or transient network failures (re-run; hash-cache resumes).
 - `pruned: N` — orphan `kb_summaries/events/<id>.md` files dropped because the upstream removed the event.
 
 If the user wants the published wiki regenerated against the freshly-summarized KB, that's the **`update-lore-wiki` skill**, not this one. Mention it but don't auto-trigger.
@@ -112,7 +112,7 @@ If the user wants the published wiki regenerated against the freshly-summarized 
 - **`kb_build` runs in seconds with zero LLM cost.** Always cheap to re-run — use it freely.
 - **`kb_summarize`'s hash gate uses `(filename, text)` over sorted stage files.** If you suspect cache poisoning, delete `kb_summaries/manifest.json` and re-run; the source-hash comparison will rebuild from scratch.
 - **Aborting mid-summarize is safe.** The next run resumes; nothing partial lands at the destination because writes are atomic (`os.replace`).
-- **`data/kb/` is gitignored** (raw chunks, regenerable). **`kb_summaries/` is in git** (committed navigation aid).
+- **`data/kb/` is gitignored** (raw chunks, regenerable). **`kb_summaries/` is in git** (committed navigation aid). **`llm_archive/` is gitignored** — every raw LLM response from a real run is stashed there (`llm_archive/<date>/<event_id>__try1__<time>.txt`, plus `__stageNN` / `__merge` for multi-pass, and `__try2` when a tag re-ask fired). These cost tokens; the `kb_summaries/` `.md` keeps only a canonicalized subset, so the archive is the place to mine a malformed-but-useful output later. Disable with `--no-archive`; relocate with `--archive-dir` or `keys.json llm_archive_path`. Purge is manual (`rm -rf llm_archive/<date>`).
 
 ## Common mistakes to avoid
 
@@ -125,5 +125,6 @@ If the user wants the published wiki regenerated against the freshly-summarized 
 ## Tunables to know
 
 - `MULTI_PASS_LENGTH_THRESHOLD = 80_000` chars or `MULTI_PASS_STAGE_THRESHOLD = 10` stages → switches to per-stage reduce + merge. ~70–90 events trip this on the live corpus. Defined in `libs/kb/summarize.py`.
-- `RETRY_LIMIT = 5`, `RETRY_SLEEP_TIME = 60` (linear backoff: 60+120+180+240+300 = 15 min worst case per event). Defined in `libs/bases.py`.
+- `RETRY_LIMIT = 5`, `RETRY_SLEEP_TIME = 60` (linear backoff: 60+120+180+240+300 = 15 min worst case per event). Defined in `libs/bases.py`. (This is the *API*-level retry — network / transient errors. Terminal errors like quota/bad-model/auth short-circuit immediately.)
+- **Tag-format repair** (`repair_tag_format` in `libs/bases.py`): before spending a second LLM call on a "missing tags" response, `query_with_validated_tags` tries to salvage the common near-misses for free — an *unclosed* trailing tag, full-width brackets `【】《》`, whitespace inside `< 标签 >`, and markdown/bold/colon label lines (`### 场景标签`, `**场景标签**`, `场景标签：…`). Only an *unrecoverable* tag triggers the one re-ask-with-reminder. `gemini-3-flash-preview` mangles the last tag often, so this kills most of the retry noise; if you still see a flood of `still missing tags … after lenient repair`, the `raw head:` log lines tell you what new shape to teach the repair (or it's a sign to move that backend to JSON/`response_schema` mode).
 - Default model: `gemini-3-flash-preview` for `--llm cli`, `gemini-2.5-flash` for `--llm gai`, `claude-haiku-4-5` for `--llm claude`. Override per-call with `--model`, or globally via `keys.json llm_model` / `gai_model` / `claude_model`.
