@@ -339,6 +339,161 @@ def _load_events_meta(kb_root: Path, only: Optional[Iterable[str]]) -> dict[str,
     return _io.load_dir_manifests(events_root, "event.json")
 
 
+# --- cost estimation (no LLM, no token spend) -------------------------------
+
+# Projected response sizes in chars, incl. tag markup. The prompts cap bodies
+# at 600字 / 200字; these add tag overhead + slack. Deliberately a little high.
+EST_SINGLE_PASS_OUT_CHARS = 900
+EST_STAGE_REDUCE_OUT_CHARS = 400
+EST_MERGE_OUT_CHARS = 900
+
+# Rough chars→tokens divisor for the CJK-dominant KB text. Gemini/Claude both
+# tokenize common Chinese chars at roughly 1 token each, English IDs/markup at
+# ~4 chars/token — net effect on this corpus is a hair under 1:1, so 1.0 is a
+# safe slight-overestimate. Tune if real usage numbers say otherwise.
+EST_CHARS_PER_TOKEN = 1.0
+
+_PROMPT_OVERHEAD_SINGLE = len(SYSTEM_PROMPT) + len(USER_PROMPT_SINGLE_PASS)
+_PROMPT_OVERHEAD_STAGE = len(SYSTEM_PROMPT) + len(USER_PROMPT_STAGE_REDUCE)
+_PROMPT_OVERHEAD_MERGE = len(SYSTEM_PROMPT) + len(USER_PROMPT_MERGE)
+
+
+@dataclass
+class EventCostEstimate:
+    event_id: str
+    passes: str  # "single" | "multi"
+    stage_count: int
+    total_length: int
+    llm_calls: int
+    in_chars: int
+    out_chars: int
+
+    @property
+    def total_chars(self) -> int:
+        return self.in_chars + self.out_chars
+
+
+@dataclass
+class CostEstimate:
+    to_run: list[EventCostEstimate] = field(default_factory=list)
+    already_done: list[EventCostEstimate] = field(default_factory=list)
+
+    def _sum(self, rows: list[EventCostEstimate], attr: str) -> int:
+        return sum(getattr(r, attr) for r in rows)
+
+    @property
+    def n_to_run(self) -> int:
+        return len(self.to_run)
+
+    @property
+    def n_single(self) -> int:
+        return sum(1 for e in self.to_run if e.passes == "single")
+
+    @property
+    def n_multi(self) -> int:
+        return sum(1 for e in self.to_run if e.passes == "multi")
+
+    @property
+    def llm_calls(self) -> int:
+        return self._sum(self.to_run, "llm_calls")
+
+    @property
+    def in_chars(self) -> int:
+        return self._sum(self.to_run, "in_chars")
+
+    @property
+    def out_chars(self) -> int:
+        return self._sum(self.to_run, "out_chars")
+
+    @property
+    def total_chars(self) -> int:
+        return self.in_chars + self.out_chars
+
+    @property
+    def in_tokens(self) -> int:
+        return round(self.in_chars / EST_CHARS_PER_TOKEN)
+
+    @property
+    def out_tokens(self) -> int:
+        return round(self.out_chars / EST_CHARS_PER_TOKEN)
+
+    @property
+    def total_tokens(self) -> int:
+        return self.in_tokens + self.out_tokens
+
+    @property
+    def done_in_chars(self) -> int:
+        return self._sum(self.already_done, "in_chars")
+
+
+def estimate_event_cost(
+    event_id: str, total_length: int, stage_count: int
+) -> EventCostEstimate:
+    """Projected one-run cost for a single event. Mirrors `summarize_event`'s
+    branch: single-pass = 1 call; multi-pass = stage_count reduce calls + 1
+    merge call. Input chars = prompt overhead + the actual story text;
+    output chars are the EST_* guesses above. No tag-revalidation retries
+    are modeled (rare) — add headroom yourself if you want a worst case."""
+    if not should_multi_pass(total_length, stage_count):
+        return EventCostEstimate(
+            event_id=event_id,
+            passes="single",
+            stage_count=stage_count,
+            total_length=total_length,
+            llm_calls=1,
+            in_chars=_PROMPT_OVERHEAD_SINGLE + total_length,
+            out_chars=EST_SINGLE_PASS_OUT_CHARS,
+        )
+    # multi-pass: per-stage reduce calls (their inputs sum to total_length plus
+    # per-call prompt overhead), then one merge over the stage summaries.
+    n = max(stage_count, 1)
+    stage_out = EST_STAGE_REDUCE_OUT_CHARS * n
+    stage_in = _PROMPT_OVERHEAD_STAGE * n + total_length
+    merge_in = _PROMPT_OVERHEAD_MERGE + stage_out
+    return EventCostEstimate(
+        event_id=event_id,
+        passes="multi",
+        stage_count=stage_count,
+        total_length=total_length,
+        llm_calls=n + 1,
+        in_chars=stage_in + merge_in,
+        out_chars=stage_out + EST_MERGE_OUT_CHARS,
+    )
+
+
+def estimate_remaining(
+    kb_root: Path,
+    summaries_root: Path,
+    *,
+    only: Optional[Iterable[str]] = None,
+    force: bool = False,
+) -> CostEstimate:
+    """Estimate the token/char cost of the next `summarize_all` run without
+    touching an LLM. Selection mirrors `summarize_all`: an event runs if
+    `force`, or it has no manifest entry, or its summary file is missing.
+
+    Cheap deliberate inaccuracy: this does NOT re-hash stage text, so a
+    *content change* in an already-summarized event won't show here — it
+    gets caught (and re-billed) inside `kb_summarize` at run time. Good
+    enough for the common "how much is left to bake" question."""
+    only_list = list(only) if only else None
+    events_meta = _load_events_meta(kb_root, only_list)
+    manifest_events = load_summaries_manifest(summaries_root).get("events", {})
+
+    est = CostEstimate()
+    for event_id, meta in sorted(events_meta.items()):
+        total_length = meta["total_length"]
+        stage_count = len(meta["stages"])
+        row = estimate_event_cost(event_id, total_length, stage_count)
+        prior = manifest_events.get(event_id)
+        out_path = paths.event_summary_path(summaries_root, event_id)
+        if force or prior is None or not out_path.exists():
+            est.to_run.append(row)
+        else:
+            est.already_done.append(row)
+    return est
+
+
 def summarize_all(
     kb_root: Path,
     summaries_root: Path,

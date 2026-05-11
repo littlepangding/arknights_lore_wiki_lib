@@ -146,3 +146,9 @@ The KB is now retrieval-ready end-to-end *modulo* a `kb_build.py` script (Phase 
 - **Model-name drift fix:** `keys.json llm_model` and `bases.DEFAULT_CLI_MODEL` were both set to `gemini-3.1-flash`, which the live Gemini API now rejects with `ModelNotFoundError`. Updated to `gemini-3-flash-preview` per the user. Surfaces here because the smoke test would have hung indefinitely without it.
 - **`docs/PROMPTS.md` already had the P1 prompts** (single-pass + stage-reduce + merge); summarize.py mirrors them as Python constants. PROMPTS.md remains the canonical reviewable source.
 - **Tests:** 184 passing total (132 prior + 27 new in `test_llm_clients.py` + 25 new in `test_summarize.py`). Mock-based throughout — `subprocess.run` and `genai.Client.models.generate_content` are monkeypatched; a `FakeClient` records every `(system, prompt, model)` tuple so call-count and prompt-shape assertions are exact. No real LLM in CI.
+
+### 2026-05-11 — `kb_summarize --estimate` (no-LLM cost dry-run)
+
+**User intent:** "How many tokens are needed to finish the kb summary work?" — asked frequently, so the user wanted it as reusable code + documented in the skill rather than recomputed by hand each time.
+
+**Outcome:** Added `summarize.estimate_remaining()` / `estimate_event_cost()` in `libs/kb/summarize.py` (with `EST_*` output-size guesses and an `EST_CHARS_PER_TOKEN` divisor as tunables) and a `--estimate` flag on `scripts/kb_summarize.py`. The flag skips client construction entirely (no keys.json needed) and prints events-to-run (single vs multi pass), already-done count, total LLM calls, and projected input/output/total chars≈tokens. Honors `--event` / `--force` / `--kb-root` / `--summaries-root`; selection mirrors the real run (no manifest entry or missing `.md` → counts). Documented under Step 2 of the `refresh-kb` skill. Baseline 149/461 → ~312 events, ~559 calls, ~4.2M tokens (~3.8M in / ~0.4M out); a full `--force` re-bake ≈ ~13.2M tokens.

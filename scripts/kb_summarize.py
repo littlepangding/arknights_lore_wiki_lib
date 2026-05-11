@@ -100,6 +100,13 @@ def main() -> int:
         help="Ignore source-hash cache and re-summarize every selected event.",
     )
     parser.add_argument(
+        "--estimate",
+        action="store_true",
+        help="Don't call any LLM — just print the projected cost (events, "
+        "LLM calls, chars, ~tokens) of the run that would happen. Honors "
+        "--event / --force / --kb-root / --summaries-root.",
+    )
+    parser.add_argument(
         "--no-prune",
         action="store_true",
         help="Keep kb_summaries/events/<id>.md files for events absent from the current KB.",
@@ -126,10 +133,29 @@ def main() -> int:
         )
     summaries_root.mkdir(parents=True, exist_ok=True)
 
+    only = args.event or None
+
+    if args.estimate:
+        est = summarize.estimate_remaining(
+            kb_root, summaries_root, only=only, force=args.force
+        )
+        scope = f"{len(only)} requested event(s)" if only else "full corpus"
+        print(f"cost estimate — {scope}  (force={args.force})")
+        print(f"  events to run:   {est.n_to_run}  (single-pass: {est.n_single}, multi-pass: {est.n_multi})")
+        print(f"  already done:    {len(est.already_done)}  (skipped — no token spend)")
+        print(f"  LLM calls:       ~{est.llm_calls}")
+        print(f"  input:           ~{est.in_chars:,} chars   ≈ ~{est.in_tokens:,} tokens")
+        print(f"  output:          ~{est.out_chars:,} chars   ≈ ~{est.out_tokens:,} tokens")
+        print(f"  total:           ~{est.total_chars:,} chars   ≈ ~{est.total_tokens:,} tokens")
+        print(
+            "  note: ~1 token/char for this CJK-heavy text; excludes retry "
+            "re-tries and content-changed re-bills. Treat as a slight over-estimate."
+        )
+        return 0
+
     client, backend = _build_client(args)
     model = args.model or None
 
-    only = args.event or None
     if only:
         print(f"summarizing {len(only)} event(s): {', '.join(only)}")
     else:
