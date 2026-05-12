@@ -11,7 +11,7 @@ Two layers:
 - **Raw layer** at `data/kb/` (gitignored, regenerable from `ArknightsGameData` in minutes via `scripts/kb_build.py`):
   - Per-stage cleaned story chunks under `events/<event_id>/stage_NN_*.txt` (median 5K zh chars, max 21K).
   - Per-character **sectional** files under `chars/<char_id>/{profile,voice,archive,skins,modules}.txt` plus `manifest.json` and `storysets.json`. Read only the section you need.
-  - JSON indexes: `events_by_family.json` (mainline / activity / mini_activity / operator_record / other), `char_to_events_deterministic.json`, `char_to_events_inferred.json`, `event_to_chars.json`, `stage_table.json`, `char_table.json`, optionally `char_alias.json`.
+  - JSON indexes: `events_by_family.json` (mainline / activity / mini_activity / operator_record / other), `char_to_events_deterministic.json`, `char_to_events_participant.json`, `char_to_events_summary.json`, `event_to_chars.json`, `stage_table.json`, `char_table.json`, optionally `char_alias.json`.
 - **Summary layer** at `kb_summaries/` (in git, optionally LLM-baked via `scripts/kb_summarize.py`):
   - Per-event 600-zh-char summary + 关键人物 list + 场景标签.
   - **No per-char summaries in v1** — char data is already sectional and small (median ~5 KB, max ~11 KB total). Read `chars/<id>/manifest.json` for navigation, then specific section files for content.
@@ -32,14 +32,19 @@ The corpus is divided into four content families, derived deterministically from
 
 For char-related Q/A, **operator_record** is usually the highest-yield family — most chars have a deterministic record there.
 
-### Edge confidence: deterministic vs inferred
+### Edge confidence: three layers + a tier
 
-Every char↔event link in the KB is tagged with its source:
+Every char↔stage link in the KB carries a `source` (and, for `participant`, a `tier`):
 
-- **`deterministic`** — from a handbook storyset's `storyTxt` resolving to a story-review event. 372 such links across 372 events. Trust these.
-- **`inferred`** — from literal name/alias substring hits across stage text. Recall floor; will have some false positives. Each edge is tagged with `match_class` (`canonical_short`, `canonical`, `curated`, `fuzzy`) so you can downweight short-name hits when precision matters. Inferred edges are *additional* to deterministic ones, never duplicates.
+- **`deterministic`** — from a handbook storyset's `storyTxt` resolving to a story-review event. 372 such links. Ground truth; always passes any `--min-tier`. Trust these.
+- **`participant`** — derived per stage from the cleaned chunk text, with a **`tier`**:
+  - `speaker` — the char had ≥1 line of dialogue in that stage (`名字:台词`, materialized by `clean_script`). This is what "appears in" should mean by default — highest precision.
+  - `named` — an alias appears in narration: a multi-char canonical zh name, an ASCII canonical name with a real word boundary (`W` ⊄ `World` but `W` ⊂ `W走`), a single-zh-char canonical seen ≥2× (or also listed in the event summary), or aliases summing to ≥2 mentions.
+  - `mentioned` — a lone passing reference and nothing stronger. Kept as a recall floor; **dropped by default** (`--min-tier named`). When you see one, say "name-dropped", not "appears in".
+  - `participant` edges are *additional* to deterministic ones (the exact stage that has a deterministic edge is not re-emitted as a participant).
+- **`summary`** — *event-scoped* (`stage_idx` is `null`): the `<关键人物>` tag of a baked event summary, each surface name resolved through the alias index. Catches chars referred to only by a title/nickname a name-grep misses. Treated as `tier=named` for `--min-tier`. (Event-scoped today; a later phase will make per-stage summaries upgrade it to stage granularity.)
 
-Most CLI commands take `--source deterministic|inferred|both` (default `both`). When precision matters, pin to `deterministic`.
+`event chars` / `stage_chars` / `char appearances` take `--source {deterministic,participant,summary,all}` (default `all`) and `--min-tier {speaker,named,mentioned}` (default `named`). When precision matters, pin `--source deterministic` or `--min-tier speaker`.
 
 ### What the resolver does and doesn't cover (operator-only)
 
@@ -49,7 +54,7 @@ Most CLI commands take `--source deterministic|inferred|both` (default `both`). 
 - `Ambiguous` — multiple operators share that display name (9 known duplicates: `暮落`, `郁金香`, `Sharp`, `Stormeye`, `Pith`, `Touch`, plus three `预备干员-*`). Also surfaces when a curated-alias canonical itself is ambiguous: e.g. `沉渊` is listed in `char_alias.txt` under `暮落`, but `暮落` collides on two `char_id`s, so `沉渊` resolves as `Ambiguous([char_512_aprot, char_4025_aprot2])` rather than being silently attached to either. The CLI prints all candidates; you (the agent) pick.
 - `Missing` — no match. **Common cases:** the name is an NPC (`特蕾西娅`, `霜星`, `鼠王`), a title (`皇帝的利刃`), a group (`整合运动`), an alternate-body identity (`劳伦缇娅`), or a civilian name (`玛嘉烈`). About 90% of the curated alias entries are not recoverable from raw game data, so without the alias file even some real operator aliases will return `Missing`.
 
-**Single-character operator names work.** 23 operators have one-character zh display names (e.g. `陈`, `年`, `夕`, `黑`, `令`, `空`, `阿`). These resolve normally and also participate in the inferred-edge index without a length floor — but the index marks them as `match_class=canonical_short`, so per-event hit lists may be noisier than for multi-character names. Trust deterministic edges first, then verify a flagged single-char hit by reading the stage if it matters.
+**Single-character operator names work.** 23 operators have one-character zh display names (e.g. `陈`, `年`, `夕`, `黑`, `令`, `空`, `阿`). These resolve normally. In the `participant` edge layer a *lone* narration hit of a one-char name stays at `tier=mentioned` (so `年` ⊄ "appears in" just because the prose says `今年`); it's promoted to `named` only when the char also speaks, the name appears ≥2×, or the event summary lists it. So with the default `--min-tier named` a `年`-the-operator participant edge means a real mention, not noise — but if you ever drop to `--min-tier mentioned`, verify a single-char hit by reading the stage.
 
 **When the resolver returns `Missing`, fall back to `kb_query grep "<name>"`.** The grep search is **literal substring by default** (use `--regex` only if you actually want regex semantics) and finds any occurrence in stage text or char-section files, regardless of entity type. For NPCs and groups, literal grep is the v1 retrieval mechanism, and it handles names with parentheses / hyphens / smart quotes (`AUS (群体)`, `Ishar-mla`, `"桥夹"克里夫`) correctly without escaping.
 
@@ -70,14 +75,14 @@ All commands run from the lib repo root with `.venv/bin/python`:
 .venv/bin/python -m scripts.kb_query family list
 .venv/bin/python -m scripts.kb_query event list [--family mainline|activity|mini_activity|operator_record|other]
 .venv/bin/python -m scripts.kb_query event get <event_id>
-.venv/bin/python -m scripts.kb_query event chars <event_id> [--source deterministic|inferred|both]
-.venv/bin/python -m scripts.kb_query event stage_chars <event_id> <stage_idx> [--source deterministic|inferred|both]
+.venv/bin/python -m scripts.kb_query event chars <event_id> [--source deterministic|participant|summary|all] [--min-tier speaker|named|mentioned]
+.venv/bin/python -m scripts.kb_query event stage_chars <event_id> <stage_idx> [--source ...] [--min-tier ...]
 .venv/bin/python -m scripts.kb_query event stages <event_id>          # per-chapter listing: idx / name / avgTag / length — pick one <章节> to read
 .venv/bin/python -m scripts.kb_query event stage <event_id> <stage_idx> [--text]
 .venv/bin/python -m scripts.kb_query char resolve <name_or_alias>     # OPERATOR-ONLY; returns resolved/ambiguous/missing
 .venv/bin/python -m scripts.kb_query char get <char_id> [--section profile|voice|archive|skins|modules|all] [--text]
 .venv/bin/python -m scripts.kb_query char card <char_id_or_name>      # deterministic fact card: 基础档案 fields / 客观履历 verbatim / skin+module names / storysets — each tagged with its source table
-.venv/bin/python -m scripts.kb_query char appearances <char_id_or_name> [--source deterministic|inferred|both]
+.venv/bin/python -m scripts.kb_query char appearances <char_id_or_name> [--source deterministic|participant|summary|all] [--min-tier speaker|named|mentioned]
 .venv/bin/python -m scripts.kb_query char storysets <char_id>
 .venv/bin/python -m scripts.kb_query grep "<text>" [--regex] [--in events|chars|summaries|all]    # literal substring by default; --regex opts in; `summaries` searches the baked event summaries (high-signal, no raw-script noise)
 .venv/bin/python -m scripts.kb_query summary event <event_id>
@@ -94,7 +99,7 @@ User asks: *"陈在哪些活动里出现过？"* (`陈` is a real single-charact
 
 1. `kb_query char resolve 陈` → returns `Resolved(char_010_chen)`.
 2. `kb_query char storysets char_010_chen` → deterministic operator-record link(s). Read these first; they're guaranteed about this char.
-3. `kb_query char appearances char_010_chen --source deterministic` → same data formatted as `Appearance` rows (one per stage). For grep-derived mentions across mainline / activities, drop the filter — but check the `match_class` field: hits with `match_class=canonical_short` (single-char names like `陈`) need a manual sanity-check on the stage text because the literal substring matches commentary noise too.
+3. `kb_query char appearances char_010_chen --source deterministic` → same data formatted as `Appearance` rows (one per stage). For text-derived mentions across mainline / activities, drop the filter (the default `--source all --min-tier named` already keeps the trustworthy ones); drop to `--min-tier speaker` for "where did 陈 actually have lines", or `--min-tier mentioned` only as a last-resort recall floor (then sanity-check single-char hits on the stage text).
 4. For each event you care about, `kb_query summary event <event_id>` for a short answer.
 5. If the user wants a specific scene, `kb_query event stage_chars <event_id> <stage_idx>` returns the chars whose edge points at that exact stage (tighter than `event chars`, which spans the whole event). Then `kb_query event stage <event_id> <idx> --text` to read it.
 
@@ -137,7 +142,7 @@ To override the backend: `--llm cli|gai|claude`.
 .venv/bin/python -m scripts.kb_audit_wiki --target char <char_id>
 ```
 
-Same two-signal pattern, but the **claim-level signal is primary** for char wikis (their structured tag set parses cleanly into per-claim assertions). For each `<剧情高光>` bullet, the script pulls relevant raw stages — deterministic edges from `storysets.json` first, then `canonical` inferred matches — and asks the LLM to verify with `docs/PROMPTS.md#P4`. Same budget caps as `--target story`.
+Same two-signal pattern, but the **claim-level signal is primary** for char wikis (their structured tag set parses cleanly into per-claim assertions). For each `<剧情高光>` bullet, the script pulls relevant raw stages — deterministic edges from `storysets.json` first, then `participant` edges at `speaker`/`named` tier — and asks the LLM to verify with `docs/PROMPTS.md#P4`. Same budget caps as `--target story`.
 
 ## When to use which LLM backend
 

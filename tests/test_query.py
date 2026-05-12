@@ -203,16 +203,32 @@ def test_resolve_unique_curated_alias(ambiguous_kb):
 
 
 def test_char_appearances_filter_source(loaded_kb):
-    det_only = query.char_appearances(loaded_kb, "char_test_001", source="deterministic")
+    det_only = query.char_appearances(
+        loaded_kb, "char_test_001", source="deterministic"
+    )
     assert len(det_only) == 1
     assert det_only[0].source == "deterministic"
     assert det_only[0].event_id == "mem_aria"
-    inf_only = query.char_appearances(loaded_kb, "char_test_001", source="inferred")
-    assert all(a.source == "inferred" for a in inf_only)
-    assert {a.event_id for a in inf_only} <= {"act_test", "main_01"}
-    # `both` returns the union
-    both = query.char_appearances(loaded_kb, "char_test_001", source="both")
-    assert len(both) == len(det_only) + len(inf_only)
+    part_only = query.char_appearances(
+        loaded_kb, "char_test_001", source="participant"
+    )
+    assert all(a.source == "participant" for a in part_only)
+    # 艾莉亚 speaks in act_test (3 stages) + main_01 (2); mem_aria/0 is
+    # subtracted because she has a deterministic edge there.
+    assert {a.event_id for a in part_only} == {"act_test", "main_01"}
+    assert all(a.tier == "speaker" for a in part_only)
+    # `all` returns the union of the layers
+    both = query.char_appearances(loaded_kb, "char_test_001", source="all")
+    assert len(both) == len(det_only) + len(part_only)
+
+
+def test_char_appearances_min_tier_keeps_deterministic(loaded_kb):
+    """A `--min-tier speaker` filter still keeps deterministic/storyset
+    edges (ground truth) even though they carry no participant tier."""
+    appearances = query.char_appearances(
+        loaded_kb, "char_test_001", source="all", min_tier="speaker"
+    )
+    assert any(a.source == "deterministic" for a in appearances)
 
 
 def test_event_chars_returns_appearances_with_metadata(loaded_kb):
@@ -225,9 +241,11 @@ def test_event_chars_returns_appearances_with_metadata(loaded_kb):
 
 
 def test_event_chars_filter_source(loaded_kb):
-    chars = query.event_chars(loaded_kb, "act_test", source="inferred")
-    assert all(a.source == "inferred" for a in chars)
+    chars = query.event_chars(loaded_kb, "act_test", source="participant")
+    assert all(a.source == "participant" for a in chars)
     assert {a.char_id for a in chars} >= {"char_test_001", "char_test_002"}
+    # both are speakers in act_test → tier "speaker", clears default min-tier
+    assert all(a.tier == "speaker" for a in chars)
 
 
 def test_stage_chars_tight_scope(loaded_kb):
@@ -239,9 +257,15 @@ def test_stage_chars_tight_scope(loaded_kb):
 
 def test_group_by_event_rolls_up_appearances():
     apps = [
-        query.Appearance(char_id="c1", event_id="ev1", stage_idx=0, source="inferred", count=1, match_class="canonical"),
-        query.Appearance(char_id="c1", event_id="ev1", stage_idx=2, source="inferred", count=3, match_class="canonical"),
-        query.Appearance(char_id="c2", event_id="ev2", stage_idx=0, source="deterministic", story_set_name="ss"),
+        query.Appearance(
+            char_id="c1", event_id="ev1", stage_idx=0, source="participant", tier="speaker"
+        ),
+        query.Appearance(
+            char_id="c1", event_id="ev1", stage_idx=2, source="participant", tier="named"
+        ),
+        query.Appearance(
+            char_id="c2", event_id="ev2", stage_idx=0, source="deterministic", story_set_name="ss"
+        ),
     ]
     out = query.group_by_event(apps)
     assert set(out.keys()) == {"ev1", "ev2"}

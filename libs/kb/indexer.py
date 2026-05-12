@@ -1,19 +1,27 @@
 """Pure-code (no LLM) builders for the `data/kb/indexes/*.json` files.
 
 Reads from `data/kb/{events,chars}/<id>/` on disk; writes to
-`data/kb/indexes/`. Two passes: deterministic edges from each char's
-`storysets.json` (cheap, exact, 372/372 verified linkage), then inferred
-edges from substring grep over the per-stage text chunks (recall floor;
-subtractive against the deterministic `(char_id, event_id)` pairs so we
-never duplicate edges that the deterministic pass already nailed).
+`data/kb/indexes/`. Three char↔stage edge layers:
 
-The class-aware match floor is the load-bearing piece of the inferred
-pass. Single-char zh operator names (`陈`, `年`, `夕`, ...) live in
-class A with no length floor — a 2-char floor across the board would
-silently drop 23 operators. Curated aliases keep the 2-char floor
-because they are the more noise-prone source.
+1. **deterministic** — from each char's `storysets.json` (cheap, exact,
+   372/372 verified linkage). The ground truth; outranks everything.
+2. **participant** — :mod:`libs.kb.participants`: per-stage, tiered
+   (`speaker`/`named`/`mentioned`), built from the cleaned chunk text
+   (speaker-line parsing + word-boundary-aware narration grep).
+   Subtractive against the deterministic `(char_id, event_id, stage_idx)`
+   triples so we never duplicate an edge the deterministic pass nailed.
+3. **summary** — :mod:`libs.kb.participants`: event-scoped, from the
+   `<关键人物>` tag of the baked `kb_summaries/events/<id>.md`. Hash-gated
+   free (reads the already-baked `.md`; no LLM call). Subtractive against
+   the deterministic `(char_id, event_id)` pairs.
 
-The inferred pass reads each stage chunk **once** and greps every
+The class-aware match floor (`classify_alias`) is the load-bearing
+piece. Single-char zh operator names (`陈`, `年`, `夕`, ...) keep no
+length floor — a 2-char floor across the board would silently drop 23
+operators. Curated aliases keep the 2-char floor because they are the
+more noise-prone source.
+
+The participant pass reads each stage chunk **once** and greps every
 char's aliases against the body. Reading per-char would be ~860K disk
 reads at corpus scale (1937 stages × ~444 chars).
 """
@@ -197,19 +205,19 @@ def build_char_to_events_deterministic(
     return out
 
 
-def _build_alias_inputs(
+def build_alias_inputs(
     char_manifests: dict[str, dict],
     curated: dict[str, list[str]] | None,
     ambiguous: set[str],
 ) -> dict[str, list[tuple[str, MatchClass]]]:
-    """Per-char grep aliases, deduped by text.
+    """Per-char grep aliases (`{char_id: [(surface, match_class), ...]}`),
+    deduped by surface text.
 
     22 operators in the live corpus have `name == appellation` (`W`,
-    `Sharp`, `Stormeye`, `Pith`, `Touch`, ...); without per-text
-    dedup, every mention would be counted twice in the inferred
-    `count`. When the same text appears in multiple alias sources
-    (e.g. canonical name vs. curated alias), the higher-precedence
-    class wins.
+    `Sharp`, `Stormeye`, `Pith`, `Touch`, ...); without per-text dedup,
+    every mention would be counted twice. When the same text appears in
+    multiple alias sources (canonical name vs. curated alias), the
+    higher-precedence class wins.
 
     Curated aliases are skipped when the char's `name` is ambiguous —
     attaching them to a single owner would be arbitrary; the resolver
@@ -245,104 +253,18 @@ def _build_alias_inputs(
     return out
 
 
-def build_char_to_events_inferred(
-    kb_root: Path,
-    char_manifests: dict[str, dict],
-    deterministic: dict[str, list[dict]],
-    *,
-    curated: dict[str, list[str]] | None = None,
-    ambiguous_canonicals: set[str] | None = None,
-    event_manifests: dict[str, dict] | None = None,
-) -> dict[str, list[dict]]:
-    """Substring-grep each char's grep-aliases against per-stage chunks.
-
-    Reads each stage file once, greps all char aliases against it (so
-    the cost scales with stages, not stages × chars). Aggregates per
-    `(char_id, stage_idx)` — one row per stage, with `count` summed
-    across that char's aliases and `match_class` set to the
-    highest-precision class that fired.
-
-    Subtraction rule applies at the `(char_id, event_id)` pair level:
-    if the deterministic pass already linked a char to an event in
-    *any* stage, every inferred row in that event for that char is
-    suppressed.
-    """
-    if ambiguous_canonicals is None:
-        ambiguous_canonicals = compute_ambiguous_canonicals(char_manifests)
-    if event_manifests is None:
-        event_manifests = load_event_manifests(kb_root)
-
-    deterministic_pairs: set[tuple[str, str]] = {
-        (cid, link["event_id"])
-        for cid, links in deterministic.items()
-        for link in links
-    }
-
-    per_char = _build_alias_inputs(char_manifests, curated, ambiguous_canonicals)
-
-    # cid -> eid -> stage_idx -> {count, match_class}
-    agg: dict[str, dict[str, dict[int, dict]]] = defaultdict(
-        lambda: defaultdict(dict)
-    )
-    for eid, ev in event_manifests.items():
-        event_dir = paths.event_dir(kb_root, eid)
-        # Pre-narrow chars whose deterministic pair already covers this event.
-        active = [
-            (cid, aliases)
-            for cid, aliases in per_char.items()
-            if (cid, eid) not in deterministic_pairs
-        ]
-        if not active:
-            continue
-        for stage in ev["stages"]:
-            stage_path = event_dir / stage["file"]
-            try:
-                body = stage_path.read_text(encoding="utf-8")
-            except FileNotFoundError:
-                continue
-            for cid, aliases in active:
-                stage_count = 0
-                stage_best_mc: MatchClass | None = None
-                for alias, mc in aliases:
-                    n = body.count(alias)
-                    if n == 0:
-                        continue
-                    stage_count += n
-                    if (
-                        stage_best_mc is None
-                        or _MATCH_CLASS_PRECEDENCE[mc] > _MATCH_CLASS_PRECEDENCE[stage_best_mc]
-                    ):
-                        stage_best_mc = mc
-                if stage_count > 0:
-                    agg[cid][eid][stage["idx"]] = {
-                        "count": stage_count,
-                        "match_class": stage_best_mc,
-                    }
-
-    out: dict[str, list[dict]] = {}
-    for cid in sorted(agg):
-        rows: list[dict] = []
-        for eid in sorted(agg[cid]):
-            for sidx in sorted(agg[cid][eid]):
-                row = agg[cid][eid][sidx]
-                rows.append(
-                    {
-                        "event_id": eid,
-                        "stage_idx": sidx,
-                        "count": row["count"],
-                        "match_class": row["match_class"],
-                    }
-                )
-        out[cid] = rows
-    return out
-
-
 def build_event_to_chars(
     deterministic: dict[str, list[dict]],
-    inferred: dict[str, list[dict]],
+    participant: dict[str, list[dict]],
+    summary: dict[str, list[dict]],
 ) -> dict[str, list[dict]]:
-    """Flat one-row-per-(char_id, stage_idx). Both source layers share
-    the same row shape so consumers don't case-split."""
+    """Flat per-event char rows merged from the three edge layers. Each
+    row carries `char_id` + `source` + `stage_idx` (`None` for the
+    event-scoped `summary` rows) plus the source-specific extras
+    (`story_set_name` for deterministic; `tier`/`spoke_lines`/
+    `mention_count`/`matched_aliases` for participant; `tier`/
+    `matched_aliases` for summary). Sorted so a row with a real
+    `stage_idx` sorts before the event-scoped `None`."""
     by_event: dict[str, list[dict]] = defaultdict(list)
     for cid, links in deterministic.items():
         for link in links:
@@ -354,21 +276,21 @@ def build_event_to_chars(
                     "story_set_name": link["story_set_name"],
                 }
             )
-    for cid, hits in inferred.items():
-        for hit in hits:
-            by_event[hit["event_id"]].append(
-                {
-                    "char_id": cid,
-                    "source": "inferred",
-                    "stage_idx": hit["stage_idx"],
-                    "count": hit["count"],
-                    "match_class": hit["match_class"],
-                }
-            )
+    for cid, rows in participant.items():
+        for r in rows:
+            by_event[r["event_id"]].append({"char_id": cid, **{k: v for k, v in r.items() if k != "event_id"}})
+    for cid, rows in summary.items():
+        for r in rows:
+            by_event[r["event_id"]].append({"char_id": cid, **{k: v for k, v in r.items() if k != "event_id"}})
+
+    def _key(r: dict) -> tuple:
+        sidx = r["stage_idx"]
+        return (r["char_id"], 1 if sidx is None else 0, -1 if sidx is None else sidx, r["source"])
+
     out: dict[str, list[dict]] = {}
     for eid in sorted(by_event):
         rows = by_event[eid]
-        rows.sort(key=lambda r: (r["char_id"], r["stage_idx"], r["source"]))
+        rows.sort(key=_key)
         out[eid] = rows
     return out
 
@@ -395,7 +317,7 @@ def build_stage_table(event_manifests: dict[str, dict]) -> list[dict]:
 
 def build_char_table(
     char_manifests: dict[str, dict],
-    inferred: dict[str, list[dict]],
+    participant: dict[str, list[dict]],
 ) -> list[dict]:
     rows: list[dict] = []
     for cid, mf in char_manifests.items():
@@ -406,7 +328,7 @@ def build_char_table(
                 "nationId": mf.get("nationId"),
                 "sections": list(mf.get("sections", [])),
                 "storyset_count": mf.get("storyset_count", 0),
-                "has_inferred_appearances": bool(inferred.get(cid)),
+                "has_participant_appearances": bool(participant.get(cid)),
             }
         )
     rows.sort(key=lambda r: r["char_id"])
@@ -453,37 +375,56 @@ def build_all_indexes(
     kb_root: Path,
     *,
     curated_aliases_path: Path | str | None = None,
+    summaries_root: Path | str | None = None,
 ) -> dict:
     """Read existing event/char manifests + storysets, build every
     index, write `kb_root/indexes/*.json`. Returns a small summary
-    dict suitable for the build report."""
+    dict suitable for the build report.
+
+    `summaries_root` (default: none) points at the baked
+    `kb_summaries/` so the event-scoped `summary` edge layer can read
+    `<关键人物>`. Absent → that layer is empty (no LLM call either way)."""
+    # Local import: `participants` imports `build_alias_inputs` etc. from
+    # this module, so importing it at module scope would be circular.
+    from libs.kb import participants
+
     event_manifests = load_event_manifests(kb_root)
     char_manifests = load_char_manifests(kb_root)
     curated = (
         parse_curated_alias_file(curated_aliases_path) if curated_aliases_path else None
     )
     ambiguous = compute_ambiguous_canonicals(char_manifests)
+    sumroot = Path(summaries_root) if summaries_root else None
 
     events_by_family = build_events_by_family(event_manifests)
     deterministic = build_char_to_events_deterministic(kb_root, char_manifests)
-    inferred = build_char_to_events_inferred(
+    alias_index = build_char_alias_index(char_manifests, curated=curated)
+
+    summary_edges, unresolved_summary = participants.build_char_to_events_summary(
+        sumroot, alias_index["alias_to_char_ids"], deterministic
+    )
+    participant = participants.build_stage_participants(
         kb_root,
         char_manifests,
         deterministic,
         curated=curated,
         ambiguous_canonicals=ambiguous,
         event_manifests=event_manifests,
+        summary_char_ids_by_event=participants.summary_char_ids_by_event(summary_edges),
     )
-    event_to_chars = build_event_to_chars(deterministic, inferred)
+    event_to_chars = build_event_to_chars(deterministic, participant, summary_edges)
     stage_table = build_stage_table(event_manifests)
-    char_table = build_char_table(char_manifests, inferred)
+    char_table = build_char_table(char_manifests, participant)
 
     atomic_write_json(paths.index_path(kb_root, "events_by_family"), events_by_family)
     atomic_write_json(
         paths.index_path(kb_root, "char_to_events_deterministic"), deterministic
     )
     atomic_write_json(
-        paths.index_path(kb_root, "char_to_events_inferred"), inferred
+        paths.index_path(kb_root, "char_to_events_participant"), participant
+    )
+    atomic_write_json(
+        paths.index_path(kb_root, "char_to_events_summary"), summary_edges
     )
     atomic_write_json(paths.index_path(kb_root, "event_to_chars"), event_to_chars)
     atomic_write_json(paths.index_path(kb_root, "stage_table"), stage_table)
@@ -491,8 +432,9 @@ def build_all_indexes(
     # Always rewrite char_alias.json (even in raw-only mode) so a
     # prior enriched build's curated entries don't survive a later
     # raw-only rebuild and silently leak into resolver output.
-    alias_index = build_char_alias_index(char_manifests, curated=curated)
     atomic_write_json(paths.index_path(kb_root, "char_alias"), alias_index)
+    # Drop the pre-WS-0 index name if a stale copy is sitting around.
+    paths.index_path(kb_root, "char_to_events_inferred").unlink(missing_ok=True)
 
     return {
         "events": len(event_manifests),
@@ -500,7 +442,11 @@ def build_all_indexes(
         "events_by_family": events_by_family,
         "deterministic_link_count": sum(len(v) for v in deterministic.values()),
         "deterministic_chars_with_edges": sum(1 for v in deterministic.values() if v),
-        "inferred_chars_with_edges": sum(1 for v in inferred.values() if v),
+        "participant_chars_with_edges": sum(1 for v in participant.values() if v),
+        "participant_edge_count": sum(len(v) for v in participant.values()),
+        "summary_chars_with_edges": sum(1 for v in summary_edges.values() if v),
+        "summary_edge_count": sum(len(v) for v in summary_edges.values()),
+        "unresolved_summary_names": unresolved_summary,
         "ambiguous_canonicals": sorted(ambiguous),
         "curated_alias_canonicals": (len(curated) if curated else 0),
     }

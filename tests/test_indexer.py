@@ -145,187 +145,94 @@ def test_deterministic_uses_storysets_json(tmp_path, make_char):
     assert "char_b" not in out
 
 
-# --- build_char_to_events_inferred ------------------------------------
-
-
-def test_inferred_records_count_and_match_class(tmp_path, make_event, make_char):
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "阿米娅说：我们出发吧。阿米娅笑了。")])
-    make_char(kb, "char_amiya", name="阿米娅", appellation="Amiya")
-    cm = indexer.load_char_manifests(kb)
-    inf = indexer.build_char_to_events_inferred(kb, cm, {})
-    rows = inf["char_amiya"]
-    assert len(rows) == 1
-    row = rows[0]
-    assert row["event_id"] == "ev1"
-    assert row["stage_idx"] == 0
-    assert row["count"] == 2  # `阿米娅` appears twice
-    assert row["match_class"] == "canonical"
-
-
-def test_inferred_canonical_short_for_single_char_operator(tmp_path, make_event, make_char):
-    """Class A no-floor rule keeps single-zh-char operators recoverable.
-    The downweight is encoded as `match_class=canonical_short`."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "陈走进门。")])
-    make_char(kb, "char_chen", name="陈")
-    cm = indexer.load_char_manifests(kb)
-    inf = indexer.build_char_to_events_inferred(kb, cm, {})
-    assert inf["char_chen"][0]["match_class"] == "canonical_short"
-
-
-def test_inferred_picks_highest_precision_class_per_stage(tmp_path, make_event, make_char):
-    """When a char's name (canonical) AND a curated alias (curated) both
-    fire in the same stage, the row's `match_class` is the higher-
-    precision one (`canonical`)."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "临光转身。玛嘉烈在前面。")])
-    make_char(kb, "char_nearl", name="临光", appellation="Nearl")
-    cm = indexer.load_char_manifests(kb)
-    curated = {"临光": ["玛嘉烈"]}
-    inf = indexer.build_char_to_events_inferred(kb, cm, {}, curated=curated)
-    row = inf["char_nearl"][0]
-    assert row["count"] == 2  # 临光 once, 玛嘉烈 once
-    assert row["match_class"] == "canonical"  # canonical beats curated
-
-
-def test_inferred_subtracts_when_deterministic_pair_exists(tmp_path, make_event, make_char):
-    """If a deterministic edge already links `(char, event)`, no
-    inferred rows for that char are emitted in that event — even if
-    other stages of the same event mention the char."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "陈出现"), ("s1", "陈在另一幕")])
-    make_event(kb, "ev2", [("s0", "陈也在这里")])
-    make_char(
-        kb,
-        "char_chen",
-        name="陈",
-        storysets=[
-            {
-                "storySetName": "x",
-                "storyTxt": "y",
-                "linked_event_id": "ev1",
-                "linked_stage_idx": 0,
-            }
-        ],
-    )
-    cm = indexer.load_char_manifests(kb)
-    det = indexer.build_char_to_events_deterministic(kb, cm)
-    inf = indexer.build_char_to_events_inferred(kb, cm, det)
-    rows = inf["char_chen"]
-    # ev1 entirely subtracted (incl. stage 1 even though stage 0 is what
-    # was deterministically linked); ev2 emitted normally
-    assert {r["event_id"] for r in rows} == {"ev2"}
-
-
-def test_inferred_blocklist_drops_canonical_alias(tmp_path, make_event, make_char):
-    """Even a canonical name is blocklisted if it overlaps with role
-    nouns. Defensive against pathological char data."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "博士提议。")])
-    make_char(kb, "char_dr", name="博士")
-    cm = indexer.load_char_manifests(kb)
-    inf = indexer.build_char_to_events_inferred(kb, cm, {})
-    assert "char_dr" not in inf  # zero edges produced, key not added
-
-
-def test_inferred_skips_curated_aliases_when_canonical_is_ambiguous(tmp_path, make_event, make_char):
-    """`暮落` collides on two char_ids; the curated alias `沉渊` would
-    auto-attach to one (arbitrary) or both (broadens scope) — neither
-    is honest, so the inferred pass skips curated aliases for ambiguous
-    canonicals."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "沉渊出现。")])
-    make_char(kb, "char_a1", name="暮落")
-    make_char(kb, "char_a2", name="暮落")
-    cm = indexer.load_char_manifests(kb)
-    curated = {"暮落": ["沉渊"]}
-    inf = indexer.build_char_to_events_inferred(
-        kb, cm, {}, curated=curated, ambiguous_canonicals={"暮落"}
-    )
-    # 暮落 itself classified canonical (not in body) → no rows.
-    # 沉渊 (curated for ambiguous canonical) is skipped.
-    assert "char_a1" not in inf
-    assert "char_a2" not in inf
-
-
-def test_inferred_dedupes_when_name_equals_appellation(tmp_path, make_event, make_char):
-    """22 operators in the live corpus have `name == appellation`
-    (`W`, `Sharp`, `Stormeye`, ...). Without per-char text dedup, a
-    single mention would be counted twice (once per alias source)."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "W走出帐篷。")])
-    make_char(kb, "char_w", name="W", appellation="W")
-    cm = indexer.load_char_manifests(kb)
-    inf = indexer.build_char_to_events_inferred(kb, cm, {})
-    assert inf["char_w"][0]["count"] == 1
-
-
-def test_inferred_dedupe_keeps_highest_precision_class(tmp_path, make_event, make_char):
-    """If the same text appears as both a canonical name and a curated
-    alias of the same char, the canonical class wins (precedence 4 vs 3)."""
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "凯尔希出现。")])
-    make_char(kb, "char_kal", name="凯尔希", appellation="Kalts")
-    cm = indexer.load_char_manifests(kb)
-    # Curated map repeating the canonical text would normally never
-    # happen (parser puts canonical as key, not value), but we feed it
-    # in explicitly to verify the precedence rule.
-    inf = indexer.build_char_to_events_inferred(
-        kb, cm, {}, curated={"凯尔希": ["凯尔希"]}
-    )
-    row = inf["char_kal"][0]
-    assert row["count"] == 1  # not 2 — text deduped
-    assert row["match_class"] == "canonical"  # canonical beats curated
-
-
-def test_inferred_returns_empty_for_chars_with_no_hits(tmp_path, make_event, make_char):
-    kb = tmp_path / "kb"
-    make_event(kb, "ev1", [("s0", "无人出现。")])
-    make_char(kb, "char_x", name="阿米娅")
-    cm = indexer.load_char_manifests(kb)
-    inf = indexer.build_char_to_events_inferred(kb, cm, {})
-    assert inf == {}
-
-
 # --- build_event_to_chars --------------------------------------------
+# (the inferred-pass scenarios moved to test_participants.py with the
+#  rewrite to the tiered `build_stage_participants`.)
 
 
-def test_event_to_chars_flat_one_row_per_stage():
+def test_event_to_chars_merges_three_layers():
     det = {
         "char_a": [{"event_id": "ev1", "stage_idx": 2, "story_set_name": "ss"}],
     }
-    inf = {
+    participant = {
         "char_b": [
-            {"event_id": "ev1", "stage_idx": 0, "count": 5, "match_class": "canonical"},
-            {"event_id": "ev1", "stage_idx": 3, "count": 9, "match_class": "canonical"},
+            {
+                "event_id": "ev1",
+                "stage_idx": 0,
+                "source": "participant",
+                "tier": "speaker",
+                "spoke_lines": 3,
+                "mention_count": 4,
+                "matched_aliases": ["B"],
+            },
+            {
+                "event_id": "ev1",
+                "stage_idx": 3,
+                "source": "participant",
+                "tier": "named",
+                "spoke_lines": 0,
+                "mention_count": 2,
+                "matched_aliases": ["B"],
+            },
         ],
     }
-    out = indexer.build_event_to_chars(det, inf)
+    summary = {
+        "char_c": [
+            {
+                "event_id": "ev1",
+                "stage_idx": None,
+                "source": "summary",
+                "tier": "named",
+                "matched_aliases": ["“C”"],
+            }
+        ]
+    }
+    out = indexer.build_event_to_chars(det, participant, summary)
     rows = out["ev1"]
-    assert len(rows) == 3  # 1 deterministic + 2 inferred
-    # Deterministic row carries story_set_name, no count/match_class
+    assert len(rows) == 4  # 1 deterministic + 2 participant + 1 summary
+
     det_row = next(r for r in rows if r["source"] == "deterministic")
     assert det_row["char_id"] == "char_a"
     assert det_row["stage_idx"] == 2
     assert det_row["story_set_name"] == "ss"
-    assert "count" not in det_row
-    # Inferred rows carry count + match_class, no story_set_name
-    inf_rows = [r for r in rows if r["source"] == "inferred"]
-    assert {r["stage_idx"] for r in inf_rows} == {0, 3}
-    for r in inf_rows:
-        assert r["count"] > 0
-        assert r["match_class"] == "canonical"
+    assert "tier" not in det_row
+
+    part_rows = [r for r in rows if r["source"] == "participant"]
+    assert {r["stage_idx"] for r in part_rows} == {0, 3}
+    for r in part_rows:
+        assert r["tier"] in ("speaker", "named")
+        assert r["matched_aliases"] == ["B"]
         assert "story_set_name" not in r
 
+    sum_row = next(r for r in rows if r["source"] == "summary")
+    assert sum_row["char_id"] == "char_c"
+    assert sum_row["stage_idx"] is None
+    assert sum_row["tier"] == "named"
 
-def test_event_to_chars_sorted_by_char_then_stage():
+
+def test_event_to_chars_sorted_char_then_stage_then_event_scoped_last():
     det = {
         "char_b": [{"event_id": "ev1", "stage_idx": 1, "story_set_name": "x"}],
         "char_a": [{"event_id": "ev1", "stage_idx": 0, "story_set_name": "y"}],
     }
-    out = indexer.build_event_to_chars(det, {})
-    assert [r["char_id"] for r in out["ev1"]] == ["char_a", "char_b"]
+    summary = {
+        "char_a": [
+            {
+                "event_id": "ev1",
+                "stage_idx": None,
+                "source": "summary",
+                "tier": "named",
+                "matched_aliases": ["A"],
+            }
+        ]
+    }
+    out = indexer.build_event_to_chars(det, {}, summary)
+    rows = out["ev1"]
+    assert [r["char_id"] for r in rows] == ["char_a", "char_a", "char_b"]
+    # within char_a: the stage-0 deterministic row before the event-scoped (None) summary row
+    a_rows = [r for r in rows if r["char_id"] == "char_a"]
+    assert a_rows[0]["source"] == "deterministic" and a_rows[0]["stage_idx"] == 0
+    assert a_rows[1]["source"] == "summary" and a_rows[1]["stage_idx"] is None
 
 
 # --- build_stage_table -----------------------------------------------
@@ -365,7 +272,7 @@ def test_stage_table_carries_source_family_and_prefix():
 # --- build_char_table ------------------------------------------------
 
 
-def test_char_table_marks_inferred_appearances():
+def test_char_table_marks_participant_appearances():
     cm = {
         "char_a": {
             "char_id": "char_a",
@@ -382,11 +289,15 @@ def test_char_table_marks_inferred_appearances():
             "storyset_count": 1,
         },
     }
-    inf = {"char_a": [{"event_id": "ev1", "stage_idx": 0, "count": 1, "match_class": "canonical"}]}
-    rows = indexer.build_char_table(cm, inf)
+    participant = {
+        "char_a": [
+            {"event_id": "ev1", "stage_idx": 0, "source": "participant", "tier": "named"}
+        ]
+    }
+    rows = indexer.build_char_table(cm, participant)
     rows_by_id = {r["char_id"]: r for r in rows}
-    assert rows_by_id["char_a"]["has_inferred_appearances"] is True
-    assert rows_by_id["char_b"]["has_inferred_appearances"] is False
+    assert rows_by_id["char_a"]["has_participant_appearances"] is True
+    assert rows_by_id["char_b"]["has_participant_appearances"] is False
 
 
 # --- build_char_alias_index ------------------------------------------
@@ -452,8 +363,11 @@ def test_build_all_indexes_against_mini_fixture(tmp_path, build_real_kb):
     assert summary["chars"] == 2
     # 艾莉亚 has a deterministic edge to mem_aria via her storyset
     assert summary["deterministic_chars_with_edges"] == 1
-    # Both chars appear in act_test / main_01 → both have inferred edges
-    assert summary["inferred_chars_with_edges"] == 2
+    # Both chars speak in act_test / main_01 → both have participant edges
+    assert summary["participant_chars_with_edges"] == 2
+    # No baked summaries in the mini fixture → no summary-source edges
+    assert summary["summary_edge_count"] == 0
+    assert summary["unresolved_summary_names"] == {}
 
     # Every index file written, including char_alias.json (raw-only mode
     # gets a name+appellation-only alias index so a later raw rebuild
@@ -461,7 +375,8 @@ def test_build_all_indexes_against_mini_fixture(tmp_path, build_real_kb):
     for name in (
         "events_by_family",
         "char_to_events_deterministic",
-        "char_to_events_inferred",
+        "char_to_events_participant",
+        "char_to_events_summary",
         "event_to_chars",
         "stage_table",
         "char_table",
@@ -504,10 +419,10 @@ def test_build_all_indexes_with_curated_alias_file(tmp_path, build_real_kb):
 def test_build_all_indexes_subtracts_deterministic_in_event_to_chars(
     tmp_path, build_real_kb
 ):
-    """艾莉亚 has a deterministic edge in mem_aria/0; her name appears in
-    that stage's body too. The merged event_to_chars row for mem_aria
-    should record her exactly once (deterministic), with no inferred
-    duplicate."""
+    """艾莉亚 has a deterministic edge in mem_aria/0 and also speaks in
+    that single stage; the per-(char,event,stage) subtraction means the
+    merged event_to_chars row for mem_aria records her exactly once
+    (deterministic), with no participant duplicate for the same stage."""
     kb = build_real_kb(tmp_path / "kb")
     e2c = json.loads(paths.index_path(kb, "event_to_chars").read_text())
     mem_rows = [r for r in e2c["mem_aria"] if r["char_id"] == "char_test_001"]

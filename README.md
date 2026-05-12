@@ -69,7 +69,7 @@ The skill enforces the human review gates and validation passes that the user re
 .venv/bin/python -m scripts.kb_build
 ```
 
-Reads `ArknightsGameData/`, writes deterministic per-stage and per-character chunks under `data/kb/` (gitignored), plus a handful of JSON indexes. Runs in ~8s against the live corpus. Idempotent; default-on prune.
+Reads `ArknightsGameData/` (and, when present, the baked `kb_summaries/` for the event-scoped `summary` char↔event edge layer — no LLM call), writes deterministic per-stage and per-character chunks under `data/kb/` (gitignored), plus a handful of JSON indexes. Runs in ~10s against the live corpus. Idempotent; default-on prune.
 
 ### 3. Query the knowledge base
 
@@ -79,14 +79,24 @@ The KB is designed for command-line consumption by an agent or a human:
 .venv/bin/python -m scripts.kb_query event list --family activity
 .venv/bin/python -m scripts.kb_query event get act46side
 .venv/bin/python -m scripts.kb_query event stages act46side          # per-chapter listing; pick a <章节> to read
-.venv/bin/python -m scripts.kb_query event chars act46side --source deterministic
+.venv/bin/python -m scripts.kb_query event chars act46side                       # who's in this event — each row has a tier
+.venv/bin/python -m scripts.kb_query event chars act46side --min-tier speaker    # only chars who actually had dialogue
+.venv/bin/python -m scripts.kb_query event chars act46side --source deterministic # only the exact handbook-storyset links
 .venv/bin/python -m scripts.kb_query char resolve 阿米娅
 .venv/bin/python -m scripts.kb_query char get char_002_amiya --section voice
+.venv/bin/python -m scripts.kb_query char appearances char_002_amiya             # every (event, stage) this char shows up in, tiered
 .venv/bin/python -m scripts.kb_query char card char_002_amiya          # deterministic fact card (basics / 客观履历 / skins / modules / storysets)
 .venv/bin/python -m scripts.kb_query grep 巨枭 --in summaries          # search the baked event summaries (high-signal); also --in events|chars|all
 ```
 
 JSON output by default; `--text` returns raw chunks where applicable. The fact card is deterministic (parsed from `character_table` + `handbook_info_table`, every field tagged with its source) — it's the cheapest correctness anchor for checking a wiki page's basics.
+
+**Char↔stage edges come in three layers** (`event chars` / `char appearances` merge them; `--source` picks one):
+- `deterministic` — the exact handbook-storyset links (372/372 verified). Ground truth; always passes any `--min-tier`.
+- `participant` — derived from the cleaned chunk text, with a `tier`: `speaker` (had ≥1 line of dialogue — the default meaning of "appears in"), `named` (named in narration; ASCII names use a real word boundary so `W` ⊄ `World`, single-zh-char names need ≥2 hits or a summary hit), `mentioned` (a lone passing reference — kept as a recall floor, dropped by default).
+- `summary` — *event-scoped* (`stage_idx` is `null`): the `<关键人物>` of a baked event summary, resolved through the alias index. Catches chars referred to only by title/nickname a name-grep misses.
+
+`--min-tier {speaker,named,mentioned}` (default `named`) thresholds the `participant` edges; `deterministic` edges always survive it.
 
 ### 4. Bake LLM event summaries (`kb_summaries/`)
 
@@ -120,7 +130,7 @@ libs/
   game_data.py    # parse ArknightsGameData JSON; clean_script
   llm_clients.py  # unified Gemini CLI / SDK / Claude CLI dispatch
   ui.py           # render data/*.txt → docs/*.md for the published wiki
-  kb/             # the knowledge-base package (paths, chunker, indexer, query, summarize)
+  kb/             # the knowledge-base package (paths, chunker, cards, indexer, participants, query, summarize)
 scripts/
   find_new_stories.py + find_chars_in_new_stories.py  # update-flow helpers
   get_story_wiki.py + get_char_wiki_v3.py             # LLM generators

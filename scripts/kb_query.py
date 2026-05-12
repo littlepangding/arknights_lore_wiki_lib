@@ -76,14 +76,24 @@ def cmd_event_get(args: argparse.Namespace) -> int:
 
 def cmd_event_chars(args: argparse.Namespace) -> int:
     kb = _load(args)
-    _print_json(query.event_chars(kb, args.event_id, source=args.source))
+    _print_json(
+        query.event_chars(
+            kb, args.event_id, source=args.source, min_tier=args.min_tier
+        )
+    )
     return 0
 
 
 def cmd_event_stage_chars(args: argparse.Namespace) -> int:
     kb = _load(args)
     _print_json(
-        query.stage_chars(kb, args.event_id, args.stage_idx, source=args.source)
+        query.stage_chars(
+            kb,
+            args.event_id,
+            args.stage_idx,
+            source=args.source,
+            min_tier=args.min_tier,
+        )
     )
     return 0
 
@@ -187,7 +197,11 @@ def cmd_char_appearances(args: argparse.Namespace) -> int:
     char_id = _resolve_char_id_or_name(kb, args.char_id)
     if char_id is None:
         return 1
-    _print_json(query.char_appearances(kb, char_id, source=args.source))
+    _print_json(
+        query.char_appearances(
+            kb, char_id, source=args.source, min_tier=args.min_tier
+        )
+    )
     return 0
 
 
@@ -254,6 +268,25 @@ def _add_common(p: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_edge_filters(p: argparse.ArgumentParser) -> None:
+    """`--source` (which char↔stage edge layer) + `--min-tier` (how
+    strongly a participant edge must hold). `deterministic`/storyset
+    edges always pass `--min-tier`. Default `--min-tier named` keeps
+    speaker + named, drops lone `mentioned` hits."""
+    p.add_argument(
+        "--source",
+        choices=list(query.SOURCE_FILTERS),
+        default="all",
+        help="deterministic | participant | summary | all (default all).",
+    )
+    p.add_argument(
+        "--min-tier",
+        choices=list(query.TIERS),
+        default=query.DEFAULT_MIN_TIER,
+        help="speaker | named | mentioned (default named).",
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="kb_query", description=__doc__)
     sub = parser.add_subparsers(dest="group", required=True)
@@ -276,7 +309,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _add_common(p)
     p.add_argument("event_id")
-    p.add_argument("--source", choices=list(query.SOURCE_FILTERS), default="both")
+    _add_edge_filters(p)
     p.set_defaults(fn=cmd_event_chars)
 
     p = g_event_sub.add_parser(
@@ -285,7 +318,7 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common(p)
     p.add_argument("event_id")
     p.add_argument("stage_idx", type=int)
-    p.add_argument("--source", choices=list(query.SOURCE_FILTERS), default="both")
+    _add_edge_filters(p)
     p.set_defaults(fn=cmd_event_stage_chars)
 
     p = g_event_sub.add_parser(
@@ -330,7 +363,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _add_common(p)
     p.add_argument("char_id")
-    p.add_argument("--source", choices=list(query.SOURCE_FILTERS), default="both")
+    _add_edge_filters(p)
     p.set_defaults(fn=cmd_char_appearances)
 
     p = g_char_sub.add_parser(

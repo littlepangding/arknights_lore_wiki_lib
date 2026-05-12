@@ -299,7 +299,14 @@ Pure-code (no LLM) builders for the JSON indexes. Two passes: deterministic edge
 
 6. **`stage_table.json`** — flat list of every stage with metadata, including `source_family` and `storyTxt_prefix`. Sortable / filterable on any field.
 
-7. **`char_table.json`** — flat per-char metadata: `char_id`, `name`, `nationId`, `sections` (list of populated section files), `storyset_count`, `has_inferred_appearances`.
+7. **`char_table.json`** — flat per-char metadata: `char_id`, `name`, `nationId`, `sections` (list of populated section files), `storyset_count`, `has_participant_appearances`.
+
+> **Superseded by WS-0 (plan phase P-B) — `libs/kb/participants.py`.** The "inferred edge" pass (§3–4 above: `char_to_events_inferred.json`, flat `count` + `match_class`, event-level deterministic subtraction) is replaced by a **tiered participant extractor**. Three edge layers now:
+> 1. `char_to_events_deterministic.json` — unchanged (§264 above). Source label on rows: `"deterministic"`. Ground truth; always passes any `--min-tier`.
+> 2. `char_to_events_participant.json` — per-stage rows `{event_id, stage_idx, source:"participant", tier, spoke_lines, mention_count, matched_aliases}`. `tier ∈ {speaker, named, mentioned}` (see `participants.py` docstring for the rules — speaker-line parsing off `clean_script`'s `名字:台词`; ASCII names use a real word boundary; single-zh-char names need ≥2 hits / a speaker line / a summary hit to clear `mentioned`). Deterministic subtraction is now **per `(char_id, event_id, stage_idx)`** (not per event-pair), so a char's other stages in a storyset-linked event still surface.
+> 3. `char_to_events_summary.json` — *event-scoped* rows `{event_id, stage_idx:null, source:"summary", tier:"named", matched_aliases}` from the `<关键人物>` tag of `kb_summaries/events/<id>.md`, each name resolved through the alias index. Hash-gated free (no LLM call). Suppressed when a deterministic edge already links `(char_id, event_id)`. Unresolved/ambiguous surface names are reported in the build manifest (`unresolved_summary_names`).
+>
+> `event_to_chars.json` merges all three (each row carries `source` + the source-specific extras; the event-scoped `summary` rows have `stage_idx: null`). `kb_query event chars|stage_chars|char appearances` take `--source {deterministic,participant,summary,all}` (default `all`) and `--min-tier {speaker,named,mentioned}` (default `named`). `Appearance` gains `tier`, `spoke_lines`, `mention_count`, `matched_aliases`, and `stage_idx` becomes `int | None`; `count` / `match_class` are gone from the public type (`matched_aliases` carries the surfaces instead). `match_class` is still an internal alias-classification concept inside the indexer / `participants` (blocklist + per-class length floor in `classify_alias`).
 
 ### `query.py`
 Pure-function retrieval API. Every function takes a `KB` object (loaded indexes) and returns Python values. CLI wrappers in `scripts/kb_query.py` print JSON.
