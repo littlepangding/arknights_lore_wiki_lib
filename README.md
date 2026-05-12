@@ -78,13 +78,15 @@ The KB is designed for command-line consumption by an agent or a human:
 ```bash
 .venv/bin/python -m scripts.kb_query event list --family activity
 .venv/bin/python -m scripts.kb_query event get act46side
+.venv/bin/python -m scripts.kb_query event stages act46side          # per-chapter listing; pick a <章节> to read
 .venv/bin/python -m scripts.kb_query event chars act46side --source deterministic
 .venv/bin/python -m scripts.kb_query char resolve 阿米娅
 .venv/bin/python -m scripts.kb_query char get char_002_amiya --section voice
-.venv/bin/python -m scripts.kb_query grep 巨枭
+.venv/bin/python -m scripts.kb_query char card char_002_amiya          # deterministic fact card (basics / 客观履历 / skins / modules / storysets)
+.venv/bin/python -m scripts.kb_query grep 巨枭 --in summaries          # search the baked event summaries (high-signal); also --in events|chars|all
 ```
 
-JSON output by default; `--text` returns raw chunks where applicable.
+JSON output by default; `--text` returns raw chunks where applicable. The fact card is deterministic (parsed from `character_table` + `handbook_info_table`, every field tagged with its source) — it's the cheapest correctness anchor for checking a wiki page's basics.
 
 ### 4. Bake LLM event summaries (`kb_summaries/`)
 

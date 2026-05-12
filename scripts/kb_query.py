@@ -88,6 +88,16 @@ def cmd_event_stage_chars(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_event_stages(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    stages = query.event_stages(kb, args.event_id)
+    if stages is None:
+        print(f"kb_query: event {args.event_id!r} not found", file=sys.stderr)
+        return 1
+    _print_json(stages)
+    return 0
+
+
 def cmd_event_stage(args: argparse.Namespace) -> int:
     kb = _load(args)
     text = query.get_stage_text(kb, args.event_id, args.stage_idx)
@@ -190,6 +200,23 @@ def cmd_char_storysets(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_char_card(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    char_id = _resolve_char_id_or_name(kb, args.char_id)
+    if char_id is None:
+        return 1
+    card = query.get_card(kb, char_id)
+    if card is None:
+        print(
+            f"kb_query: no fact card for {char_id!r} "
+            "(rebuild with `python -m scripts.kb_build`)",
+            file=sys.stderr,
+        )
+        return 1
+    _print_json(card)
+    return 0
+
+
 def cmd_grep(args: argparse.Namespace) -> int:
     kb = _load(args)
     _print_json(query.grep_text(kb, args.pattern, scope=args.scope, regex=args.regex))
@@ -262,6 +289,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(fn=cmd_event_stage_chars)
 
     p = g_event_sub.add_parser(
+        "stages", help="List one event's chapters (idx / name / avgTag / length)."
+    )
+    _add_common(p)
+    p.add_argument("event_id")
+    p.set_defaults(fn=cmd_event_stages)
+
+    p = g_event_sub.add_parser(
         "stage", help="Read one stage chunk; --text prints raw, JSON otherwise."
     )
     _add_common(p)
@@ -305,6 +339,13 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common(p)
     p.add_argument("char_id")
     p.set_defaults(fn=cmd_char_storysets)
+
+    p = g_char_sub.add_parser(
+        "card", help="Deterministic fact card (basics / 客观履历 / skins / modules)."
+    )
+    _add_common(p)
+    p.add_argument("char_id")
+    p.set_defaults(fn=cmd_char_card)
 
     p = sub.add_parser("grep", help="Literal substring search; --regex opts in.")
     _add_common(p)

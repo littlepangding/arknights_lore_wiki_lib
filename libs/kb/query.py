@@ -24,10 +24,10 @@ from libs.kb.paths import Family, FAMILIES, MatchClass, Section, SECTIONS
 
 SectionOrAll = Literal["profile", "voice", "archive", "skins", "modules", "all"]
 SourceFilter = Literal["deterministic", "inferred", "both"]
-GrepScope = Literal["events", "chars", "all"]
+GrepScope = Literal["events", "chars", "summaries", "all"]
 
 SOURCE_FILTERS: tuple[SourceFilter, ...] = ("deterministic", "inferred", "both")
-GREP_SCOPES: tuple[GrepScope, ...] = ("events", "chars", "all")
+GREP_SCOPES: tuple[GrepScope, ...] = ("events", "chars", "summaries", "all")
 SECTIONS_OR_ALL: tuple[SectionOrAll, ...] = (
     "profile",
     "voice",
@@ -96,6 +96,7 @@ class Match:
     line: str
     line_no: int
     snippet: str
+    source: Literal["stage", "char_section", "event_summary"] = "stage"
 
 
 # --- resolver sum type -------------------------------------------------
@@ -417,8 +418,8 @@ def grep_text(
     (parens / hyphens / smart quotes in NPC and group names) — literal
     is the only safe default.
     """
-    if scope not in ("events", "chars", "all"):
-        raise ValueError(f"scope must be events|chars|all, got {scope!r}")
+    if scope not in GREP_SCOPES:
+        raise ValueError(f"scope must be one of {GREP_SCOPES}, got {scope!r}")
     if regex:
         rx = re.compile(pattern)
 
@@ -481,9 +482,58 @@ def grep_text(
                                 line=line,
                                 line_no=i,
                                 snippet=line[:snippet_len],
+                                source="char_section",
+                            )
+                        )
+    if scope in ("summaries", "all") and kb.summaries_root is not None:
+        sum_events_dir = kb.summaries_root / "events"
+        if sum_events_dir.is_dir():
+            for p in sorted(sum_events_dir.glob("*.md")):
+                eid = p.stem
+                body = p.read_text(encoding="utf-8")
+                if not file_could_match(body):
+                    continue
+                for i, line in enumerate(body.splitlines(), start=1):
+                    if line_matches(line):
+                        out.append(
+                            Match(
+                                event_id=eid,
+                                stage_idx=None,
+                                char_id=None,
+                                section=None,
+                                line=line,
+                                line_no=i,
+                                snippet=line[:snippet_len],
+                                source="event_summary",
                             )
                         )
     return out
+
+
+def get_card(kb: KB, char_id: str) -> dict | None:
+    """Read the deterministic fact card for a char, or `None` if absent
+    (e.g. an old build, or a char with no handbook entry)."""
+    return read_json_or(paths.char_card_path(kb.root, char_id), None)
+
+
+def event_stages(kb: KB, event_id: str) -> list[dict] | None:
+    """Per-chapter listing for one event (idx / name / avgTag / length /
+    file / story_txt), straight from the event manifest — so an agent can
+    target one `<章节>` instead of reading the whole event."""
+    ev = kb.event_manifests.get(event_id)
+    if ev is None:
+        return None
+    return [
+        {
+            "idx": s["idx"],
+            "name": s["name"],
+            "avgTag": s.get("avgTag"),
+            "length": s.get("length"),
+            "file": s.get("file"),
+            "story_txt": s.get("story_txt"),
+        }
+        for s in ev.get("stages", [])
+    ]
 
 
 # --- event summaries (LLM-derived; populated by Phase 5) --------------
