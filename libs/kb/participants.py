@@ -164,6 +164,19 @@ def _prepare_aliases(
 # --- the participant builder ------------------------------------------
 
 
+def _alias_is_strong(mc: MatchClass, mode: AliasMode, n: int, in_summary: bool) -> bool:
+    """Does this alias hit, on its own, justify `named` (vs `mentioned`)?
+    A multi-char canonical zh name, or a boundary-matched ASCII canonical
+    name, counts at a single hit; a single-zh-char canonical needs ≥2
+    hits or an event-summary hit; curated/fuzzy aliases never do (they
+    only contribute to the ≥2-total fallback)."""
+    if mode == "cjk_multi":
+        return mc == "canonical"
+    if mode == "ascii":
+        return mc in ("canonical", "canonical_short")
+    return n >= 2 or in_summary  # cjk_single
+
+
 def _classify_stage(
     body: str,
     speaker_names: dict[str, int],
@@ -174,25 +187,18 @@ def _classify_stage(
     """One participant row for one (char, stage), or `None` if the char
     doesn't appear in this stage at all."""
     spoke_lines = 0
-    matched: set[str] = set()
-    for alias, _mc, _mode, _rx in aliases:
-        hits = speaker_names.get(alias, 0)
-        if hits:
-            spoke_lines += hits
-            matched.add(alias)
     mention_count = 0
     strong = False
+    matched: set[str] = set()
     for alias, mc, mode, rx in aliases:
+        spoke = speaker_names.get(alias, 0)
         n = _count_in_body(body, alias, rx)
-        if not n:
+        if not spoke and not n:
             continue
-        mention_count += n
         matched.add(alias)
-        if mode == "cjk_multi" and mc == "canonical":
-            strong = True
-        elif mode == "ascii" and mc in ("canonical", "canonical_short"):
-            strong = True
-        elif mode == "cjk_single" and (n >= 2 or cid in summary_char_ids):
+        spoke_lines += spoke
+        mention_count += n
+        if n and _alias_is_strong(mc, mode, n, cid in summary_char_ids):
             strong = True
     if not matched:
         return None

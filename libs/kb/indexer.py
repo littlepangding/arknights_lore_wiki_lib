@@ -276,12 +276,12 @@ def build_event_to_chars(
                     "story_set_name": link["story_set_name"],
                 }
             )
-    for cid, rows in participant.items():
-        for r in rows:
-            by_event[r["event_id"]].append({"char_id": cid, **{k: v for k, v in r.items() if k != "event_id"}})
-    for cid, rows in summary.items():
-        for r in rows:
-            by_event[r["event_id"]].append({"char_id": cid, **{k: v for k, v in r.items() if k != "event_id"}})
+    for layer in (participant, summary):
+        for cid, rows in layer.items():
+            for r in rows:
+                by_event[r["event_id"]].append(
+                    {"char_id": cid, **{k: v for k, v in r.items() if k != "event_id"}}
+                )
 
     def _key(r: dict) -> tuple:
         sidx = r["stage_idx"]
