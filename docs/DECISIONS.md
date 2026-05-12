@@ -181,3 +181,9 @@ The KB is now retrieval-ready end-to-end *modulo* a `kb_build.py` script (Phase 
 - `.gitignore`: added `llm_archive/` — these are large raw dumps; the validated summaries already live in git.
 - Tests: +5 in `test_llm_clients.py` (disabled-by-default, writes-when-enabled, never-raises-on-bad-dir, archives-raw-output, archives-both-attempts-on-retry). Suite 217 passing (was 212). `test_summarize.py` unaffected — archiving stays off unless the global is set, which only `scripts/kb_summarize.py` does.
 - Retention is manual: `rm -rf llm_archive/<date>` to purge. No auto-rotation (deliberate — the user wants to decide).
+
+### 2026-05-12 — Completed the kb_summaries full bake (149 → 461)
+
+**User intent:** "Continue the work, first with pro model" — finish the `kb_summarize` bake of the remaining ~312 events using the post-refactor pipeline (heuristic tag repair + raw-output archive from the 2026-05-11 work), starting with the `gemini-3-pro-preview` model.
+
+**Outcome:** All 461 events now have summaries in `kb_summaries/events/`. The `gemini-3-pro-preview` run exhausted its daily quota after only **9 events** (`TerminalQuotaError`, ~23h reset) — so `gemini-3-pro-preview` is not viable for full bakes; **`gemini-3-flash-preview` stays the practical default**. The flash fallback run wrote the remaining 303 events in ~1h28m (~3.3M tokens) with **zero errors** and exactly **one** heuristic-repair retry (`story_mostma_set_1` — model emitted the English-ized tag `<core剧情>`, which the bracket heuristic can't salvage; the reminder-retry recovered it) — versus the ~150-retry / 108-hard-failure storm before the 2026-05-11 repair work, so that fix is confirmed effective. Source-hash cache meant the 9 pro-baked events weren't re-billed. `kb_summaries/events/*.md` (313 files changed: 312 new + manifest) committed; `llm_archive/2026-05-11/` (582 raw responses, 2.3 MB) left for manual purge.
