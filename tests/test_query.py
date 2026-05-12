@@ -306,3 +306,49 @@ def test_get_event_summary_reads_md_when_present(tmp_path, build_real_kb):
     kb = query.load_kb(kb_root, summaries_root=summaries)
     assert query.get_event_summary(kb, "act_test") == "# 测试"
     assert query.get_event_summary(kb, "no_event") is None
+
+
+def test_grep_in_summaries_scope(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries = tmp_path / "kb_summaries"
+    (summaries / "events").mkdir(parents=True)
+    (summaries / "events" / "act_test.md").write_text(
+        "<一句话概要>\n测试关键词ABC\n</一句话概要>\n", encoding="utf-8"
+    )
+    kb = query.load_kb(kb_root, summaries_root=summaries)
+    hits = query.grep_text(kb, "测试关键词ABC", scope="summaries")
+    assert len(hits) == 1
+    assert hits[0].event_id == "act_test"
+    assert hits[0].source == "event_summary"
+    # `summaries` scope is a no-op when summaries_root is unset.
+    assert query.grep_text(query.load_kb(kb_root), "测试关键词ABC", scope="summaries") == []
+
+
+# --- fact cards -----------------------------------------------------
+
+
+def test_get_card_parsed_from_handbook(loaded_kb):
+    card = query.get_card(loaded_kb, "char_test_001")
+    assert card is not None
+    assert card["char_id"] == "char_test_001"
+    assert card["name"] == "艾莉亚"
+    assert card["basic_info"] == {"代号": "艾莉亚", "出身地": "测试村"}
+    assert "基础档案" in card["archive_sections"]
+
+
+def test_get_card_returns_none_for_unknown_char(loaded_kb):
+    assert query.get_card(loaded_kb, "char_does_not_exist") is None
+
+
+# --- event stages ---------------------------------------------------
+
+
+def test_event_stages_lists_chapters(loaded_kb):
+    stages = query.event_stages(loaded_kb, "act_test")
+    assert stages is not None
+    assert [s["idx"] for s in stages] == list(range(len(stages)))
+    assert all({"name", "avgTag", "length", "file", "story_txt"} <= set(s) for s in stages)
+
+
+def test_event_stages_returns_none_for_unknown_event(loaded_kb):
+    assert query.event_stages(loaded_kb, "no_such_event") is None

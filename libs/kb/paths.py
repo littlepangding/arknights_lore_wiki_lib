@@ -134,6 +134,10 @@ def char_storysets_path(kb_root: Path, char_id: str) -> Path:
     return char_dir(kb_root, char_id) / "storysets.json"
 
 
+def char_card_path(kb_root: Path, char_id: str) -> Path:
+    return char_dir(kb_root, char_id) / "card.json"
+
+
 def indexes_root(kb_root: Path) -> Path:
     return kb_root / "indexes"
 

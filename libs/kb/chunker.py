@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 from libs import game_data
-from libs.kb import paths
+from libs.kb import cards, paths
 from libs.kb._io import atomic_write_json, atomic_write_text, prune_stale_files
 from libs.kb.paths import Family, Section
 
@@ -330,6 +330,11 @@ def write_char(
 
     linked, warnings = resolve_storysets(char, storytxt_index)
     atomic_write_json(paths.char_storysets_path(kb_root, char_id), linked)
+
+    atomic_write_json(
+        paths.char_card_path(kb_root, char_id),
+        cards.build_card(char_id, char, linked),
+    )
 
     aliases = compute_char_aliases(
         char,

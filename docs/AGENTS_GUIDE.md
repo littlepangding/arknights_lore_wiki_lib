@@ -72,12 +72,14 @@ All commands run from the lib repo root with `.venv/bin/python`:
 .venv/bin/python -m scripts.kb_query event get <event_id>
 .venv/bin/python -m scripts.kb_query event chars <event_id> [--source deterministic|inferred|both]
 .venv/bin/python -m scripts.kb_query event stage_chars <event_id> <stage_idx> [--source deterministic|inferred|both]
+.venv/bin/python -m scripts.kb_query event stages <event_id>          # per-chapter listing: idx / name / avgTag / length — pick one <章节> to read
 .venv/bin/python -m scripts.kb_query event stage <event_id> <stage_idx> [--text]
 .venv/bin/python -m scripts.kb_query char resolve <name_or_alias>     # OPERATOR-ONLY; returns resolved/ambiguous/missing
 .venv/bin/python -m scripts.kb_query char get <char_id> [--section profile|voice|archive|skins|modules|all] [--text]
+.venv/bin/python -m scripts.kb_query char card <char_id_or_name>      # deterministic fact card: 基础档案 fields / 客观履历 verbatim / skin+module names / storysets — each tagged with its source table
 .venv/bin/python -m scripts.kb_query char appearances <char_id_or_name> [--source deterministic|inferred|both]
 .venv/bin/python -m scripts.kb_query char storysets <char_id>
-.venv/bin/python -m scripts.kb_query grep "<text>" [--regex] [--in events|chars|all]    # literal substring by default; --regex opts in
+.venv/bin/python -m scripts.kb_query grep "<text>" [--regex] [--in events|chars|summaries|all]    # literal substring by default; --regex opts in; `summaries` searches the baked event summaries (high-signal, no raw-script noise)
 .venv/bin/python -m scripts.kb_query summary event <event_id>
 # `summary char <id>` is intentionally absent in v1 — read the char dossier directly via `char get`.
 ```
