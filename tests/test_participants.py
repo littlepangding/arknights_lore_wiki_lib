@@ -16,7 +16,7 @@ import json
 import pytest
 
 from libs import game_data
-from libs.kb import indexer, participants, query
+from libs.kb import indexer, participants, paths, query
 
 
 # --- speaker-line extraction -----------------------------------------
@@ -325,6 +325,71 @@ def test_build_char_to_events_summary_subtracts_deterministic(tmp_path):
 def test_build_char_to_events_summary_no_summaries_dir(tmp_path):
     assert participants.build_char_to_events_summary(None, {}, {}) == ({}, {})
     assert participants.build_char_to_events_summary(tmp_path / "nope", {}, {}) == ({}, {})
+
+
+def _write_stage_summary(summaries_root, eid, sidx, key_chars: str) -> None:
+    p = paths.stage_summary_path(summaries_root, eid, sidx)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(f"<关键人物>\n{key_chars}\n</关键人物>\n", encoding="utf-8")
+
+
+def _srow(eid, sidx, names):
+    return {
+        "event_id": eid, "stage_idx": sidx, "source": "summary",
+        "tier": "named", "matched_aliases": names,
+    }
+
+
+def test_build_char_to_events_summary_stage_scoped(tmp_path):
+    sr = tmp_path / "kb_summaries"
+    _write_stage_summary(sr, "ev1", 0, "阿米娅;陈")
+    _write_stage_summary(sr, "ev1", 2, "陈")
+    alias_to_char_ids = {"阿米娅": ["char_amiya"], "陈": ["char_chen"]}
+    edges, unresolved = participants.build_char_to_events_summary(sr, alias_to_char_ids, {})
+    assert edges["char_amiya"] == [_srow("ev1", 0, ["阿米娅"])]
+    assert edges["char_chen"] == [_srow("ev1", 0, ["陈"]), _srow("ev1", 2, ["陈"])]
+    assert unresolved == {}
+
+
+def test_build_char_to_events_summary_stage_subsumes_event_scoped(tmp_path):
+    sr = tmp_path / "kb_summaries"
+    (sr / "events").mkdir(parents=True)
+    (sr / "events" / "ev1.md").write_text("<关键人物>\n阿米娅;陈\n</关键人物>\n", encoding="utf-8")
+    _write_stage_summary(sr, "ev1", 1, "阿米娅")  # 阿米娅 baked at stage level for ev1
+    edges, _ = participants.build_char_to_events_summary(
+        sr, {"阿米娅": ["char_amiya"], "陈": ["char_chen"]}, {}
+    )
+    # 阿米娅: only the stage-scoped row (the event-scoped one is subsumed)
+    assert edges["char_amiya"] == [_srow("ev1", 1, ["阿米娅"])]
+    # 陈: no stage summary mentions 陈, so it keeps its event-scoped edge
+    assert edges["char_chen"] == [_srow("ev1", None, ["陈"])]
+
+
+def test_build_char_to_events_summary_stage_subtracts_deterministic(tmp_path):
+    sr = tmp_path / "kb_summaries"
+    _write_stage_summary(sr, "ev1", 0, "阿米娅")
+    _write_stage_summary(sr, "ev1", 1, "阿米娅")
+    deterministic = {"char_amiya": [{"event_id": "ev1", "stage_idx": 0, "story_set_name": "x"}]}
+    edges, _ = participants.build_char_to_events_summary(sr, {"阿米娅": ["char_amiya"]}, deterministic)
+    # stage 0 is already a deterministic edge → only stage 1 survives
+    assert edges["char_amiya"] == [_srow("ev1", 1, ["阿米娅"])]
+
+
+def test_build_char_to_events_summary_unresolved_merged_across_layers(tmp_path):
+    sr = tmp_path / "kb_summaries"
+    (sr / "events").mkdir(parents=True)
+    (sr / "events" / "ev1.md").write_text("<关键人物>\n神农\n</关键人物>\n", encoding="utf-8")
+    _write_stage_summary(sr, "ev1", 0, "神农;颉")  # 神农 also unresolved here; 颉 unresolved
+    edges, unresolved = participants.build_char_to_events_summary(sr, {}, {})
+    assert edges == {}
+    assert unresolved == {"ev1": ["神农", "颉"]}  # deduped + sorted
+
+
+def test_summary_char_ids_by_event_includes_stage_scoped(tmp_path):
+    sr = tmp_path / "kb_summaries"
+    _write_stage_summary(sr, "ev1", 3, "陈")
+    edges, _ = participants.build_char_to_events_summary(sr, {"陈": ["char_chen"]}, {})
+    assert participants.summary_char_ids_by_event(edges) == {"ev1": frozenset({"char_chen"})}
 
 
 def test_summary_char_ids_by_event_inversion():

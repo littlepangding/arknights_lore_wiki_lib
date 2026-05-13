@@ -18,17 +18,26 @@ For each stage, classify every char by how the stage *uses* them:
   nothing stronger. Kept as a recall floor but tier-marked so a
   consumer can drop it.
 
-Plus :func:`build_char_to_events_summary` — deterministic, *event-scoped*
-edges from the ``<关键人物>`` tag of the baked ``kb_summaries/events/<id>.md``,
-each surface name resolved through the alias index. Hash-gated free (no
-LLM call — it just reads the already-baked ``.md``). Per-stage summaries
-(plan phase P-C) will later upgrade this to stage granularity.
+Plus :func:`build_char_to_events_summary` — deterministic edges from the
+``<关键人物>`` tag of the baked ``kb_summaries``:
 
-Subtraction rule (unchanged in spirit, tightened to per-stage): a
+* ``kb_summaries/events/<id>.md`` → *event-scoped* edges (``stage_idx``
+  is ``None``).
+* ``kb_summaries/stages/<event_id>/<NN>.md`` → *stage-scoped* edges
+  (``stage_idx`` is the chapter index). When a char is named in a
+  baked stage summary of an event, the stage breakdown subsumes the
+  event-scoped edge for that ``(char, event)`` — only chars whose stage
+  isn't baked yet keep their event-scoped edge (partial bakes stay
+  honest).
+
+Each surface name is resolved through the alias index. Hash-gated free
+(no LLM call — it just reads the already-baked ``.md``).
+
+Subtraction rule (tightened to per-stage where the edge has a stage): a
 participant or summary edge is suppressed when the deterministic
 storyset pass already covers it — per ``(char_id, event_id, stage_idx)``
-for participant edges, per ``(char_id, event_id)`` for the event-scoped
-summary edges.
+for participant edges and stage-scoped summary edges, per
+``(char_id, event_id)`` for the event-scoped summary edges.
 
 Cost still scales with stages, not stages × chars: each stage file is
 read once and all aliases are greped against it.
@@ -309,6 +318,16 @@ def parse_key_chars(md_text: str) -> list[str]:
     return out
 
 
+def _summary_row(event_id: str, stage_idx: int | None, names: list[str]) -> dict:
+    return {
+        "event_id": event_id,
+        "stage_idx": stage_idx,
+        "source": "summary",
+        "tier": "named",
+        "matched_aliases": names,
+    }
+
+
 def build_char_to_events_summary(
     summaries_root: Path | None,
     alias_to_char_ids: dict[str, list[str]],
@@ -316,62 +335,100 @@ def build_char_to_events_summary(
 ) -> tuple[dict[str, list[dict]], dict[str, list[str]]]:
     """Returns `(edges, unresolved)`.
 
-    `edges`: `char_id -> [{event_id, stage_idx:None, source:"summary",
-    tier:"named", matched_aliases:[surface names]}, ...]` — one row per
-    (char_id, event_id), event-scoped (`stage_idx` is `None`). Suppressed
-    when a deterministic storyset edge already links `(char_id, event_id)`.
+    `edges`: `char_id -> [{event_id, stage_idx, source:"summary",
+    tier:"named", matched_aliases:[surface names]}, ...]`, sorted by
+    `(event_id, stage_idx)` with the event-scoped (`stage_idx is None`)
+    row first. Built from two layers:
 
-    `unresolved`: `event_id -> [surface names that no alias matched]` —
-    surfaced in the build report so a curator can decide whether they
-    deserve a `char_alias.txt` line (or, later, an `entities.jsonl`
-    entry). Ambiguous surface names (alias → >1 char_id) are dropped and
-    *not* reported as unresolved (the resolver's `Ambiguous` case)."""
+    - `kb_summaries/stages/<event_id>/<NN>.md` → stage-scoped rows
+      (`stage_idx` = the chapter index). Suppressed when a deterministic
+      storyset edge already links `(char_id, event_id, stage_idx)`.
+    - `kb_summaries/events/<event_id>.md` → an event-scoped row
+      (`stage_idx is None`), but only for `(char_id, event_id)` pairs
+      *not* already covered by a stage-scoped row (the stage breakdown
+      subsumes the event-level edge) and not covered by a deterministic
+      `(char_id, event_id)` link.
+
+    `unresolved`: `event_id -> [surface names that no alias matched]`
+    (sorted, deduped, merged across the event summary and its stage
+    summaries) — surfaced in the build report so a curator can decide
+    whether they deserve a `char_alias.txt` line (or, later, an
+    `entities.jsonl` entry). Ambiguous surface names (alias → >1 char_id)
+    are dropped and *not* reported as unresolved (the `Ambiguous` case)."""
     edges: dict[str, list[dict]] = {}
-    unresolved: dict[str, list[str]] = {}
+    unresolved_acc: dict[str, set[str]] = defaultdict(set)
     if summaries_root is None:
-        return edges, unresolved
-    events_dir = summaries_root / "events"
-    if not events_dir.is_dir():
-        return edges, unresolved
+        return edges, dict(unresolved_acc)
 
-    det_pairs: set[tuple[str, str]] = {
-        (cid, link["event_id"])
-        for cid, links in deterministic.items()
-        for link in links
-    }
+    det_event_pairs: set[tuple[str, str]] = set()
+    det_stage_triples: set[tuple[str, str, int]] = set()
+    for cid, links in deterministic.items():
+        for link in links:
+            det_event_pairs.add((cid, link["event_id"]))
+            det_stage_triples.add((cid, link["event_id"], link["stage_idx"]))
 
+    def _resolve(name: str, eid: str) -> str | None:
+        """Single matching char_id, or None (ambiguous → silent; missing →
+        recorded against `eid` in `unresolved_acc`)."""
+        ids = alias_to_char_ids.get(name, [])
+        if len(ids) == 1:
+            return ids[0]
+        if not ids:
+            unresolved_acc[eid].add(name)
+        return None
+
+    # --- stage-scoped, from kb_summaries/stages/<eid>/<NN>.md ---
+    # cid -> eid -> sidx -> [surface names]
+    stage_acc: dict[str, dict[str, dict[int, list[str]]]] = defaultdict(
+        lambda: defaultdict(dict)
+    )
+    # (cid, eid) pairs that have ≥1 stage-summary hit → drop the event-scoped row
+    cids_with_stage_hit: set[tuple[str, str]] = set()
+    stages_root = paths.stages_summary_root(summaries_root)
+    if stages_root.is_dir():
+        for ev_dir in sorted(stages_root.iterdir()):
+            if not ev_dir.is_dir():
+                continue
+            eid = ev_dir.name
+            for md in sorted(ev_dir.glob("*.md")):
+                try:
+                    sidx = int(md.stem)
+                except ValueError:
+                    continue
+                for name in parse_key_chars(md.read_text(encoding="utf-8")):
+                    cid = _resolve(name, eid)
+                    if cid is None or (cid, eid, sidx) in det_stage_triples:
+                        continue
+                    stage_acc[cid][eid].setdefault(sidx, []).append(name)
+                    cids_with_stage_hit.add((cid, eid))
+
+    # --- event-scoped, from kb_summaries/events/<eid>.md ---
     # cid -> eid -> [surface names]
-    acc: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
-    for md in sorted(events_dir.glob("*.md")):
-        eid = md.stem
-        names = parse_key_chars(md.read_text(encoding="utf-8"))
-        missed: list[str] = []
-        for name in names:
-            ids = alias_to_char_ids.get(name, [])
-            if len(ids) != 1:
-                if not ids:
-                    missed.append(name)
-                continue
-            cid = ids[0]
-            if (cid, eid) in det_pairs:
-                continue
-            acc[cid][eid].append(name)
-        if missed:
-            unresolved[eid] = missed
+    event_acc: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
+    events_dir = summaries_root / "events"
+    if events_dir.is_dir():
+        for md in sorted(events_dir.glob("*.md")):
+            eid = md.stem
+            for name in parse_key_chars(md.read_text(encoding="utf-8")):
+                cid = _resolve(name, eid)
+                if (
+                    cid is None
+                    or (cid, eid) in det_event_pairs
+                    or (cid, eid) in cids_with_stage_hit
+                ):
+                    continue
+                event_acc[cid][eid].append(name)
 
-    for cid in sorted(acc):
+    for cid in sorted(set(stage_acc) | set(event_acc)):
         rows: list[dict] = []
-        for eid in sorted(acc[cid]):
-            rows.append(
-                {
-                    "event_id": eid,
-                    "stage_idx": None,
-                    "source": "summary",
-                    "tier": "named",
-                    "matched_aliases": acc[cid][eid],
-                }
-            )
+        for eid in sorted(set(stage_acc.get(cid, {})) | set(event_acc.get(cid, {}))):
+            if eid in event_acc.get(cid, {}):
+                rows.append(_summary_row(eid, None, event_acc[cid][eid]))
+            for sidx in sorted(stage_acc.get(cid, {}).get(eid, {})):
+                rows.append(_summary_row(eid, sidx, stage_acc[cid][eid][sidx]))
         edges[cid] = rows
+
+    unresolved = {eid: sorted(names) for eid, names in sorted(unresolved_acc.items())}
     return edges, unresolved
 
 
