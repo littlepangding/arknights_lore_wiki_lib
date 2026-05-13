@@ -1,16 +1,25 @@
-"""Bake LLM-derived event summaries into `kb_summaries/events/<id>.md`.
+"""Bake LLM-derived summaries into `kb_summaries/`.
 
-Reads the deterministic KB under `data/kb/events/`, runs the P1 prompt
-against each event (single-pass or multi-pass per the M5 threshold) and
-writes a small zh summary plus frontmatter. A manifest at
-`kb_summaries/manifest.json` records source hashes so unchanged events
-are skipped on the next run (no token re-spend).
+Two layers, both reading the deterministic KB under `data/kb/`:
+
+* event summaries (default) → `kb_summaries/events/<id>.md` — one per event,
+  single-pass or multi-pass per the M5 threshold.
+* `--stages` → `kb_summaries/stages/<event_id>/<NN>.md` — one per `<章节>`,
+  always single-pass. Catches the chapter-level retrieval need; its
+  `<关键人物>` tags also feed the KB's `summary`-source char↔stage edges.
+
+A manifest at `kb_summaries/manifest.json` records source hashes (separate
+`events` / `stages` sections) so unchanged chunks are skipped on the next
+run (no token re-spend). Persisted after every write, so a kill / quota
+wall mid-bake never loses paid-for work — re-run to resume.
 
 Run from the lib repo root (so `keys.json` resolves):
 
     .venv/bin/python -m scripts.kb_summarize             # all events
-    .venv/bin/python -m scripts.kb_summarize --event act46side
-    .venv/bin/python -m scripts.kb_summarize --llm gai --model gemini-2.5-flash
+    .venv/bin/python -m scripts.kb_summarize --stages    # all stages
+    .venv/bin/python -m scripts.kb_summarize --stages --event act46side
+    .venv/bin/python -m scripts.kb_summarize --stages --llm cli --model gemini-3.1-pro-preview
+    .venv/bin/python -m scripts.kb_summarize --stages --estimate   # dry-run cost
 
 Defaults to the Gemini CLI backend (`gemini`). `--llm claude` shells out
 to the local `claude` binary; `--llm gai` uses the google-genai SDK
@@ -129,15 +138,22 @@ def main() -> int:
         help="Override default model for the chosen backend.",
     )
     parser.add_argument(
+        "--stages",
+        action="store_true",
+        help="Bake per-章节 summaries (kb_summaries/stages/<event_id>/<NN>.md) "
+        "instead of per-event summaries.",
+    )
+    parser.add_argument(
         "--event",
         action="append",
         default=[],
-        help="Restrict to this event_id (repeatable). Default: all events.",
+        help="Restrict to this event_id (repeatable). With --stages, restricts "
+        "to that event's stages. Default: all events.",
     )
     parser.add_argument(
         "--force",
         action="store_true",
-        help="Ignore source-hash cache and re-summarize every selected event.",
+        help="Ignore source-hash cache and re-summarize every selected unit.",
     )
     parser.add_argument(
         "--estimate",
@@ -188,12 +204,15 @@ def main() -> int:
     only = args.event or None
 
     if args.estimate:
-        est = summarize.estimate_remaining(
-            kb_root, summaries_root, only=only, force=args.force
+        est = (
+            summarize.estimate_remaining_stages(kb_root, summaries_root, only=only, force=args.force)
+            if args.stages
+            else summarize.estimate_remaining(kb_root, summaries_root, only=only, force=args.force)
         )
-        scope = f"{len(only)} requested event(s)" if only else "full corpus"
+        units = "stages" if args.stages else "events"
+        scope = f"{len(only)} requested event(s)" if only else f"full corpus ({units})"
         print(f"cost estimate — {scope}  (force={args.force})")
-        print(f"  events to run:   {est.n_to_run}  (single-pass: {est.n_single}, multi-pass: {est.n_multi})")
+        print(f"  {units} to run:  {est.n_to_run}  (single-pass: {est.n_single}, multi-pass: {est.n_multi})")
         print(f"  already done:    {len(est.already_done)}  (skipped — no token spend)")
         print(f"  LLM calls:       ~{est.llm_calls}")
         print(f"  input:           ~{est.in_chars:,} chars   ≈ ~{est.in_tokens:,} tokens")
@@ -216,14 +235,16 @@ def main() -> int:
         archive_dir = try_get_value("llm_archive_path", "llm_archive")
     set_llm_archive_dir(archive_dir)
 
+    layer = "per-stage" if args.stages else "per-event"
     if only:
-        print(f"summarizing {len(only)} event(s): {', '.join(only)}")
+        print(f"summarizing {layer} for {len(only)} event(s): {', '.join(only)}")
     else:
-        print("summarizing all events under", paths.events_root(kb_root))
+        print(f"summarizing {layer} over all events under", paths.events_root(kb_root))
     print(f"backend={backend}  model={model or client.default_model}  force={args.force}  prune={not args.no_prune}")
     print(f"raw-output archive: {archive_dir or 'off'}")
 
-    report = summarize.summarize_all(
+    run = summarize.summarize_all_stages if args.stages else summarize.summarize_all
+    report = run(
         kb_root,
         summaries_root,
         client,
@@ -238,6 +259,9 @@ def main() -> int:
     print()
     print(f"wrote:   {len(report.wrote)}")
     print(f"skipped (unchanged): {len(report.skipped)}")
+    if report.terminal_error:
+        print(f"BATCH STOPPED — terminal error: {report.terminal_error}", file=sys.stderr)
+        print("  (re-run to resume; the manifest is up to date through the last write)", file=sys.stderr)
     if report.errors:
         print(f"errors: {len(report.errors)}")
         for eid, msg in report.errors:

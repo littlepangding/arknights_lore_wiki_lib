@@ -13,7 +13,8 @@ Two layers:
   - Per-character **sectional** files under `chars/<char_id>/{profile,voice,archive,skins,modules}.txt` plus `manifest.json` and `storysets.json`. Read only the section you need.
   - JSON indexes: `events_by_family.json` (mainline / activity / mini_activity / operator_record / other), `char_to_events_deterministic.json`, `char_to_events_participant.json`, `char_to_events_summary.json`, `event_to_chars.json`, `stage_table.json`, `char_table.json`, optionally `char_alias.json`.
 - **Summary layer** at `kb_summaries/` (in git, optionally LLM-baked via `scripts/kb_summarize.py`):
-  - Per-event 600-zh-char summary + 关键人物 list + 场景标签.
+  - `events/<id>.md` — per-event 600-zh-char summary + 关键人物 list + 场景标签.
+  - `stages/<event_id>/<NN>.md` — per-`<章节>` summary (same 4-tag shape, ≤200 字 核心剧情), baked by `kb_summarize --stages`. The chapter-level retrieval layer: event → its stage one-liners → pick a chapter → pull raw `正文`. (Code shipped; the corpus-wide bake may not be run yet — check whether `kb_summaries/stages/` is populated.)
   - **No per-char summaries in v1** — char data is already sectional and small (median ~5 KB, max ~11 KB total). Read `chars/<id>/manifest.json` for navigation, then specific section files for content.
 
 Read event summaries first when picking which event to dig into. They're tiny. Drop down to raw only when the summary is insufficient.
@@ -42,7 +43,7 @@ Every char↔stage link in the KB carries a `source` (and, for `participant`, a 
   - `named` — an alias appears in narration: a multi-char canonical zh name, an ASCII canonical name with a real word boundary (`W` ⊄ `World` but `W` ⊂ `W走`), a single-zh-char canonical seen ≥2× (or also listed in the event summary), or aliases summing to ≥2 mentions.
   - `mentioned` — a lone passing reference and nothing stronger. Kept as a recall floor; **dropped by default** (`--min-tier named`). When you see one, say "name-dropped", not "appears in".
   - `participant` edges are *additional* to deterministic ones (the exact stage that has a deterministic edge is not re-emitted as a participant).
-- **`summary`** — *event-scoped* (`stage_idx` is `null`): the `<关键人物>` tag of a baked event summary, each surface name resolved through the alias index. Catches chars referred to only by a title/nickname a name-grep misses. Treated as `tier=named` for `--min-tier`. (Event-scoped today; a later phase will make per-stage summaries upgrade it to stage granularity.)
+- **`summary`** — *event-scoped* (`stage_idx` is `null`): the `<关键人物>` tag of a baked event summary, each surface name resolved through the alias index. Catches chars referred to only by a title/nickname a name-grep misses. Treated as `tier=named` for `--min-tier`. (Event-scoped today. The per-`<章节>` summary layer — `kb_summarize --stages` → `kb_summaries/stages/` — exists as a code path; once that bake runs, its `<关键人物>` will add stage-granular `summary` edges. Not yet wired into the index.)
 
 `event chars` / `stage_chars` / `char appearances` take `--source {deterministic,participant,summary,all}` (default `all`) and `--min-tier {speaker,named,mentioned}` (default `named`). When precision matters, pin `--source deterministic` or `--min-tier speaker`.
 

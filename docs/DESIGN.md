@@ -521,11 +521,16 @@ Idempotent: re-running compares hashes; only re-writes changed files. Use `os.re
 
 ```
 kb_summarize.py [--llm cli|gai|claude] [--model ...]
-                [--only <event_id1> <event_id2> ...]
-                [--force]
+                [--stages]
+                [--event <event_id> ...] [--force] [--estimate] [--no-prune]
 ```
 
-v1 summarizes events only (no char summaries — see `summarize.py` rationale above). Defaults to `--llm cli`. Skips items whose source hash matches the manifest (no re-billing on unchanged inputs). Writes to `kb_summaries/events/`. After each item, validates the output contains the expected zh tags, retries once on failure (mirroring `query_llm_validated`).
+Two bakes (no char summaries — see `summarize.py` rationale above):
+
+- **default** — one summary per event → `kb_summaries/events/<id>.md` (single-pass or, past the M5 threshold, per-stage reduce + merge).
+- **`--stages`** — one summary per `<章节>` → `kb_summaries/stages/<event_id>/<NN>.md`, always single-pass (no stage chunk approaches the threshold; ~1937 stages corpus-wide — `--stages --estimate` prints the projected ~13M-token cost). This is plan phase P-C: the chapter-level retrieval layer; its `<关键人物>` will later upgrade the `summary`-source char↔stage edges to stage granularity.
+
+Both share `summarize._run_batch`: defaults to `--llm cli`; skips units whose source hash matches the manifest (separate `events` / `stages` sections, no re-billing on unchanged inputs); persists the manifest after every write so a kill / quota wall mid-bake never loses paid-for work (re-run to resume); bails the whole batch on a terminal LLM error (quota / bad model / auth); validates the expected zh tags per unit and retries once on failure (mirroring `query_llm_validated`). `--estimate` is a no-LLM dry-run of the run that would happen. Pruning (above) applies to both `kb_summaries/events/<id>.md` and `kb_summaries/stages/<event_id>/<NN>.md` (and now-empty stage dirs) on a full, completed run.
 
 ## Retrieval pipeline (no LLM)
 

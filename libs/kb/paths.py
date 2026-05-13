@@ -154,5 +154,17 @@ def event_summary_path(summaries_root: Path, event_id: str) -> Path:
     return summaries_root / "events" / f"{event_id}.md"
 
 
+def stages_summary_root(summaries_root: Path) -> Path:
+    return summaries_root / "stages"
+
+
+def event_stages_summary_dir(summaries_root: Path, event_id: str) -> Path:
+    return stages_summary_root(summaries_root) / event_id
+
+
+def stage_summary_path(summaries_root: Path, event_id: str, stage_idx: int) -> Path:
+    return event_stages_summary_dir(summaries_root, event_id) / f"{stage_idx:02d}.md"
+
+
 def summaries_manifest_path(summaries_root: Path) -> Path:
     return summaries_root / "manifest.json"

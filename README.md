@@ -98,15 +98,17 @@ JSON output by default; `--text` returns raw chunks where applicable. The fact c
 
 `--min-tier {speaker,named,mentioned}` (default `named`) thresholds the `participant` edges; `deterministic` edges always survive it.
 
-### 4. Bake LLM event summaries (`kb_summaries/`)
+### 4. Bake LLM summaries (`kb_summaries/`)
 
-Optional layer — small zh summaries committed to git as a navigation aid.
+Optional layer — small zh summaries committed to git as a navigation aid. Two flavours: per-event (default) and per-`<章节>` (`--stages`, output under `kb_summaries/stages/<event_id>/<NN>.md` — the chapter-level retrieval layer; ~1937 stages, always single-pass).
 
 ```bash
 .venv/bin/python -m scripts.kb_summarize --event story_12fce_set_1   # one event
 .venv/bin/python -m scripts.kb_summarize                              # all events (token cost)
-.venv/bin/python -m scripts.kb_summarize --llm claude                 # use Claude CLI
-.venv/bin/python -m scripts.kb_summarize --estimate                   # dry-run: how many events / LLM calls / ~tokens are left
+.venv/bin/python -m scripts.kb_summarize --stages                     # all stages (token cost — biggest bake)
+.venv/bin/python -m scripts.kb_summarize --stages --event act46side   # just one event's chapters
+.venv/bin/python -m scripts.kb_summarize --llm cli --model gemini-3.1-pro-preview
+.venv/bin/python -m scripts.kb_summarize --stages --estimate          # dry-run: how many stages / LLM calls / ~tokens are left
 ```
 
 Source-hash cache: re-runs over unchanged events are no-ops (no token re-spend). A real run streams a per-event progress line (`[i/N] <event_id>  done X/Y ev  ~tok_done/tok_total  elapsed  ETA ~…`) so a multi-hour bake isn't silent. Malformed-tag responses are first repaired heuristically (unclosed trailing tag, full-width brackets, markdown labels) before any re-ask; the raw text of *every* model response is archived under `llm_archive/<date>/` (gitignored — they cost tokens and the committed `.md` keeps only a canonicalized subset; `--no-archive` to skip, `--archive-dir` / `keys.json llm_archive_path` to relocate). `--estimate` calls no LLM — it just prints the projected cost (events to run, single vs multi pass, LLM calls, input/output/total chars ≈ tokens) of the run that *would* happen; honors `--event` / `--force`.
