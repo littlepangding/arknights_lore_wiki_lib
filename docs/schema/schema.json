@@ -1,0 +1,320 @@
+{
+  "$schema_version": "2",
+  "title": "明日方舟 KB —— 概念地图",
+  "as_of": "2026-05-14",
+  "note": "面向评审的高层视图：节点是明日方舟世界中的概念，而不是文件。文件路径 / libs/kb 模块 / kb_query CLI 都收纳在每个节点的『底层细节』里。共五个分组：世界里有什么 · 剧情在哪里 · 干员相关知识 · 怎样建立联系 · agent 如何检索。",
+  "layers": [
+    { "id": "lyr-world",  "label": "世界里有什么",          "color": "#f59e0b", "order": 0 },
+    { "id": "lyr-story",  "label": "剧情在哪里",            "color": "#0ea5e9", "order": 1 },
+    { "id": "lyr-op",     "label": "干员相关知识",          "color": "#14b8a6", "order": 2 },
+    { "id": "lyr-conn",   "label": "怎样建立联系",          "color": "#a855f7", "order": 3 },
+    { "id": "lyr-agent",  "label": "agent 如何检索",        "color": "#f43f5e", "order": 4 }
+  ],
+  "edge_kinds": [
+    { "id": "contains",   "color": "#64748b", "style": "solid",  "label": "包含" },
+    { "id": "has",        "color": "#0d9488", "style": "solid",  "label": "拥有" },
+    { "id": "links",      "color": "#4f46e5", "style": "solid",  "label": "指向" },
+    { "id": "bakes",      "color": "#16a34a", "style": "dashed", "label": "LLM 烤制" },
+    { "id": "names",      "color": "#7c3aed", "style": "solid",  "label": "提到" },
+    { "id": "resolves",   "color": "#dc2626", "style": "solid",  "label": "解析为" },
+    { "id": "uses",       "color": "#be185d", "style": "solid",  "label": "使用" },
+    { "id": "flow",       "color": "#fb7185", "style": "solid",  "label": "下一步" }
+  ],
+  "nodes": [
+    {
+      "data": {
+        "id": "w-operator",
+        "parent": "lyr-world",
+        "label": "干员\n(Operator)",
+        "kind": "entity",
+        "count": "444",
+        "summary": "可玩的角色。拥有完整档案 + 确定性的章节指针 —— v1 中唯一的一类一等公民实体。",
+        "details": "来源：character_table（449 条记录，444 条 name 非空；5 条无名 npc_* 被跳过）。每个干员有 7 个分节的档案（见『干员档案集』），并通过 handbook 的 storyset 与对应活动 / 章节存在确定性链接。",
+        "queries_via": "kb_query char resolve <名字>  ·  kb_query char get <char_id>",
+        "where": [
+          "源数据：ArknightsGameData/zh_CN/gamedata/excel/character_table.json",
+          "KB 落地：data/kb/chars/<char_id>/manifest.json",
+          "索引：data/kb/indexes/char_table.json",
+          "代码：libs/kb/chunker.py, libs/kb/entities.py"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "w-entity-other",
+        "parent": "lyr-world",
+        "label": "非干员实体\n(NPC · 组织 · 地点 · 群体)",
+        "kind": "entity",
+        "summary": "不是干员的具名实体：NPC（特蕾西娅 · 霜星 · 鼠王）、组织（整合运动 · 罗德岛）、地点（哥伦比亚 · 切诺米）、群体。",
+        "details": "只能通过策展人手工维护的文件进入 KB —— 没有档案，没有分节文件。Agent 通过更宽的 `entity resolve`（而不是 `char resolve`）查询，或者最终落到对章节正文的字面 grep。",
+        "weakness": "策展缺口。若没有 entities_curated.jsonl，这些实体不会成为一等公民 —— 只会作为自动播种的『未解析名字』存在。整理别名文件里 348 条中约 90% 指向的就是这类实体（而非干员）。",
+        "queries_via": "kb_query entity resolve <名字>  ·  kb_query entity list --type npc|organization|location|group",
+        "where": [
+          "策展输入：arknights_lore_wiki/data/entities_curated.jsonl",
+          "构建到：data/kb/entities.jsonl（id 形如 `ent_<6位16进制>`）",
+          "代码：libs/kb/entities.py"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "w-unknown",
+        "parent": "lyr-world",
+        "label": "未解析名字",
+        "kind": "entity",
+        "summary": "出现在已烤制摘要的 `<关键人物>` 标签里、但没有任何别名匹配的表面名。",
+        "details": "自动播种为 entities.jsonl 里 `entity_type=unknown` 的行 —— 这是策展人的待办清单：每一条要么是还没策展的真实实体，要么是模型在摘要里生造出来的幻觉，两种情况都值得知道。",
+        "weakness": "可能是策展滞后，也可能是摘要烤制时模型出错。上次完整 P-B 跑下来有 1,991 个未解析名字，分布在 433 个活动里；每次 kb_build 都会重新汇总。",
+        "queries_via": "kb_query entity list --type unknown",
+        "where": [
+          "构建到：data/kb/entities.jsonl（entity_type='unknown'）",
+          "构建清单里也会列出 `unresolved_summary_names`"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "w-ambiguous",
+        "parent": "lyr-world",
+        "label": "歧义名字",
+        "kind": "entity",
+        "summary": "在多个干员上发生碰撞的展示名。",
+        "details": "目前已知 9 个碰撞：暮落 · 郁金香 · Sharp · Stormeye · Pith · Touch · 预备干员-A / B / C。整理别名表里指向歧义 canonical 的别名（例如 `沉渊;暮落`）也会冒泡为歧义。",
+        "weakness": "解析器返回 Ambiguous(候选)，绝不自动二选一。Agent 必须借助 nation、出场分节或上下文来消歧。",
+        "queries_via": "kb_query char resolve <名字>   （返回带标签的 Ambiguous 联合类型）",
+        "where": [
+          "落地：data/kb/indexes/char_alias.json → `ambiguous_aliases` 映射",
+          "代码：libs/kb/indexer.py（别名整理）、libs/kb/query.py（解析器）"
+        ]
+      }
+    },
+
+    {
+      "data": {
+        "id": "s-family",
+        "parent": "lyr-story",
+        "label": "剧情大类\n(source family)",
+        "kind": "structure",
+        "count": "5",
+        "summary": "主要的浏览轴：主线 · 活动 · 小型活动 · 干员密录 · 其他。",
+        "details": "由每个活动的 storyTxt 前缀 + entryType 确定性推导出来。这个分类比原始数据里『entryType=NONE』那种坍缩有用 —— 372/461 个活动落在 `干员密录` （operator_record）。",
+        "queries_via": "kb_query family list  ·  kb_query event list --family operator_record",
+        "where": [
+          "分类器：libs/kb/paths.py → source_family(storyTxt, entryType)",
+          "索引：data/kb/indexes/events_by_family.json"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "s-event",
+        "parent": "lyr-story",
+        "label": "活动 / 章节\n(剧情活动 · 主线章节 · 密录)",
+        "kind": "structure",
+        "count": "461",
+        "summary": "一个自洽的剧情单元 —— 主线章节、支线活动、干员密录。",
+        "details": "通过 event_id 标识（act46side、main_16、obt_memory_amiya_1 等）。每个活动包含一组有序的章节 —— 即它的场景 —— 外加活动名、source_family、storyTxt 前缀等元数据。",
+        "queries_via": "kb_query event list  ·  kb_query event get <event_id>  ·  kb_query event stages <event_id>",
+        "where": [
+          "源：story_review_table.json",
+          "KB：data/kb/events/<event_id>/event.json",
+          "索引：data/kb/indexes/stage_table.json（章节级元数据）"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "s-stage",
+        "parent": "lyr-story",
+        "label": "章节 / Stage",
+        "kind": "structure",
+        "count": "1,937",
+        "summary": "最小的叙事单位。一场被清洗过的对白脚本，按 行动前 · 行动后 · 幕间 打标。",
+        "details": "中位数约 5K 中文字符，最大约 21K。章节在活动内按 storySort 排序。当摘要不够具体时，agent 最终读的就是这一层；出场关系也最终指向这一层。",
+        "queries_via": "kb_query event stage <event_id> <idx> --text",
+        "where": [
+          "源：ArknightsGameData/zh_CN/gamedata/story/... 下的原始脚本",
+          "由 libs/game_data.py → clean_script 清洗",
+          "KB：data/kb/events/<event_id>/stage_NN_<slug>.txt"
+        ]
+      }
+    },
+
+    {
+      "data": {
+        "id": "o-dossier",
+        "parent": "lyr-op",
+        "label": "干员档案集\n(7 个分节)",
+        "kind": "structure",
+        "summary": "干员的 7 个数据分节：招聘文本 · 干员语音 · 干员档案 · 干员皮肤 · 干员模组 · 客观履历卡片 · 章节指针。",
+        "details": "分节存储而非一坨：要问『某干员的语音里讲了什么』时只读 voice.txt 即可，不必拉整个档案。单节通常 <2 KB；整个档案最大约 11 KB。其中 章节指针（storyset）很特别 —— 它携带确定性的、ground-truth 级别的链接进入活动 / 章节图。",
+        "queries_via": "kb_query char get <char_id> [--section profile|voice|archive|skins|modules|all]  ·  kb_query char card <char_id>  ·  kb_query char storysets <char_id>",
+        "where": [
+          "KB：data/kb/chars/<char_id>/{profile,voice,archive,skins,modules}.txt + card.json + storysets.json",
+          "代码：libs/kb/chunker.py（分节），libs/kb/cards.py（确定性事实卡）",
+          "源表：character_table · charword_table · handbook_info_table · skin_table · uniequip_table"
+        ]
+      }
+    },
+
+    {
+      "data": {
+        "id": "c-appearance",
+        "parent": "lyr-conn",
+        "label": "出场关系\n(干员 → 章节)",
+        "kind": "link",
+        "summary": "最核心的交叉引用 —— 哪个干员出现在哪里。共 5 个置信度层级。",
+        "details": "deterministic —— 来自 handbook storyset → event（ground truth，372 条链接）。\nspeaker —— 干员在该章节有 ≥1 句台词。\nnamed —— 别名出现在叙述中（多字 canonical、带词边界的 ASCII canonical、有佐证的单字 zh canonical 等）。\nmentioned —— 单次顺带提及；默认丢弃。\nsummary —— 从已烤制的 `<关键人物>` 标签来；若已烤章节级摘要则 stage_idx 有值，否则为 null。",
+        "weakness": "tier 语义很重要。`mentioned` 是高召回 / 低精度 —— 默认就过滤掉。`summary` 行的 stage_idx 在章节级摘要还没烤之前可能是 null，导致按章节查询时看不到这些行。",
+        "queries_via": "kb_query char appearances <id> [--source ...] [--min-tier ...]  ·  kb_query event chars <id>  ·  kb_query event stage_chars <id> <idx>",
+        "where": [
+          "索引：data/kb/indexes/char_to_events_{deterministic,participant,summary}.json + event_to_chars.json（合并视图）",
+          "代码：libs/kb/participants.py（台词解析 + 分层匹配器），libs/kb/indexer.py（合并）"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "c-cooccur",
+        "parent": "lyr-conn",
+        "label": "同场对\n(干员 ↔ 干员)",
+        "kind": "link",
+        "summary": "哪些干员共享了场景。对称统计 —— co_stage（同章节）+ co_event（活动内共出场）。",
+        "details": "在默认 `--min-tier named` 下聚合三层出场关系。co_stage 是高信号指标。在 typed-relation 烤制完成前，它是『谁跟谁有关』的代理；同时也是后续 typed-relation 烤制的候选池。",
+        "queries_via": "kb_query relations cooccur [--char <id>] [--min ...]",
+        "where": [
+          "构建到：data/kb/cooccurrence.jsonl",
+          "代码：libs/kb/cooccurrence.py"
+        ],
+        "built": "wip"
+      }
+    },
+    {
+      "data": {
+        "id": "c-relation",
+        "parent": "lyr-conn",
+        "label": "有类型关系\n(member-of · ally · aka · …)",
+        "kind": "link",
+        "summary": "手打的断言：『member-of』『ally-of』『creator-of』『aka』等。骨架代码已落地；LLM 烤制尚未运行。",
+        "details": "行格式：{head, type, tail, source_event_ids, notes, confidence}。type 词表故意没固定 —— 等烤制遇到真实数据后再敲定。",
+        "weakness": "v1 里是空的。跨人物的问题（『X 和 Y 是什么关系』）目前只能靠 co-occurrence 计数 + 人工读章节。",
+        "queries_via": "kb_query relations（规划中）",
+        "where": [
+          "将落地于：data/kb/relations.jsonl",
+          "代码：libs/kb/relations.py（load/query 骨架）"
+        ],
+        "built": false
+      }
+    },
+    {
+      "data": {
+        "id": "c-summary",
+        "parent": "lyr-conn",
+        "label": "LLM 摘要\n(活动级 + 章节级)",
+        "kind": "link",
+        "summary": "每个活动一份（~600 zh）+ 每个章节一份（~200 zh）的导航摘要。4 个统一标签：一句话概要 · 核心剧情 · 关键人物 · 场景标签。",
+        "details": "决定『要不要深读这个活动 / 章节』时先看摘要；摘要回答不了再下沉到原文。摘要里的 `<关键人物>` 同时会喂回出场索引（source=summary）。如果某个关键人物名字解析不出来，会落地为『未解析名字』。",
+        "queries_via": "kb_query summary event <id>  ·  kb_query grep --in summaries \"<text>\"",
+        "where": [
+          "KB：kb_summaries/events/<event_id>.md + kb_summaries/stages/<event_id>/<NN>.md（已入 git）",
+          "代码：libs/kb/summarize.py · 提示词在 docs/PROMPTS.md"
+        ]
+      }
+    },
+
+    {
+      "data": {
+        "id": "a-resolve",
+        "parent": "lyr-agent",
+        "label": "1. 解析名字",
+        "kind": "workflow",
+        "summary": "把用户输入的名字映射到稳定 id。三条路径按顺序：先 operator，再 entity，最后字面 grep 兜底。",
+        "details": "char resolve：只查干员（name + appellation + 整理别名）。\nentity resolve：范围更广 —— 同时包括策展的 NPC / 组织 等，以及自动播种的 unknown。\nGrep 兜底：在章节正文 + 档案分节里做字面子串搜索；前两条都失败时的召回兜底。",
+        "weakness": "agent 必须处理三种失败模式：Missing（落到 grep）、Ambiguous（用上下文选一个）、以及静默的『整理别名表未加载』情况（整理别名里有 90% 指向非干员）。",
+        "queries_via": "kb_query char resolve  →  kb_query entity resolve  →  kb_query grep",
+        "where": [
+          "代码：libs/kb/query.py（resolve_operator_name, resolve_entity）"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "a-narrow",
+        "parent": "lyr-agent",
+        "label": "2. 缩小范围",
+        "kind": "workflow",
+        "summary": "拿到 id 后，先收缩到几个活动 / 章节 —— 不要把整个语料拉进上下文。",
+        "details": "对于干员：先看 storysets（确定性 ground truth）。然后用默认的 `--source all --min-tier named` 看更宽的画面。需要更高精度时把过滤改成 `--source deterministic` 或 `--min-tier speaker`。",
+        "queries_via": "kb_query char storysets <id>  ·  kb_query char appearances <id> [--source ...] [--min-tier ...]",
+        "where": [
+          "代码：libs/kb/query.py（char_storysets, char_appearances, event_chars, stage_chars）"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "a-read",
+        "parent": "lyr-agent",
+        "label": "3. 阅读\n(摘要 → 原文)",
+        "kind": "workflow",
+        "summary": "按代价从小到大读：先读活动摘要，再读章节摘要，最后才下沉到原文。",
+        "details": "摘要小且经过预处理；原文一节就是 5–20 KB，很容易把上下文吃满。若问的是干员相关问题，直接读对应分节（`char get --section voice --text`）比 dump 整个档案便宜得多。",
+        "queries_via": "kb_query summary event <id>  →  kb_query event stages <id>  →  kb_query event stage <id> <idx> --text",
+        "where": [
+          "代码：libs/kb/query.py（get_event_summary, get_stage_text）"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "a-audit",
+        "parent": "lyr-agent",
+        "label": "Wiki 审核\n(双信号)",
+        "kind": "workflow",
+        "summary": "用 KB 校验生成的 wiki 页（故事页 / 角色页）。两路互补的信号一起跑。",
+        "details": "信号 1 —— 实体覆盖度 diff（便宜，没 LLM）：捕捉缺失的角色 / 场景。\n信号 2 —— 单条断言的 LLM 裁定（有依据 / 无依据 / 不确定）：捕捉双方都提到的实体之间的错误归因 + 幻觉。\n带预算上限：≤30 条断言、≤15 个缺失候选、每次 LLM 调用 3 节 × 8K 字符、单活动 ~150K token 软上限。",
+        "queries_via": "scripts/kb_audit_wiki.py --target story|char <id>",
+        "where": [
+          "代码：scripts/kb_audit_wiki.py · 提示词 P3 / P4 在 docs/PROMPTS.md",
+          "锚点：干员客观履历卡、出场关系、已烤摘要、原文章节"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    { "data": { "id": "e-family-event", "source": "s-family",  "target": "s-event",  "kind": "contains" } },
+    { "data": { "id": "e-event-stage",  "source": "s-event",   "target": "s-stage",  "kind": "contains" } },
+
+    { "data": { "id": "e-op-dossier",   "source": "w-operator", "target": "o-dossier", "kind": "has" } },
+    { "data": { "id": "e-dossier-event","source": "o-dossier",  "target": "s-event",   "kind": "links", "label": "storyset（确定性）" } },
+
+    { "data": { "id": "e-op-app",       "source": "w-operator", "target": "c-appearance", "kind": "has",  "label": "出场主体" } },
+    { "data": { "id": "e-app-stage",    "source": "c-appearance","target": "s-stage",     "kind": "links","label": "指向章节" } },
+    { "data": { "id": "e-op-cooccur",   "source": "w-operator", "target": "c-cooccur",    "kind": "has",  "label": "成对" } },
+    { "data": { "id": "e-cooccur-rel",  "source": "c-cooccur",  "target": "c-relation",   "kind": "links","label": "候选对" } },
+
+    { "data": { "id": "e-bake-event",   "source": "s-event",    "target": "c-summary",    "kind": "bakes", "label": "每活动一份" } },
+    { "data": { "id": "e-bake-stage",   "source": "s-stage",    "target": "c-summary",    "kind": "bakes", "label": "每章节一份" } },
+    { "data": { "id": "e-summ-app",     "source": "c-summary",  "target": "c-appearance", "kind": "names", "label": "关键人物 → 出场" } },
+    { "data": { "id": "e-summ-op",      "source": "c-summary",  "target": "w-operator",   "kind": "names" } },
+    { "data": { "id": "e-summ-ent",     "source": "c-summary",  "target": "w-entity-other","kind": "names" } },
+    { "data": { "id": "e-summ-unk",     "source": "c-summary",  "target": "w-unknown",    "kind": "names", "label": "未解析" } },
+
+    { "data": { "id": "e-resolve-op",   "source": "a-resolve",  "target": "w-operator",      "kind": "resolves" } },
+    { "data": { "id": "e-resolve-ent",  "source": "a-resolve",  "target": "w-entity-other",  "kind": "resolves" } },
+    { "data": { "id": "e-resolve-amb",  "source": "a-resolve",  "target": "w-ambiguous",     "kind": "resolves", "label": "标签联合" } },
+    { "data": { "id": "e-resolve-unk",  "source": "a-resolve",  "target": "w-unknown",       "kind": "resolves" } },
+
+    { "data": { "id": "e-flow-1",       "source": "a-resolve",  "target": "a-narrow",    "kind": "flow" } },
+    { "data": { "id": "e-flow-2",       "source": "a-narrow",   "target": "a-read",      "kind": "flow" } },
+    { "data": { "id": "e-narrow-app",   "source": "a-narrow",   "target": "c-appearance","kind": "uses" } },
+    { "data": { "id": "e-narrow-doss",  "source": "a-narrow",   "target": "o-dossier",   "kind": "uses", "label": "storysets" } },
+    { "data": { "id": "e-read-summ",    "source": "a-read",     "target": "c-summary",   "kind": "uses" } },
+    { "data": { "id": "e-read-stage",   "source": "a-read",     "target": "s-stage",     "kind": "uses", "label": "下沉到原文" } },
+
+    { "data": { "id": "e-audit-doss",   "source": "a-audit",    "target": "o-dossier",   "kind": "uses", "label": "事实卡锚点" } },
+    { "data": { "id": "e-audit-summ",   "source": "a-audit",    "target": "c-summary",   "kind": "uses" } },
+    { "data": { "id": "e-audit-app",    "source": "a-audit",    "target": "c-appearance","kind": "uses", "label": "实体覆盖 diff" } },
+    { "data": { "id": "e-audit-stage",  "source": "a-audit",    "target": "s-stage",     "kind": "uses", "label": "断言裁定上下文" } }
+  ]
+}

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>明日方舟 KB —— 角色名检索流程</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --ink: #e5e7eb;
+      --ink-dim: #94a3b8;
+      --ink-mute: #64748b;
+      --accent: #38bdf8;
+      --teal: #14b8a6;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --rule: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 12px; background: rgba(148,163,184,.12); padding: 1px 5px; border-radius: 4px; }
+
+    header {
+      display: flex; align-items: center; gap: 16px; padding: 12px 20px;
+      border-bottom: 1px solid var(--rule); background: var(--panel);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { font-size: 15px; font-weight: 600; margin: 0; }
+    header .nav { display: flex; gap: 14px; margin-left: 14px; }
+    header .nav a { font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rule); color: var(--ink-dim); }
+    header .nav a.active { color: var(--ink); border-color: #475569; background: var(--panel-2); }
+    header .spacer { flex: 1; }
+    header .meta { color: var(--ink-mute); font-size: 12px; }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; min-height: calc(100vh - 50px); }
+    .flow { padding: 24px 20px 40px; min-width: 0; overflow-x: auto; }
+    .flow h2 { font-size: 13px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin: 0 0 14px; }
+    .flow .mermaid { background: transparent; }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 20px; padding: 12px 14px;
+      background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+      font-size: 12px; color: var(--ink-dim);
+    }
+    .legend .swatch { display: inline-flex; align-items: center; gap: 6px; }
+    .legend .dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; border: 1.5px solid; }
+
+    .sidebar {
+      background: var(--panel); border-left: 1px solid var(--rule);
+      padding: 18px 18px 40px; overflow: auto;
+    }
+    .sidebar h2 { font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin: 0 0 10px; }
+
+    .examples { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+    .example {
+      cursor: pointer; background: var(--panel-2); border: 1px solid var(--rule);
+      border-radius: 8px; padding: 11px 13px; transition: border-color 0.15s, background 0.15s;
+    }
+    .example:hover { border-color: #475569; }
+    .example.active { border-color: var(--accent); background: rgba(56,189,248,0.07); }
+    .example .name { font-size: 17px; font-weight: 600; color: var(--ink); }
+    .example .pitch { font-size: 12px; color: var(--ink-dim); margin-top: 2px; line-height: 1.45; }
+    .example .tag {
+      display: inline-block; margin-top: 6px; font-size: 10.5px; padding: 2px 7px;
+      border-radius: 999px; font-weight: 600; letter-spacing: 0.04em;
+    }
+    .tag.clean { background: rgba(20,184,166,0.16); color: var(--teal); }
+    .tag.caution { background: rgba(245,158,11,0.18); color: var(--amber); }
+    .tag.gap { background: rgba(244,63,94,0.16); color: var(--rose); }
+    .tag.precision { background: rgba(56,189,248,0.14); color: var(--accent); }
+
+    .walkthrough {
+      background: rgba(15,23,42,0.6); border: 1px solid var(--rule); border-radius: 8px;
+      padding: 14px 14px 8px; font-size: 13px; line-height: 1.6;
+    }
+    .walkthrough h3 { font-size: 13px; margin: 0 0 8px; color: var(--ink); }
+    .walkthrough .label { font-size: 10px; color: var(--ink-mute); letter-spacing: 0.06em; font-weight: 600; }
+    .walkthrough ol { padding-left: 20px; margin: 6px 0 12px; color: var(--ink-dim); }
+    .walkthrough ol li { margin: 5px 0; }
+    .walkthrough ol li b { color: var(--ink); font-weight: 600; }
+    .walkthrough .note {
+      margin-top: 8px; padding: 8px 10px; background: rgba(245,158,11,0.08);
+      border-left: 3px solid var(--amber); border-radius: 4px;
+      font-size: 12px; color: #fde68a;
+    }
+
+    .footer-note {
+      margin-top: 22px; padding: 14px; border-radius: 8px;
+      background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.18);
+      font-size: 12px; color: var(--ink-dim); line-height: 1.7;
+    }
+    .footer-note b { color: var(--ink); }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { border-left: none; border-top: 1px solid var(--rule); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>明日方舟 KB</h1>
+    <div class="nav">
+      <a href="index.html">概念地图</a>
+      <a href="lookup-flow.html" class="active">检索流程：角色名</a>
+    </div>
+    <div class="spacer"></div>
+    <span class="meta">agent 检索某个角色名时会发生什么。在右侧点一个示例名字开始。</span>
+  </header>
+
+  <div class="layout">
+    <div class="flow">
+      <div class="legend">
+        <span class="swatch"><span class="dot" style="border-color:#14b8a6;background:#0c1f1c"></span> 清晰路径</span>
+        <span class="swatch"><span class="dot" style="border-color:#f59e0b;background:#1c1410"></span> 需注意 —— 已知弱点</span>
+        <span class="swatch"><span class="dot" style="border-color:#f43f5e;background:#1f0d14"></span> 缺口 —— v1 仅有兜底</span>
+        <span class="swatch"><span class="dot" style="border-color:#0ea5e9;background:#0c1820"></span> 可达数据</span>
+        <span class="swatch"><span class="dot" style="border-color:#fbbf24;background:#0b1220"></span> 对用户的回答</span>
+      </div>
+
+      <h2>步骤 1 · 把名字解析为稳定的 id</h2>
+      <div class="mermaid" id="flow-resolve">
+flowchart TD
+  Q([用户询问某个角色名字<br/>例如：阿米娅 · 特蕾西娅 · 暮落 · 年 · 沉渊]):::start
+
+  Q --> CR{char resolve<br/>仅限干员}
+
+  CR -->|命中：唯一干员| OP[char_id]:::terminal
+  CR -->|歧义：已知 9 个碰撞| AM[从候选里选一个<br/>用 nation · 分节 · 上下文]:::caution
+  CR -->|未命中| ER{entity resolve<br/>更宽 —— 也包括 NPC}
+
+  AM --> OP
+
+  ER -->|命中：干员| OP
+  ER -->|命中：NPC · 组织 · 地点 · 群体<br/>仅当已策展| EN[entity_id<br/>ent_6hex<br/>仅一行 · 没有档案]:::caution
+  ER -->|命中：unknown<br/>由 关键人物 自动播种| UK[策展人待办清单<br/>目前约 1,991 个名字]:::caution
+  ER -->|未命中| GR[字面 grep<br/>覆盖章节 · 档案 · 摘要]:::gap
+
+  UK --> GR
+  EN --> GR
+
+  classDef start fill:#1e3a8a,stroke:#3b82f6,stroke-width:2px,color:#fff
+  classDef terminal fill:#0c1820,stroke:#0ea5e9,stroke-width:2px,color:#e0f2fe
+  classDef caution fill:#1c1410,stroke:#f59e0b,stroke-width:2px,color:#fef3c7
+  classDef gap fill:#1f0d14,stroke:#f43f5e,stroke-width:2px,color:#fecaca
+      </div>
+
+      <h2 style="margin-top: 32px;">步骤 2 · 拿到干员 id 后，四个数据轴解锁</h2>
+      <div class="mermaid" id="flow-reach">
+flowchart TD
+  OP[char_id]:::terminal --> Reach((可以触达的数据))
+
+  Reach --> Dossier[干员档案集]:::clean
+  Reach --> Appear[出场关系]:::clean
+  Reach --> Coocc[同场对]:::clean
+  Reach --> Rel[有类型关系]:::gap
+
+  subgraph DS [7 个档案分节 · 按需读取]
+    direction LR
+    Profile[profile<br/>招聘文本]
+    Voice[voice<br/>干员语音]
+    Archive[archive<br/>干员档案]
+    Skins[skins<br/>干员皮肤]
+    Modules[modules<br/>干员模组]
+    Card[card · 客观履历<br/>事实核验锚点]:::anchor
+    Storyset[storysets · handbook → event<br/>确定性 ground truth]:::anchor
+  end
+  Dossier --> DS
+
+  subgraph AP [出场关系 · 5 个置信度层级]
+    direction LR
+    Det[deterministic<br/>来自 storyset · 372 条链接]:::anchor
+    Spk[speaker<br/>≥1 句台词]
+    Nm[named<br/>叙述提及 + 佐证]
+    Sum[summary<br/>来自 关键人物 · stage_idx 可能为 null]:::caution
+    Ment[mentioned<br/>默认被过滤]:::caution
+  end
+  Appear --> AP
+
+  Rel -.->|骨架代码<br/>LLM 烤制尚未运行| RelEmpty[v1 中为空]:::gap
+
+  Storyset --> Events[活动 · 章节]:::terminal
+  Det --> Events
+  Spk --> Events
+  Nm --> Events
+  Sum --> Events
+  Ment --> Events
+
+  classDef terminal fill:#0c1820,stroke:#0ea5e9,stroke-width:2px,color:#e0f2fe
+  classDef clean fill:#0c1f1c,stroke:#14b8a6,stroke-width:2px,color:#ccfbf1
+  classDef caution fill:#1c1410,stroke:#f59e0b,stroke-width:2px,color:#fef3c7
+  classDef gap fill:#1f0d14,stroke:#f43f5e,stroke-width:2px,color:#fecaca
+  classDef anchor fill:#1e1b4b,stroke:#a78bfa,stroke-width:2px,color:#ede9fe
+      </div>
+
+      <h2 style="margin-top: 32px;">步骤 3 · 按代价从小到大阅读 —— 摘要先行，原文最后</h2>
+      <div class="mermaid" id="flow-read">
+flowchart TD
+  Events[活动 · 章节<br/>已由步骤 2 缩小范围]:::terminal --> Read((读什么))
+
+  Read -->|最便宜 · 已预处理| EvtSumm[活动摘要<br/>~600 zh · 一句话概要 · 核心剧情<br/>关键人物 · 场景标签]:::clean
+  Read -->|便宜 · 每章节| Stages[本活动的章节<br/>每个 章节]:::clean
+  Stages --> StgSumm[章节摘要<br/>~200 zh / 章节<br/>同样的 4 标签结构]:::clean
+  Stages --> Raw[原始章节正文<br/>5–20 KB · 行动前 · 行动后 · 幕间]:::caution
+
+  EvtSumm --> Ans([回答用户的问题]):::answer
+  StgSumm --> Ans
+  Raw --> Ans
+  CardOut[card.json · 事实核验]:::anchor --> Ans
+  Sections[档案分节文件<br/>profile · voice · archive · skins · modules]:::clean --> Ans
+  GrepOut[grep 命中<br/>仅作召回兜底]:::gap --> Ans
+
+  classDef start fill:#1e3a8a,stroke:#3b82f6,stroke-width:2px,color:#fff
+  classDef terminal fill:#0c1820,stroke:#0ea5e9,stroke-width:2px,color:#e0f2fe
+  classDef clean fill:#0c1f1c,stroke:#14b8a6,stroke-width:2px,color:#ccfbf1
+  classDef caution fill:#1c1410,stroke:#f59e0b,stroke-width:2px,color:#fef3c7
+  classDef gap fill:#1f0d14,stroke:#f43f5e,stroke-width:2px,color:#fecaca
+  classDef anchor fill:#1e1b4b,stroke:#a78bfa,stroke-width:2px,color:#ede9fe
+  classDef answer fill:#0b1220,stroke:#fbbf24,stroke-width:2.5px,color:#fde68a
+      </div>
+
+      <div class="footer-note">
+        <b>为什么是这个形状：</b>agent 的工作是『不把整个语料塞进上下文』就能回答问题。整个流程要把范围 <i>收缩两次</i>（解析名字 → 借出场关系 / storyset 缩小）才开始阅读，并按代价从小到大读（摘要 &lt; 分节 &lt; 原文）。三种有色徽章标出了 v1 可能让你失望的地方：<span style="color:var(--amber)">需注意</span> = 诚实承认的已知局限；<span style="color:var(--rose)">缺口</span> = 『v1 里只能兜底或者根本没有』。紫色的<b>锚点</b>是你应当 fall back <i>到</i> 的高置信源（不是要 fall back <i>离开</i> 的）—— <code>storysets.json</code> 给确定性出场，<code>card.json</code> 给事实核验。
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <h2>实战示例 —— 点击一个名字</h2>
+      <div class="examples" id="examples"></div>
+
+      <div class="walkthrough" id="walkthrough">
+        <div class="label">选一个名字以查看其路径</div>
+      </div>
+
+      <div class="footer-note" style="margin-top: 18px;">
+        <b>在代码里对照核对：</b><br/>
+        <code>libs/kb/query.py</code> —— 解析器实现。<br/>
+        <code>libs/kb/participants.py</code> —— 出场关系的 tier 规则与匹配器。<br/>
+        <code>libs/kb/entities.py</code> —— 更宽的实体层。<br/>
+        <code>docs/AGENTS_GUIDE.md</code> —— CLI 实战指南。
+      </div>
+    </aside>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#0b1220',
+        primaryColor: '#1f2937',
+        primaryTextColor: '#e5e7eb',
+        primaryBorderColor: '#475569',
+        lineColor: '#64748b',
+        secondaryColor: '#0c1820',
+        tertiaryColor: '#111827',
+        fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif',
+        fontSize: '14px',
+        clusterBkg: '#0b1220',
+        clusterBorder: '#334155',
+        edgeLabelBackground: '#0b1220',
+      },
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+    });
+
+    const EXAMPLES = [
+      {
+        id: 'amiya',
+        name: '阿米娅',
+        pitch: '干员。干净命中，完整档案，storyset 提供进入主线活动的确定性链接。',
+        tag: { kind: 'clean', label: '清晰路径' },
+        path: [
+          '<b>char resolve 阿米娅</b> → <b>Resolved(char_002_amiya)</b>。零歧义，无需兜底。',
+          '<b>char storysets char_002_amiya</b> → handbook 给出的章节指针（确定性 ground truth）。',
+          '<b>char appearances char_002_amiya --source all --min-tier named</b> → 跨主线活动的 participant + summary 出场关系；storyset 推导的 deterministic 边永远过滤通过。',
+          '<b>char get char_002_amiya --section archive --text</b> → 只读 干员档案 散文（约 2 KB），而不是整个档案集。',
+          '对具体活动：先 <b>summary event main_14</b>；只在摘要回答不了时再 <b>event stage main_14 7 --text</b>。'
+        ],
+        note: null
+      },
+      {
+        id: 'theresa',
+        name: '特蕾西娅',
+        pitch: 'NPC。不在 character_table 里。v1 路径：策展 → entity resolve，否则字面 grep。',
+        tag: { kind: 'gap', label: 'NPC 缺口' },
+        path: [
+          '<b>char resolve 特蕾西娅</b> → <b>Missing</b>。她是 NPC，不是干员。',
+          '<b>entity resolve 特蕾西娅</b> → 若 <code>entities_curated.jsonl</code> 已收录，<b>ResolvedEntity(npc, ent_&lt;hex&gt;)</b>；否则若已烤摘要里提到过，<b>Resolved(unknown)</b>；再否则 <b>Missing</b>。',
+          '不论哪种结果：<b>grep 特蕾西娅 --in stages</b> 才是 v1 的检索办法 —— 章节正文上做字面子串匹配，作为召回兜底。',
+          '按 event_id 聚合命中；对每个有命中的活动读 <b>summary event &lt;id&gt;</b>。',
+          '用于审核时，entity 行至少给了她一个稳定的 id，可以在 grep 排序前先用上。'
+        ],
+        note: 'NPC / 组织 / 地点 / 群体 在 v1 中都不是一等公民。它们要么通过策展，要么通过 grep —— 没有针对它们的出场索引。'
+      },
+      {
+        id: 'molou',
+        name: '暮落',
+        pitch: '歧义展示名。2 个干员碰撞；解析器拒绝自动二选一。',
+        tag: { kind: 'caution', label: '歧义' },
+        path: [
+          '<b>char resolve 暮落</b> → <b>Ambiguous([char_512_aprot, char_4025_aprot2])</b>。CLI 会把所有候选都打印出来。',
+          'agent 借助上下文消歧 —— 通常 <b>char get &lt;id&gt; --section profile</b> 里的 nation_id 就够了。',
+          '整理别名 <code>沉渊;暮落</code> 也是同一个坑：沉渊 同样会返回 Ambiguous，因为它指向的 canonical 本身就歧义。',
+          '一旦选定其中一边，后面就是标准的干员路径（storyset → 出场 → 摘要）。'
+        ],
+        note: '当前数据里 9 个已知碰撞：暮落 · 郁金香 · Sharp · Stormeye · Pith · Touch · 预备干员-A / B / C。故意不自动 attach —— 静默选一边会让别名的语义无声地膨胀。'
+      },
+      {
+        id: 'nian',
+        name: '年',
+        pitch: '单字 zh 干员名。命中干净，但出场关系的 tier 规则要看清楚。',
+        tag: { kind: 'precision', label: 'tier 敏感' },
+        path: [
+          '<b>char resolve 年</b> → <b>Resolved(char_<id>_nian)</b>。标准干员路径。',
+          '出场关系：在默认的 <b>--min-tier named</b> 下，叙述里的单次 年 命中只到 <b>mentioned</b> tier，会被过滤掉 —— 这避免了 今年、去年 这类词造成的假阳性。',
+          '只有当 年 有佐证时才升到 <b>named</b>：本章节有台词、≥2 次命中、或者活动摘要也提到了 年。',
+          '若你把过滤降到 <b>--min-tier mentioned</b>，要回头读章节人工核对单字命中 —— 那一层接受噪声。',
+          '从 storyset 推导出来的 deterministic 边永远过滤通过，与 tier 无关。'
+        ],
+        note: '现有 23 个单字 zh 名字的干员（年、夕、陈、黑、令、空、阿 …）。匹配器给它们一个置信度扣分，但绝不静默丢弃。'
+      },
+      {
+        id: 'mageret',
+        name: '玛嘉烈',
+        pitch: '整理别名表里的民用名。只有加载了别名文件才能解析。',
+        tag: { kind: 'caution', label: '依赖整理别名' },
+        path: [
+          '<b>char resolve 玛嘉烈</b> → 若构建时加载了 <code>char_alias.txt</code>，<b>Resolved(char_&lt;id&gt;_lemuen)</b>（临光）；否则 <b>Missing</b>。',
+          '整理别名表里大约 <b>90%</b> 的条目无法从原始游戏数据中还原 —— 它们是民用名、头衔、社区昵称。',
+          '若别名文件缺失：兜底链路与 NPC 一样 —— entity resolve，再 grep。',
+          'KB build 在别名文件缺失时会在构建日志里发一条提示，所以这种降级是可见的，不是静默的。'
+        ],
+        note: '在未启用整理别名索引时，char resolve 只能看到 `name + appellation`（英文 codename）。像 玛嘉烈 这样的民用 zh 名字是不可见的。'
+      }
+    ];
+
+    const examplesEl = document.getElementById('examples');
+    const walkthroughEl = document.getElementById('walkthrough');
+    EXAMPLES.forEach(ex => {
+      const div = document.createElement('div');
+      div.className = 'example';
+      div.dataset.id = ex.id;
+      div.innerHTML = `
+        <div class="name">${ex.name}</div>
+        <div class="pitch">${ex.pitch}</div>
+        <span class="tag ${ex.tag.kind}">${ex.tag.label}</span>
+      `;
+      div.onclick = () => selectExample(ex.id);
+      examplesEl.appendChild(div);
+    });
+
+    function selectExample (id) {
+      const ex = EXAMPLES.find(e => e.id === id);
+      if (!ex) return;
+      [...examplesEl.children].forEach(c => c.classList.toggle('active', c.dataset.id === id));
+      walkthroughEl.innerHTML = `
+        <div class="label">演练 · ${ex.name}</div>
+        <h3>${ex.pitch}</h3>
+        <ol>${ex.path.map(p => `<li>${p}</li>`).join('')}</ol>
+        ${ex.note ? `<div class="note"><b>注 —</b> ${ex.note}</div>` : ''}
+      `;
+    }
+
+    // 默认选第一个，避免右侧面板初始为空。
+    selectExample('amiya');
+  </script>
+</body>
+</html>

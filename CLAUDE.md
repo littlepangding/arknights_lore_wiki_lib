@@ -55,6 +55,7 @@ A separate, in-progress effort builds an agent-facing knowledge base over the ra
 - `docs/PROMPTS.md` — Chinese prompt templates for summary / audit flows.
 - `docs/DECISIONS.md` — substantial-decision log.
 - `docs/reviews/` — review feedback applied to the design.
+- `docs/schema/` — interactive HTML diagram of the KB schema (concepts / file artifacts / edge layers / query surface) with weakness callouts on known agent-lookup gaps. Served via GitHub Pages from `/docs`. Update `docs/schema/schema.json` when you add a new module, index, edge layer, or query subcommand.
 
 The KB layer is **independent** of the wiki update flow above. They share `libs/game_data.py` and the LLM backends but the directories don't overlap.
 
