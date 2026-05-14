@@ -23,6 +23,22 @@ cd ~/Claude/arknights/arknights_lore_wiki_lib
 
 On a fresh checkout: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`. System python on macOS will fail with PEP 668 — always use the venv.
 
+## Common commands
+
+| Task | Command |
+|---|---|
+| Build raw chunks (`data/kb/`, ~10s, no LLM) | `.venv/bin/python -m scripts.kb_build` |
+| Bake event summaries | `.venv/bin/python -m scripts.kb_summarize --llm cli --model gemini-3.1-pro-preview` |
+| Bake stage summaries | `.venv/bin/python -m scripts.kb_summarize --stages --llm cli --model gemini-3.1-pro-preview` |
+| Cost estimate only | append `--estimate` |
+| Limit to one event | append `--event <event_id>` |
+| Force re-bake | append `--force` |
+| Compile wiki site | `.venv/bin/python -m scripts.compile_website` |
+| Find new stories vs upstream | `.venv/bin/python -m scripts.find_new_stories` |
+| Tests | `.venv/bin/python -m pytest` |
+
+Gemini model slugs (asymmetric — note the `.1`): **pro** = `gemini-3.1-pro-preview`, **flash** = `gemini-3-flash-preview`. The bake is resume-safe (hash-gated manifest), so interrupting and re-running is cheap.
+
 ## End-to-end update flow
 
 When the upstream `ArknightsGameData` updates, the user runs the update flow. **Don't piece it together by hand — invoke the skill `update-lore-wiki` (`.claude/skills/update-lore-wiki/SKILL.md`).** It enforces the human gates (story list, candidate char list) and the validation passes that the user requires before any LLM call.
