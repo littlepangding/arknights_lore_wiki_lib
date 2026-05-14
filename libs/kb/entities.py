@@ -14,10 +14,12 @@ An *entity* is anything with a stable identity that lore points at:
   颉 / 神农 / 罗德岛 / 叙拉古 enter the graph — as real nodes, not
   failed operator resolutions.
 - **Uncurated leftovers** — `entity_type="unknown"`, `id=ent_<6hex>`.
-  Auto-seeded from `<关键人物>` surface names in the baked
-  `kb_summaries/` that no alias resolved. They give the curator a
-  concrete punch list; a later curation line in `entities_curated.jsonl`
-  promotes one to a typed entity.
+  Auto-seeded from `<关键人物>` surface names that no alias resolved.
+  The caller supplies the unresolved-name map (already accumulated by
+  `participants.build_char_to_events_summary`) — this module does not
+  re-walk `kb_summaries/`. They give the curator a concrete punch
+  list; a later curation line in `entities_curated.jsonl` promotes
+  one to a typed entity.
 
 What is *not* an entity: a `name:null` hint (e.g. "年口中会做饭的弟弟").
 Hints stay `null` on a relation edge — never invent an id for them.
@@ -53,9 +55,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Literal
 
-from libs.kb import paths
-from libs.kb._io import atomic_write_text
-from libs.kb.participants import parse_key_chars
+from libs.kb._io import atomic_write_text, invert_alias_lists
 
 EntityType = Literal[
     "operator", "npc", "organization", "location", "group", "unknown"
@@ -240,60 +240,44 @@ def build_curated_entities(
     return rows, warnings
 
 
-# --- auto-seeding from baked summary <关键人物> -----------------------
+# --- auto-seeding from caller-supplied unresolved map ----------------
 
 
-def collect_unresolved_summary_names(
-    summaries_root: Path,
-    alias_to_char_ids: dict[str, list[str]],
+def invert_unresolved_by_event(
+    unresolved_by_event: dict[str, list[str]],
 ) -> dict[str, list[str]]:
-    """`{surface_name: [event_id, ...]}` for `<关键人物>` names that no
-    operator alias resolves. Walks both the per-event and per-stage
-    summary tree with the same `parse_key_chars` the edge builder uses,
-    so what we report as unresolved here is exactly what was unresolved
-    there."""
+    """Flip `participants.build_char_to_events_summary`'s
+    `event_id -> [names]` output into the `name -> [event_ids]` view
+    `build_entities` consumes. One pass over the existing accumulator;
+    avoids re-reading any `kb_summaries/` files."""
     out: dict[str, set[str]] = defaultdict(set)
-    if not summaries_root.is_dir():
-        return {}
-    events_dir = summaries_root / "events"
-    if events_dir.is_dir():
-        for md in sorted(events_dir.glob("*.md")):
-            eid = md.stem
-            for name in parse_key_chars(md.read_text(encoding="utf-8")):
-                if name not in alias_to_char_ids:
-                    out[name].add(eid)
-    stages_root = paths.stages_summary_root(summaries_root)
-    if stages_root.is_dir():
-        for ev_dir in sorted(stages_root.iterdir()):
-            if not ev_dir.is_dir():
-                continue
-            eid = ev_dir.name
-            for md in sorted(ev_dir.glob("*.md")):
-                for name in parse_key_chars(md.read_text(encoding="utf-8")):
-                    if name not in alias_to_char_ids:
-                        out[name].add(eid)
+    for eid, names in unresolved_by_event.items():
+        for n in names:
+            out[n].add(eid)
     return {n: sorted(ev) for n, ev in sorted(out.items())}
 
 
 def build_auto_seeded_entities(
     unresolved: dict[str, list[str]],
     curated_names: set[str],
-    seen_ids: set[str],
+    existing_ids: set[str],
 ) -> list[dict]:
     """Promote each unresolved-name to an `entity_type="unknown"` entry,
-    *unless* curation already covers it. `seen_ids` is updated in place
-    so callers can keep the global id-uniqueness invariant."""
+    *unless* curation already covers it. `existing_ids` is consulted but
+    not mutated — local de-dup tracks new auto-seed ids so two unresolved
+    names that hash to the same `ent_<6hex>` don't both land."""
     rows: list[dict] = []
+    minted: set[str] = set()
     for name, evids in unresolved.items():
         if name in curated_names:
             continue
         eid = synthetic_entity_id(name)
-        if eid in seen_ids:
+        if eid in existing_ids or eid in minted:
             # A curated entity with a different `name` happened to hash
-            # to the same id (or a previous auto-seed already claimed
-            # it). Drop the duplicate; the seen entity wins.
+            # to the same id, or a previous auto-seed already claimed
+            # it. Drop the duplicate; the seen entity wins.
             continue
-        seen_ids.add(eid)
+        minted.add(eid)
         rows.append(
             {
                 "id": eid,
@@ -321,19 +305,26 @@ def build_entities(
     curated_aliases: dict[str, list[str]] | None = None,
     ambiguous_canonicals: set[str] | None = None,
     curated_entities_path: Path | None = None,
-    summaries_root: Path | None = None,
+    unresolved_summary_names: dict[str, list[str]] | None = None,
 ) -> dict:
     """Build the full entity list. Returns a summary dict with the
     sorted `entities` plus counts/errors/warnings for the build report.
 
+    `unresolved_summary_names` is the `{name -> [event_ids]}` view of
+    `<关键人物>` surface names that didn't resolve through any alias.
+    Pass `invert_unresolved_by_event(...)` over the dict already
+    returned by `participants.build_char_to_events_summary` — that's
+    cheaper than re-walking `kb_summaries/`.
+
     Sort order: operators first (by `char_id`), then non-operators by
     id. Stable across rebuilds since ids are deterministic."""
     ambiguous_canonicals = ambiguous_canonicals or set()
+    unresolved = unresolved_summary_names or {}
 
     operator_rows = build_operator_entities(
         char_manifests, curated_aliases, ambiguous_canonicals
     )
-    seen_ids: set[str] = {r["id"] for r in operator_rows}
+    existing_ids: set[str] = {r["id"] for r in operator_rows}
 
     if curated_entities_path is not None:
         curated_entries, curated_errors = parse_curated_entities_file(
@@ -345,16 +336,10 @@ def build_entities(
         curated_entries, alias_to_char_ids
     )
     for r in curated_rows:
-        seen_ids.add(r["id"])
+        existing_ids.add(r["id"])
 
-    auto_rows: list[dict] = []
-    unresolved: dict[str, list[str]] = {}
-    if summaries_root is not None:
-        unresolved = collect_unresolved_summary_names(
-            summaries_root, alias_to_char_ids
-        )
-        curated_names = {r["name"] for r in curated_rows}
-        auto_rows = build_auto_seeded_entities(unresolved, curated_names, seen_ids)
+    curated_names = {r["name"] for r in curated_rows}
+    auto_rows = build_auto_seeded_entities(unresolved, curated_names, existing_ids)
 
     entities = sorted(
         operator_rows + curated_rows + auto_rows,
@@ -396,9 +381,4 @@ def build_entity_alias_index(entities: list[dict]) -> dict[str, list[str]]:
     """`alias -> [entity_id, ...]`. Multi-target rows encode ambiguity
     (`暮落` → both operators; same shape as the operator alias index).
     Used by `resolve_entity` to return Resolved | Ambiguous | Missing."""
-    out: dict[str, list[str]] = defaultdict(list)
-    for ent in entities:
-        for alias in ent.get("aliases", []):
-            if ent["id"] not in out[alias]:
-                out[alias].append(ent["id"])
-    return dict(sorted(out.items()))
+    return invert_alias_lists(entities, id_field="id")

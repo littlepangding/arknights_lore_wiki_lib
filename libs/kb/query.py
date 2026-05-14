@@ -189,11 +189,11 @@ class KB:
     # rather than O(chars). Built from name + appellation; the curated
     # alias index is layered on top in `resolve_operator_name`.
     direct_name_to_char_ids: dict[str, list[str]] = field(default_factory=dict)
-    # Entity layer (P-D). `entities` is the JSONL load; `entities_by_id`
-    # is a dict view for O(1) `get`; `entity_alias_to_ids` is the
-    # resolver lookup for `resolve_entity`. Pre-P-D builds (no
-    # entities.jsonl on disk) load as empty — every query degrades to
-    # the same empty answer the resolver returned before P-D shipped.
+    # `entities` is the JSONL load; `entities_by_id` is a dict view
+    # for O(1) `get`; `entity_alias_to_ids` is the resolver lookup for
+    # `resolve_entity`. A build without an `entities.jsonl` on disk
+    # loads as empty — the resolver degrades to `Missing` for every
+    # query rather than failing.
     entities: list[dict] = field(default_factory=list)
     entities_by_id: dict[str, dict] = field(default_factory=dict)
     entity_alias_to_ids: dict[str, list[str]] = field(default_factory=dict)
@@ -632,7 +632,7 @@ def get_event_summary(kb: KB, event_id: str) -> str | None:
     return p.read_text(encoding="utf-8") if p.is_file() else None
 
 
-# --- entity layer (P-D) ------------------------------------------------
+# --- entity layer -----------------------------------------------------
 
 
 def resolve_entity(kb: KB, name_or_alias: str) -> EntityResolution:

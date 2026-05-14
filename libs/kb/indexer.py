@@ -444,13 +444,18 @@ def build_all_indexes(
     paths.index_path(kb_root, "char_to_events_inferred").unlink(missing_ok=True)
 
     ent_curated = Path(curated_entities_path) if curated_entities_path else None
+    # `unresolved_summary` is `{event_id: [names]}` from the participant
+    # builder above — invert once for entity auto-seeding instead of
+    # re-walking 2000+ summary files.
     ent_summary = entities.build_entities(
         char_manifests,
         alias_to_char_ids=alias_index["alias_to_char_ids"],
         curated_aliases=curated,
         ambiguous_canonicals=ambiguous,
         curated_entities_path=ent_curated,
-        summaries_root=sumroot,
+        unresolved_summary_names=entities.invert_unresolved_by_event(
+            unresolved_summary
+        ),
     )
     entities.write_entities_jsonl(
         paths.entities_jsonl_path(kb_root), ent_summary["entities"]

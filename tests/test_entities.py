@@ -176,8 +176,9 @@ def test_build_curated_entities_honors_explicit_id():
 
 def test_build_auto_seeded_entities_promotes_unresolved():
     unresolved = {"上尉": ["act31side"], "黍": ["act31side"]}
-    seen: set[str] = set()
-    rows = entities.build_auto_seeded_entities(unresolved, curated_names=set(), seen_ids=seen)
+    rows = entities.build_auto_seeded_entities(
+        unresolved, curated_names=set(), existing_ids=set()
+    )
     names = {r["name"] for r in rows}
     assert names == {"上尉", "黍"}
     assert all(r["entity_type"] == "unknown" for r in rows)
@@ -187,9 +188,23 @@ def test_build_auto_seeded_entities_promotes_unresolved():
 def test_build_auto_seeded_skips_curated_names():
     unresolved = {"绩": ["act31side"]}
     rows = entities.build_auto_seeded_entities(
-        unresolved, curated_names={"绩"}, seen_ids=set()
+        unresolved, curated_names={"绩"}, existing_ids=set()
     )
     assert rows == []
+
+
+def test_build_auto_seeded_does_not_mutate_existing_ids():
+    existing = {"char_a"}
+    entities.build_auto_seeded_entities(
+        {"绩": ["e1"]}, curated_names=set(), existing_ids=existing
+    )
+    assert existing == {"char_a"}
+
+
+def test_invert_unresolved_by_event():
+    by_event = {"e1": ["绩", "颉"], "e2": ["绩"], "e3": []}
+    flipped = entities.invert_unresolved_by_event(by_event)
+    assert flipped == {"绩": ["e1", "e2"], "颉": ["e1"]}
 
 
 # --- top-level builder -------------------------------------------------
@@ -211,11 +226,10 @@ def test_build_entities_top_level_integration(tmp_path):
         {"name": "绩", "entity_type": "npc", "notes": "年家三女"},
         {"name": "阿米娅", "entity_type": "npc"},  # collides with operator → dropped
     ])
-    summaries_root = tmp_path / "kb_summaries"
-    (summaries_root / "events").mkdir(parents=True)
-    (summaries_root / "events" / "act31side.md").write_text(
-        "<关键人物>黍;颉;阿米娅</关键人物>\n", encoding="utf-8"
-    )
+    # The caller (kb_build) hands us the already-accumulated unresolved
+    # map from participants.build_char_to_events_summary; only 颉 fell
+    # through the alias index there.
+    unresolved = {"颉": ["act31side"]}
 
     summary = entities.build_entities(
         cm,
@@ -223,7 +237,7 @@ def test_build_entities_top_level_integration(tmp_path):
         curated_aliases=None,
         ambiguous_canonicals=set(),
         curated_entities_path=curated_path,
-        summaries_root=summaries_root,
+        unresolved_summary_names=unresolved,
     )
     by_name = {e["name"]: e for e in summary["entities"]}
 
@@ -233,7 +247,7 @@ def test_build_entities_top_level_integration(tmp_path):
     # Curated NPC accepted (no operator collision).
     assert by_name["绩"]["entity_type"] == "npc"
     assert by_name["绩"]["sources"] == ["entities_curated.jsonl"]
-    # Auto-seeded from <关键人物>: 颉 was unresolved; 阿米娅 / 黍 resolved.
+    # Auto-seeded: 颉 was the only unresolved name passed in.
     assert by_name["颉"]["entity_type"] == "unknown"
     assert "黍" not in [e["name"] for e in summary["entities"] if e["entity_type"] == "unknown"]
     # Curated collision was warned about, not silently merged.
@@ -245,7 +259,7 @@ def test_build_entities_top_level_integration(tmp_path):
     assert summary["entities"][0]["entity_type"] == "operator"
 
 
-def test_build_entities_no_curated_no_summaries(tmp_path):
+def test_build_entities_no_curated_no_unresolved():
     cm = {"char_002_amiya": _mf("char_002_amiya", name="阿米娅", appellation="Amiya")}
     summary = entities.build_entities(
         cm,
