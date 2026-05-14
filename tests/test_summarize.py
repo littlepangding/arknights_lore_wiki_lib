@@ -29,11 +29,15 @@ from libs.kb.summarize import (
     MULTI_PASS_LENGTH_THRESHOLD,
     MULTI_PASS_STAGE_THRESHOLD,
     STAGE_REDUCE_REQUIRED_TAGS,
+    STAGE_SUMMARY_REQUIRED_TAGS,
     SummaryResult,
+    estimate_remaining_stages,
     hash_stage_texts,
+    prune_stale_stage_summaries,
     prune_stale_summaries,
     should_multi_pass,
     summarize_all,
+    summarize_all_stages,
     summarize_event,
 )
 
@@ -561,3 +565,258 @@ def test_prune_stale_summaries_removes_only_orphans(tmp_path):
 
 def test_prune_stale_summaries_handles_missing_dir(tmp_path):
     assert prune_stale_summaries(tmp_path / "missing", set()) == []
+
+
+# -------- per-stage summaries (P-C) -----------------------------------------
+
+
+def _stage_keys_on_disk(kb_root: Path) -> list[str]:
+    keys: list[str] = []
+    for ev_dir in sorted((kb_root / "events").iterdir()):
+        if not ev_dir.is_dir():
+            continue
+        meta = json.loads((ev_dir / "event.json").read_text("utf-8"))
+        for s in meta["stages"]:
+            keys.append(f"{ev_dir.name}/{s['idx']:02d}")
+    return keys
+
+
+def test_stage_summary_required_tags_match_event_shape():
+    assert STAGE_SUMMARY_REQUIRED_TAGS == EVENT_REQUIRED_TAGS
+
+
+def test_summarize_all_stages_writes_one_per_stage(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    client = FakeClient(responses=[_full_event_body()] * (len(keys) + 5))
+
+    report = summarize_all_stages(kb_root, summaries_root, client, backend_label="cli")
+
+    assert sorted(report.wrote) == sorted(keys)
+    assert report.errors == []
+    assert len(client.calls) == len(keys)  # always single-pass: one call per stage
+
+    manifest = json.loads(paths.summaries_manifest_path(summaries_root).read_text("utf-8"))
+    assert set(manifest["stages"].keys()) == set(keys)
+    for key, entry in manifest["stages"].items():
+        eid, nn = key.split("/")
+        assert entry["event_id"] == eid
+        assert entry["stage_idx"] == int(nn)
+        assert entry["backend"] == "cli"
+        assert len(entry["source_hash"]) > 16
+        md_path = summaries_root / "stages" / eid / f"{nn}.md"
+        assert md_path.exists()
+        md = md_path.read_text("utf-8")
+        assert f"event_id: {eid}" in md and f"stage_idx: {int(nn)}" in md
+        for tag in STAGE_SUMMARY_REQUIRED_TAGS:
+            assert f"<{tag}>" in md and f"</{tag}>" in md
+
+
+def test_summarize_all_stages_embeds_chapter_text(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    eid, nn = keys[0].split("/")
+    stage_text = (
+        paths.event_dir(kb_root, eid)
+        / json.loads((paths.event_json_path(kb_root, eid)).read_text("utf-8"))["stages"][int(nn)]["file"]
+    ).read_text("utf-8")
+
+    client = FakeClient(responses=[_full_event_body()] * len(keys))
+    summarize_all_stages(kb_root, summaries_root, client, only=[eid])
+    # first call's user prompt must embed that chapter's raw text + the template tags
+    user_prompt = client.calls[0][1]
+    assert stage_text[:50] in user_prompt
+    assert "<一句话概要>" in user_prompt
+
+
+def test_summarize_all_stages_second_run_is_noop(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    client2 = FakeClient(responses=[])  # raises if called
+    report = summarize_all_stages(kb_root, summaries_root, client2, backend_label="cli")
+    assert report.wrote == []
+    assert len(report.skipped) == len(keys)
+    assert client2.calls == []
+
+
+def test_summarize_all_stages_event_filter(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    target = keys[0].split("/")[0]
+    target_keys = [k for k in keys if k.startswith(f"{target}/")]
+    other = next(k for k in keys if not k.startswith(f"{target}/"))
+
+    report = summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        only=[target],
+    )
+    assert sorted(report.wrote) == sorted(target_keys)
+    oeid, onn = other.split("/")
+    assert not (summaries_root / "stages" / oeid / f"{onn}.md").exists()
+
+
+def test_summarize_all_stages_force_resummarizes(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    client2 = FakeClient(responses=[_full_event_body()] * len(keys))
+    report = summarize_all_stages(kb_root, summaries_root, client2, force=True, backend_label="cli")
+    assert sorted(report.wrote) == sorted(keys)
+    assert len(client2.calls) == len(keys)
+
+
+def test_summarize_all_stages_prune_drops_stale(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    orphan = paths.stage_summary_path(summaries_root, "ghost_event", 7)
+    orphan.parent.mkdir(parents=True, exist_ok=True)
+    orphan.write_text("---\n---\nstale\n", encoding="utf-8")
+
+    report = summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[]), backend_label="cli"
+    )
+    assert "ghost_event/07" in report.pruned
+    assert not orphan.exists()
+    assert not orphan.parent.exists()  # now-empty event dir removed too
+
+
+def test_summarize_all_stages_no_prune_keeps_stale(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    orphan = paths.stage_summary_path(summaries_root, "ghost_event", 7)
+    orphan.parent.mkdir(parents=True, exist_ok=True)
+    orphan.write_text("---\n---\n", encoding="utf-8")
+
+    report = summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[]), backend_label="cli", prune=False
+    )
+    assert report.pruned == []
+    assert orphan.exists()
+
+
+def test_summarize_all_stages_only_filter_skips_prune(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    orphan = paths.stage_summary_path(summaries_root, "ghost_event", 7)
+    orphan.parent.mkdir(parents=True, exist_ok=True)
+    orphan.write_text("---\n---\n", encoding="utf-8")
+
+    target = keys[0].split("/")[0]
+    report = summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        only=[target], force=True,
+    )
+    assert report.pruned == []
+    assert orphan.exists()
+
+
+def test_summarize_all_stages_continues_when_stage_file_missing(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    victim_eid, victim_nn = keys[0].split("/")
+    vmeta = json.loads(paths.event_json_path(kb_root, victim_eid).read_text("utf-8"))
+    (paths.event_dir(kb_root, victim_eid) / vmeta["stages"][int(victim_nn)]["file"]).unlink()
+
+    report = summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    assert any(eid == keys[0] and "FileNotFoundError" in msg for eid, msg in report.errors)
+    assert len(report.wrote) == len(keys) - 1
+
+
+def test_summarize_all_stages_raises_when_kb_empty(tmp_path):
+    kb_root = tmp_path / "kb"
+    (kb_root / "events").mkdir(parents=True)
+    with pytest.raises(FileNotFoundError):
+        summarize_all_stages(kb_root, tmp_path / "kb_summaries", FakeClient(responses=[]))
+
+
+def test_estimate_remaining_stages_counts_all_then_none(tmp_path, build_real_kb):
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+
+    est = estimate_remaining_stages(kb_root, summaries_root)
+    assert est.n_to_run == len(keys)
+    assert est.n_multi == 0  # stage summaries never multi-pass
+    assert est.llm_calls == len(keys)
+    assert est.in_chars > 0 and est.total_tokens > 0
+
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    est2 = estimate_remaining_stages(kb_root, summaries_root)
+    assert est2.n_to_run == 0
+    assert len(est2.already_done) == len(keys)
+
+
+def test_prune_stale_stage_summaries_direct(tmp_path):
+    summaries_root = tmp_path / "kb_summaries"
+    keep = paths.stage_summary_path(summaries_root, "ev1", 0)
+    keep.parent.mkdir(parents=True, exist_ok=True)
+    keep.write_text("k", encoding="utf-8")
+    drop = paths.stage_summary_path(summaries_root, "ev2", 3)
+    drop.parent.mkdir(parents=True, exist_ok=True)
+    drop.write_text("d", encoding="utf-8")
+
+    removed = prune_stale_stage_summaries(summaries_root, current_stage_keys={"ev1/00"})
+    assert removed == ["ev2/03"]
+    assert keep.exists()
+    assert not drop.exists() and not drop.parent.exists()
+
+
+def test_prune_stale_stage_summaries_handles_missing_dir(tmp_path):
+    assert prune_stale_stage_summaries(tmp_path / "missing", set()) == []
+
+
+def test_summarize_event_and_stages_share_one_manifest(tmp_path, build_real_kb):
+    """Event and stage bakes write to disjoint sections of the same
+    kb_summaries/manifest.json — neither clobbers the other."""
+    kb_root = build_real_kb(tmp_path / "kb")
+    summaries_root = tmp_path / "kb_summaries"
+    keys = _stage_keys_on_disk(kb_root)
+    summarize_all(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * 10),
+        backend_label="cli",
+    )
+    summarize_all_stages(
+        kb_root, summaries_root, FakeClient(responses=[_full_event_body()] * len(keys)),
+        backend_label="cli",
+    )
+    manifest = json.loads(paths.summaries_manifest_path(summaries_root).read_text("utf-8"))
+    assert len(manifest["events"]) == 3
+    assert len(manifest["stages"]) == len(keys)
+    # a third no-op event run must not disturb the stages section
+    summarize_all(kb_root, summaries_root, FakeClient(responses=[]), backend_label="cli")
+    manifest2 = json.loads(paths.summaries_manifest_path(summaries_root).read_text("utf-8"))
+    assert manifest2["stages"] == manifest["stages"]

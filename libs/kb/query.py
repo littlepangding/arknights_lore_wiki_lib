@@ -17,16 +17,26 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Literal
 
+from libs.kb import entities as entities_mod
 from libs.kb import indexer, paths
 from libs.kb._io import read_json, read_json_or
-from libs.kb.paths import Family, FAMILIES, MatchClass, Section, SECTIONS
+from libs.kb.entities import ENTITY_TYPES, EntityType
+from libs.kb.participants import Tier, TIERS, tier_at_least
+from libs.kb.paths import Family, FAMILIES, Section, SECTIONS
 
 
 SectionOrAll = Literal["profile", "voice", "archive", "skins", "modules", "all"]
-SourceFilter = Literal["deterministic", "inferred", "both"]
+EdgeSource = Literal["deterministic", "participant", "summary"]
+SourceFilter = Literal["deterministic", "participant", "summary", "all"]
 GrepScope = Literal["events", "chars", "summaries", "all"]
 
-SOURCE_FILTERS: tuple[SourceFilter, ...] = ("deterministic", "inferred", "both")
+SOURCE_FILTERS: tuple[SourceFilter, ...] = (
+    "deterministic",
+    "participant",
+    "summary",
+    "all",
+)
+DEFAULT_MIN_TIER: Tier = "named"
 GREP_SCOPES: tuple[GrepScope, ...] = ("events", "chars", "summaries", "all")
 SECTIONS_OR_ALL: tuple[SectionOrAll, ...] = (
     "profile",
@@ -65,17 +75,27 @@ class CharMeta:
 
 @dataclass(frozen=True)
 class Appearance:
-    """One char in one stage. `count` and `match_class` are populated for
-    inferred rows only; `story_set_name` is populated for deterministic
-    rows only — keeping them on a single shape lets callers iterate
-    without case-splitting."""
+    """One char ↔ (event, stage) edge. A single shape across the three
+    layers so callers iterate without case-splitting:
+
+    - `source="deterministic"` — from `char.storysets`. `story_set_name`
+      set; `tier=None`; always passes any `--min-tier`. Ground truth.
+    - `source="participant"` — from the cleaned stage text. `tier` ∈
+      {`speaker`,`named`,`mentioned`}; `spoke_lines` / `mention_count` /
+      `matched_aliases` set.
+    - `source="summary"` — from a baked event summary's `<关键人物>`.
+      *Event-scoped*: `stage_idx=None`. `tier="named"`; `matched_aliases`
+      = the surface names the summary used.
+    """
 
     char_id: str
     event_id: str
-    stage_idx: int
-    source: Literal["deterministic", "inferred"]
-    count: int | None = None
-    match_class: MatchClass | None = None
+    stage_idx: int | None
+    source: EdgeSource
+    tier: Tier | None = None
+    spoke_lines: int | None = None
+    mention_count: int | None = None
+    matched_aliases: tuple[str, ...] | None = None
     story_set_name: str | None = None
 
 
@@ -123,6 +143,31 @@ class Missing:
 Resolution = Resolved | Ambiguous | Missing
 
 
+# Entity resolver — mirrors `Resolution` but ranges over every entity
+# (operator + curated NPC + auto-seeded unknown), not just operators.
+
+
+@dataclass(frozen=True)
+class ResolvedEntity:
+    entity_id: str
+    kind: Literal["resolved"] = "resolved"
+
+
+@dataclass(frozen=True)
+class AmbiguousEntity:
+    candidates: tuple[str, ...]
+    kind: Literal["ambiguous"] = "ambiguous"
+
+
+@dataclass(frozen=True)
+class MissingEntity:
+    name: str
+    kind: Literal["missing"] = "missing"
+
+
+EntityResolution = ResolvedEntity | AmbiguousEntity | MissingEntity
+
+
 # --- the loaded KB -----------------------------------------------------
 
 
@@ -134,7 +179,8 @@ class KB:
     event_manifests: dict[str, dict]
     char_manifests: dict[str, dict]
     char_to_events_deterministic: dict[str, list[dict]]
-    char_to_events_inferred: dict[str, list[dict]]
+    char_to_events_participant: dict[str, list[dict]]
+    char_to_events_summary: dict[str, list[dict]]
     event_to_chars: dict[str, list[dict]]
     stage_table: list[dict]
     char_table: list[dict]
@@ -143,6 +189,14 @@ class KB:
     # rather than O(chars). Built from name + appellation; the curated
     # alias index is layered on top in `resolve_operator_name`.
     direct_name_to_char_ids: dict[str, list[str]] = field(default_factory=dict)
+    # `entities` is the JSONL load; `entities_by_id` is a dict view
+    # for O(1) `get`; `entity_alias_to_ids` is the resolver lookup for
+    # `resolve_entity`. A build without an `entities.jsonl` on disk
+    # loads as empty — the resolver degrades to `Missing` for every
+    # query rather than failing.
+    entities: list[dict] = field(default_factory=list)
+    entities_by_id: dict[str, dict] = field(default_factory=dict)
+    entity_alias_to_ids: dict[str, list[str]] = field(default_factory=dict)
 
 
 def load_kb(
@@ -160,7 +214,12 @@ def load_kb(
     deterministic = read_json_or(
         paths.index_path(root, "char_to_events_deterministic"), {}
     )
-    inferred = read_json_or(paths.index_path(root, "char_to_events_inferred"), {})
+    participant = read_json_or(
+        paths.index_path(root, "char_to_events_participant"), {}
+    )
+    summary_edges = read_json_or(
+        paths.index_path(root, "char_to_events_summary"), {}
+    )
     event_to_chars = read_json_or(paths.index_path(root, "event_to_chars"), {})
     stage_table = read_json_or(paths.index_path(root, "stage_table"), [])
     char_table = read_json_or(paths.index_path(root, "char_table"), [])
@@ -177,6 +236,10 @@ def load_kb(
         if ap and cid not in direct.setdefault(ap, []):
             direct[ap].append(cid)
 
+    ent_list = entities_mod.load_entities(paths.entities_jsonl_path(root))
+    entities_by_id = {e["id"]: e for e in ent_list}
+    entity_alias_index = entities_mod.build_entity_alias_index(ent_list)
+
     return KB(
         root=root,
         summaries_root=sumroot,
@@ -184,12 +247,16 @@ def load_kb(
         event_manifests=event_manifests,
         char_manifests=char_manifests,
         char_to_events_deterministic=deterministic,
-        char_to_events_inferred=inferred,
+        char_to_events_participant=participant,
+        char_to_events_summary=summary_edges,
         event_to_chars=event_to_chars,
         stage_table=stage_table,
         char_table=char_table,
         alias_to_char_ids=alias_index.get("alias_to_char_ids", {}),
         direct_name_to_char_ids=direct,
+        entities=ent_list,
+        entities_by_id=entities_by_id,
+        entity_alias_to_ids=entity_alias_index,
     )
 
 
@@ -321,64 +388,76 @@ def char_storysets(kb: KB, char_id: str) -> list[StorySetLink]:
 # --- cross-references --------------------------------------------------
 
 
-def _det_appearance(char_id: str, row: dict) -> Appearance:
+def _appearance_from_row(
+    char_id: str, event_id: str, row: dict, source: EdgeSource | None = None
+) -> Appearance:
+    """Build an `Appearance` from any of the three edge-row shapes —
+    each carries only the fields its source populates, so `.get` covers
+    the rest. `source` is taken from the row when present (the merged
+    `event_to_chars` rows carry it) or supplied by the caller (the
+    per-char indexes key the rows under one source)."""
+    matched = row.get("matched_aliases")
     return Appearance(
         char_id=char_id,
-        event_id=row["event_id"],
-        stage_idx=row["stage_idx"],
-        source="deterministic",
+        event_id=event_id,
+        stage_idx=row.get("stage_idx"),
+        source=source or row["source"],
+        tier=row.get("tier"),
+        spoke_lines=row.get("spoke_lines"),
+        mention_count=row.get("mention_count"),
+        matched_aliases=tuple(matched) if matched is not None else None,
         story_set_name=row.get("story_set_name"),
     )
 
 
-def _inf_appearance(char_id: str, row: dict) -> Appearance:
-    return Appearance(
-        char_id=char_id,
-        event_id=row["event_id"],
-        stage_idx=row["stage_idx"],
-        source="inferred",
-        count=row.get("count"),
-        match_class=row.get("match_class"),
-    )
+def _passes(a: Appearance, source: SourceFilter, min_tier: Tier) -> bool:
+    if source != "all" and a.source != source:
+        return False
+    # Deterministic (storyset) edges are ground truth — they always pass
+    # any `--min-tier` regardless of having no participant tier.
+    if a.source == "deterministic":
+        return True
+    return tier_at_least(a.tier, min_tier)
+
+
+def _sort_key(a: Appearance) -> tuple:
+    sidx = a.stage_idx
+    return (a.event_id, 1 if sidx is None else 0, -1 if sidx is None else sidx, a.source)
 
 
 def char_appearances(
-    kb: KB, char_id: str, source: SourceFilter = "both"
+    kb: KB,
+    char_id: str,
+    source: SourceFilter = "all",
+    *,
+    min_tier: Tier = DEFAULT_MIN_TIER,
 ) -> list[Appearance]:
     out: list[Appearance] = []
-    if source in ("deterministic", "both"):
-        out.extend(
-            _det_appearance(char_id, r)
-            for r in kb.char_to_events_deterministic.get(char_id, [])
-        )
-    if source in ("inferred", "both"):
-        out.extend(
-            _inf_appearance(char_id, r)
-            for r in kb.char_to_events_inferred.get(char_id, [])
-        )
-    out.sort(key=lambda a: (a.event_id, a.stage_idx, a.source))
+    for src_name, index in (
+        ("deterministic", kb.char_to_events_deterministic),
+        ("participant", kb.char_to_events_participant),
+        ("summary", kb.char_to_events_summary),
+    ):
+        for r in index.get(char_id, []):
+            a = _appearance_from_row(char_id, r["event_id"], r, src_name)
+            if _passes(a, source, min_tier):
+                out.append(a)
+    out.sort(key=_sort_key)
     return out
 
 
 def event_chars(
-    kb: KB, event_id: str, source: SourceFilter = "both"
+    kb: KB,
+    event_id: str,
+    source: SourceFilter = "all",
+    *,
+    min_tier: Tier = DEFAULT_MIN_TIER,
 ) -> list[Appearance]:
-    rows = kb.event_to_chars.get(event_id, [])
     out: list[Appearance] = []
-    for row in rows:
-        if source != "both" and row["source"] != source:
-            continue
-        out.append(
-            Appearance(
-                char_id=row["char_id"],
-                event_id=event_id,
-                stage_idx=row["stage_idx"],
-                source=row["source"],
-                count=row.get("count"),
-                match_class=row.get("match_class"),
-                story_set_name=row.get("story_set_name"),
-            )
-        )
+    for row in kb.event_to_chars.get(event_id, []):
+        a = _appearance_from_row(row["char_id"], event_id, row)
+        if _passes(a, source, min_tier):
+            out.append(a)
     return out
 
 
@@ -386,10 +465,17 @@ def stage_chars(
     kb: KB,
     event_id: str,
     stage_idx: int,
-    source: SourceFilter = "both",
+    source: SourceFilter = "all",
+    *,
+    min_tier: Tier = DEFAULT_MIN_TIER,
 ) -> list[Appearance]:
-    """Tight scope: chars whose edge points at *this exact* stage."""
-    return [a for a in event_chars(kb, event_id, source) if a.stage_idx == stage_idx]
+    """Tight scope: chars whose edge points at *this exact* stage. The
+    event-scoped `summary` edges (`stage_idx is None`) never match."""
+    return [
+        a
+        for a in event_chars(kb, event_id, source, min_tier=min_tier)
+        if a.stage_idx == stage_idx
+    ]
 
 
 def group_by_event(appearances: Iterable[Appearance]) -> dict[str, list[Appearance]]:
@@ -544,3 +630,35 @@ def get_event_summary(kb: KB, event_id: str) -> str | None:
         return None
     p = paths.event_summary_path(kb.summaries_root, event_id)
     return p.read_text(encoding="utf-8") if p.is_file() else None
+
+
+# --- entity layer -----------------------------------------------------
+
+
+def resolve_entity(kb: KB, name_or_alias: str) -> EntityResolution:
+    """Resolve a surface name against every entity (operator + curated
+    NPC + auto-seeded unknown). Same Resolved | Ambiguous | Missing
+    contract as `resolve_operator_name`, but the lookup covers named
+    non-operators too — so `绩` or `罗德岛` can resolve once curated."""
+    ids = kb.entity_alias_to_ids.get(name_or_alias, [])
+    if not ids:
+        return MissingEntity(name=name_or_alias)
+    if len(ids) == 1:
+        return ResolvedEntity(entity_id=ids[0])
+    return AmbiguousEntity(candidates=tuple(ids))
+
+
+def list_entities(
+    kb: KB,
+    entity_type: EntityType | None = None,
+) -> list[dict]:
+    """Every entity row, optionally filtered by `entity_type`. Same
+    sort order kb_build wrote (operators first, then by id)."""
+    if entity_type is None:
+        return list(kb.entities)
+    return [e for e in kb.entities if e["entity_type"] == entity_type]
+
+
+def get_entity(kb: KB, entity_id: str) -> dict | None:
+    """The full entity row, or `None` if no entity has that id."""
+    return kb.entities_by_id.get(entity_id)

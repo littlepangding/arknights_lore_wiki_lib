@@ -147,11 +147,38 @@ def index_path(kb_root: Path, name: str) -> Path:
     return indexes_root(kb_root) / f"{name}.json"
 
 
+def entities_jsonl_path(kb_root: Path) -> Path:
+    """The deterministic entity table — one JSON object per line. Built
+    by `kb_build` from `character_table` + the curated overrides file +
+    unresolved `<关键人物>` names; consumed by `kb_query entity …` and
+    (later) the relation network / audit passes."""
+    return kb_root / "entities.jsonl"
+
+
+def curated_entities_path(wiki_path: Path) -> Path:
+    """`<lore_wiki_path>/data/entities_curated.jsonl` — hand-curated
+    non-operator entity overrides (named NPCs, organizations, ...).
+    Sibling of the curated `char_alias.txt`."""
+    return Path(wiki_path) / "data" / "entities_curated.jsonl"
+
+
 # --- summaries path helpers -----------------------------------------------
 
 
 def event_summary_path(summaries_root: Path, event_id: str) -> Path:
     return summaries_root / "events" / f"{event_id}.md"
+
+
+def stages_summary_root(summaries_root: Path) -> Path:
+    return summaries_root / "stages"
+
+
+def event_stages_summary_dir(summaries_root: Path, event_id: str) -> Path:
+    return stages_summary_root(summaries_root) / event_id
+
+
+def stage_summary_path(summaries_root: Path, event_id: str, stage_idx: int) -> Path:
+    return event_stages_summary_dir(summaries_root, event_id) / f"{stage_idx:02d}.md"
 
 
 def summaries_manifest_path(summaries_root: Path) -> Path:

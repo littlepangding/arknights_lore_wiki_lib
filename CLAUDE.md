@@ -23,6 +23,22 @@ cd ~/Claude/arknights/arknights_lore_wiki_lib
 
 On a fresh checkout: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`. System python on macOS will fail with PEP 668 — always use the venv.
 
+## Common commands
+
+| Task | Command |
+|---|---|
+| Build raw chunks (`data/kb/`, ~10s, no LLM) | `.venv/bin/python -m scripts.kb_build` |
+| Bake event summaries | `.venv/bin/python -m scripts.kb_summarize --llm cli --model gemini-3.1-pro-preview` |
+| Bake stage summaries | `.venv/bin/python -m scripts.kb_summarize --stages --llm cli --model gemini-3.1-pro-preview` |
+| Cost estimate only | append `--estimate` |
+| Limit to one event | append `--event <event_id>` |
+| Force re-bake | append `--force` |
+| Compile wiki site | `.venv/bin/python -m scripts.compile_website` |
+| Find new stories vs upstream | `.venv/bin/python -m scripts.find_new_stories` |
+| Tests | `.venv/bin/python -m pytest` |
+
+Gemini model slugs (asymmetric — note the `.1`): **pro** = `gemini-3.1-pro-preview`, **flash** = `gemini-3-flash-preview`. The bake is resume-safe (hash-gated manifest), so interrupting and re-running is cheap.
+
 ## End-to-end update flow
 
 When the upstream `ArknightsGameData` updates, the user runs the update flow. **Don't piece it together by hand — invoke the skill `update-lore-wiki` (`.claude/skills/update-lore-wiki/SKILL.md`).** It enforces the human gates (story list, candidate char list) and the validation passes that the user requires before any LLM call.
@@ -34,7 +50,7 @@ High-level: find new stories → confirm with user → LLM-summarize each → ex
 A separate, in-progress effort builds an agent-facing knowledge base over the raw game data (lore Q&A, audit new wiki updates, audit existing pages). When a task involves any of those, **start with `docs/README.md`** — it indexes:
 
 - `docs/REQUIREMENTS.md` — user intent for the KB.
-- `docs/DESIGN.md` — architecture: `libs/kb/`, `data/kb/` (gitignored raw chunks), `kb_summaries/` (committed LLM aids), four source families, deterministic vs inferred char↔event edges.
+- `docs/DESIGN.md` — architecture: `libs/kb/`, `data/kb/` (gitignored raw chunks), `kb_summaries/` (committed LLM aids — per-event `events/*.md` + per-章节 `stages/<id>/<NN>.md`, both baked by `kb_summarize`), four source families, the three char↔stage edge layers (deterministic / participant-with-tier / summary — see `libs/kb/participants.py`).
 - `docs/AGENTS_GUIDE.md` — how to use the KB CLIs (`kb_query`, `kb_audit_wiki`, `kb_summarize`).
 - `docs/PROMPTS.md` — Chinese prompt templates for summary / audit flows.
 - `docs/DECISIONS.md` — substantial-decision log.

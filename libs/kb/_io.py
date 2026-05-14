@@ -60,6 +60,37 @@ def load_dir_manifests(root: Path, basename: str) -> dict[str, dict]:
     return out
 
 
+def invert_alias_lists(
+    rows: list[dict] | dict[str, list[str]],
+    *,
+    id_field: str | None = None,
+    aliases_field: str = "aliases",
+) -> dict[str, list[str]]:
+    """Invert `{id: [aliases]}` (or a row list with id_field + aliases_field
+    keys) into `{alias: [ids]}`. Multi-target rows are how the resolver
+    encodes ambiguity (`暮落` → two char_ids; same shape for entity ids).
+    Order within each list mirrors first-seen; the outer dict is sorted.
+
+    When `rows` is a row list, `id_field` is required (one entity / one
+    row → one id). When `rows` is a `{id: [aliases]}` dict, leave
+    `id_field=None`."""
+    out: dict[str, list[str]] = {}
+    if isinstance(rows, dict):
+        items = rows.items()
+    else:
+        if id_field is None:
+            raise ValueError("id_field is required when rows is a list of dicts")
+        items = ((r[id_field], r.get(aliases_field, [])) for r in rows)
+    for owner_id, aliases in items:
+        for alias in aliases:
+            if not alias:
+                continue
+            bucket = out.setdefault(alias, [])
+            if owner_id not in bucket:
+                bucket.append(owner_id)
+    return dict(sorted(out.items()))
+
+
 def prune_stale_files(directory: Path, glob_pattern: str, keep: set[str]) -> list[str]:
     """Delete files in `directory` matching `glob_pattern` whose name is not
     in `keep`. Returns sorted list of removed filenames. Used after a build
