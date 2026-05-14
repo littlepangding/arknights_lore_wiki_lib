@@ -57,6 +57,8 @@ Every char↔stage link in the KB carries a `source` (and, for `participant`, a 
 
 **Single-character operator names work.** 23 operators have one-character zh display names (e.g. `陈`, `年`, `夕`, `黑`, `令`, `空`, `阿`). These resolve normally. In the `participant` edge layer a *lone* narration hit of a one-char name stays at `tier=mentioned` (so `年` ⊄ "appears in" just because the prose says `今年`); it's promoted to `named` only when the char also speaks, the name appears ≥2×, or the event summary lists it. So with the default `--min-tier named` a `年`-the-operator participant edge means a real mention, not noise — but if you ever drop to `--min-tier mentioned`, verify a single-char hit by reading the stage.
 
+**Before falling back to grep, try `kb_query entity resolve <name>`.** That's the broader resolver — it covers operators *and* curated non-operator entities (`绩`, `颉`, `神农`, `罗德岛`, … via `<lore_wiki_path>/data/entities_curated.jsonl`) *and* auto-seeded `entity_type="unknown"` placeholders (any `<关键人物>` surface name that turned up in a baked summary and didn't resolve). `entity resolve 绩` → `ResolvedEntity(ent_<6hex>)` once curated; while uncurated it's still `Resolved` (just `entity_type=unknown` until a curator types it). `entity get <id>` reads the full row. Operator-only checks should stay on `char resolve`; the broader entity layer is what you want for "is this a real named thing the corpus knows about?"
+
 **When the resolver returns `Missing`, fall back to `kb_query grep "<name>"`.** The grep search is **literal substring by default** (use `--regex` only if you actually want regex semantics) and finds any occurrence in stage text or char-section files, regardless of entity type. For NPCs and groups, literal grep is the v1 retrieval mechanism, and it handles names with parentheses / hyphens / smart quotes (`AUS (群体)`, `Ishar-mla`, `"桥夹"克里夫`) correctly without escaping.
 
 Example resolver flow when uncertain:
@@ -87,6 +89,9 @@ All commands run from the lib repo root with `.venv/bin/python`:
 .venv/bin/python -m scripts.kb_query char storysets <char_id>
 .venv/bin/python -m scripts.kb_query grep "<text>" [--regex] [--in events|chars|summaries|all]    # literal substring by default; --regex opts in; `summaries` searches the baked event summaries (high-signal, no raw-script noise)
 .venv/bin/python -m scripts.kb_query summary event <event_id>
+.venv/bin/python -m scripts.kb_query entity resolve <name>            # BROADER than `char resolve`: covers operators + curated named NPCs + auto-seeded unknowns
+.venv/bin/python -m scripts.kb_query entity list [--type operator|npc|organization|location|group|unknown]
+.venv/bin/python -m scripts.kb_query entity get <entity_id>           # char_id for operators, ent_<6hex> for non-operators
 # `summary char <id>` is intentionally absent in v1 — read the char dossier directly via `char get`.
 ```
 

@@ -376,17 +376,24 @@ def build_all_indexes(
     *,
     curated_aliases_path: Path | str | None = None,
     summaries_root: Path | str | None = None,
+    curated_entities_path: Path | str | None = None,
 ) -> dict:
     """Read existing event/char manifests + storysets, build every
-    index, write `kb_root/indexes/*.json`. Returns a small summary
-    dict suitable for the build report.
+    index, write `kb_root/indexes/*.json` + `kb_root/entities.jsonl`.
+    Returns a small summary dict suitable for the build report.
 
     `summaries_root` (default: none) points at the baked
     `kb_summaries/` so the event-scoped `summary` edge layer can read
-    `<关键人物>`. Absent → that layer is empty (no LLM call either way)."""
-    # Local import: `participants` imports `build_alias_inputs` etc. from
-    # this module, so importing it at module scope would be circular.
-    from libs.kb import participants
+    `<关键人物>`. Absent → that layer is empty (no LLM call either way).
+
+    `curated_entities_path` (default: none) points at the optional
+    `<wiki>/data/entities_curated.jsonl` non-operator override file.
+    Absent → entities.jsonl contains operator rows + (when
+    `summaries_root` is present) auto-seeded `unknown` placeholders
+    from unresolved `<关键人物>` names."""
+    # Local import: `participants` and `entities` both reach back into
+    # this module, so importing them at module scope would be circular.
+    from libs.kb import entities, participants
 
     event_manifests = load_event_manifests(kb_root)
     char_manifests = load_char_manifests(kb_root)
@@ -436,6 +443,19 @@ def build_all_indexes(
     # Drop the pre-WS-0 index name if a stale copy is sitting around.
     paths.index_path(kb_root, "char_to_events_inferred").unlink(missing_ok=True)
 
+    ent_curated = Path(curated_entities_path) if curated_entities_path else None
+    ent_summary = entities.build_entities(
+        char_manifests,
+        alias_to_char_ids=alias_index["alias_to_char_ids"],
+        curated_aliases=curated,
+        ambiguous_canonicals=ambiguous,
+        curated_entities_path=ent_curated,
+        summaries_root=sumroot,
+    )
+    entities.write_entities_jsonl(
+        paths.entities_jsonl_path(kb_root), ent_summary["entities"]
+    )
+
     return {
         "events": len(event_manifests),
         "chars": len(char_manifests),
@@ -449,4 +469,10 @@ def build_all_indexes(
         "unresolved_summary_names": unresolved_summary,
         "ambiguous_canonicals": sorted(ambiguous),
         "curated_alias_canonicals": (len(curated) if curated else 0),
+        "entity_count": len(ent_summary["entities"]),
+        "entity_operator_count": ent_summary["operator_count"],
+        "entity_curated_count": ent_summary["curated_count"],
+        "entity_auto_seeded_count": ent_summary["auto_seeded_count"],
+        "entity_curated_errors": ent_summary["curated_errors"],
+        "entity_curated_warnings": ent_summary["curated_warnings"],
     }

@@ -17,8 +17,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Literal
 
+from libs.kb import entities as entities_mod
 from libs.kb import indexer, paths
 from libs.kb._io import read_json, read_json_or
+from libs.kb.entities import ENTITY_TYPES, EntityType
 from libs.kb.participants import Tier, TIERS, tier_at_least
 from libs.kb.paths import Family, FAMILIES, Section, SECTIONS
 
@@ -141,6 +143,31 @@ class Missing:
 Resolution = Resolved | Ambiguous | Missing
 
 
+# Entity resolver — mirrors `Resolution` but ranges over every entity
+# (operator + curated NPC + auto-seeded unknown), not just operators.
+
+
+@dataclass(frozen=True)
+class ResolvedEntity:
+    entity_id: str
+    kind: Literal["resolved"] = "resolved"
+
+
+@dataclass(frozen=True)
+class AmbiguousEntity:
+    candidates: tuple[str, ...]
+    kind: Literal["ambiguous"] = "ambiguous"
+
+
+@dataclass(frozen=True)
+class MissingEntity:
+    name: str
+    kind: Literal["missing"] = "missing"
+
+
+EntityResolution = ResolvedEntity | AmbiguousEntity | MissingEntity
+
+
 # --- the loaded KB -----------------------------------------------------
 
 
@@ -162,6 +189,14 @@ class KB:
     # rather than O(chars). Built from name + appellation; the curated
     # alias index is layered on top in `resolve_operator_name`.
     direct_name_to_char_ids: dict[str, list[str]] = field(default_factory=dict)
+    # Entity layer (P-D). `entities` is the JSONL load; `entities_by_id`
+    # is a dict view for O(1) `get`; `entity_alias_to_ids` is the
+    # resolver lookup for `resolve_entity`. Pre-P-D builds (no
+    # entities.jsonl on disk) load as empty — every query degrades to
+    # the same empty answer the resolver returned before P-D shipped.
+    entities: list[dict] = field(default_factory=list)
+    entities_by_id: dict[str, dict] = field(default_factory=dict)
+    entity_alias_to_ids: dict[str, list[str]] = field(default_factory=dict)
 
 
 def load_kb(
@@ -201,6 +236,10 @@ def load_kb(
         if ap and cid not in direct.setdefault(ap, []):
             direct[ap].append(cid)
 
+    ent_list = entities_mod.load_entities(paths.entities_jsonl_path(root))
+    entities_by_id = {e["id"]: e for e in ent_list}
+    entity_alias_index = entities_mod.build_entity_alias_index(ent_list)
+
     return KB(
         root=root,
         summaries_root=sumroot,
@@ -215,6 +254,9 @@ def load_kb(
         char_table=char_table,
         alias_to_char_ids=alias_index.get("alias_to_char_ids", {}),
         direct_name_to_char_ids=direct,
+        entities=ent_list,
+        entities_by_id=entities_by_id,
+        entity_alias_to_ids=entity_alias_index,
     )
 
 
@@ -588,3 +630,35 @@ def get_event_summary(kb: KB, event_id: str) -> str | None:
         return None
     p = paths.event_summary_path(kb.summaries_root, event_id)
     return p.read_text(encoding="utf-8") if p.is_file() else None
+
+
+# --- entity layer (P-D) ------------------------------------------------
+
+
+def resolve_entity(kb: KB, name_or_alias: str) -> EntityResolution:
+    """Resolve a surface name against every entity (operator + curated
+    NPC + auto-seeded unknown). Same Resolved | Ambiguous | Missing
+    contract as `resolve_operator_name`, but the lookup covers named
+    non-operators too — so `绩` or `罗德岛` can resolve once curated."""
+    ids = kb.entity_alias_to_ids.get(name_or_alias, [])
+    if not ids:
+        return MissingEntity(name=name_or_alias)
+    if len(ids) == 1:
+        return ResolvedEntity(entity_id=ids[0])
+    return AmbiguousEntity(candidates=tuple(ids))
+
+
+def list_entities(
+    kb: KB,
+    entity_type: EntityType | None = None,
+) -> list[dict]:
+    """Every entity row, optionally filtered by `entity_type`. Same
+    sort order kb_build wrote (operators first, then by id)."""
+    if entity_type is None:
+        return list(kb.entities)
+    return [e for e in kb.entities if e["entity_type"] == entity_type]
+
+
+def get_entity(kb: KB, entity_id: str) -> dict | None:
+    """The full entity row, or `None` if no entity has that id."""
+    return kb.entities_by_id.get(entity_id)

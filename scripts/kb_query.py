@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any
 
 from libs.kb import paths, query
+from libs.kb.entities import ENTITY_TYPES
 from libs.kb.paths import FAMILIES
 
 
@@ -237,6 +238,33 @@ def cmd_grep(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_entity_resolve(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    res = query.resolve_entity(kb, args.name)
+    _print_json(res)
+    return 0 if res.kind != "missing" else 1
+
+
+def cmd_entity_list(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    _print_json(query.list_entities(kb, entity_type=args.type))
+    return 0
+
+
+def cmd_entity_get(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    ent = query.get_entity(kb, args.entity_id)
+    if ent is None:
+        print(
+            f"kb_query: no entity with id {args.entity_id!r} "
+            "(try `entity resolve <name>` or `entity list`)",
+            file=sys.stderr,
+        )
+        return 1
+    _print_json(ent)
+    return 0
+
+
 def cmd_summary_event(args: argparse.Namespace) -> int:
     kb = _load(args)
     text = query.get_event_summary(kb, args.event_id)
@@ -388,6 +416,37 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--regex", action="store_true")
     p.set_defaults(fn=cmd_grep)
+
+    g_entity = sub.add_parser(
+        "entity",
+        help="Entity layer (operators + curated NPCs + auto-seeded unknowns).",
+    )
+    g_entity_sub = g_entity.add_subparsers(dest="cmd", required=True)
+
+    p = g_entity_sub.add_parser(
+        "resolve",
+        help="Resolve a name/alias across every entity (broader than `char resolve`).",
+    )
+    _add_common(p)
+    p.add_argument("name")
+    p.set_defaults(fn=cmd_entity_resolve)
+
+    p = g_entity_sub.add_parser(
+        "list", help="Every entity row, optional --type filter."
+    )
+    _add_common(p)
+    p.add_argument(
+        "--type", choices=list(ENTITY_TYPES), default=None,
+        help="Filter by entity_type (default: every type).",
+    )
+    p.set_defaults(fn=cmd_entity_list)
+
+    p = g_entity_sub.add_parser(
+        "get", help="Get one entity row by id (char_id for operators, ent_<6hex> else)."
+    )
+    _add_common(p)
+    p.add_argument("entity_id")
+    p.set_defaults(fn=cmd_entity_get)
 
     g_summary = sub.add_parser("summary", help="LLM summaries (Phase 5).")
     g_summary_sub = g_summary.add_subparsers(dest="cmd", required=True)

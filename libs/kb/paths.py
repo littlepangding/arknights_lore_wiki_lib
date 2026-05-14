@@ -147,6 +147,21 @@ def index_path(kb_root: Path, name: str) -> Path:
     return indexes_root(kb_root) / f"{name}.json"
 
 
+def entities_jsonl_path(kb_root: Path) -> Path:
+    """The deterministic entity table — one JSON object per line. Built
+    by `kb_build` from `character_table` + the curated overrides file +
+    unresolved `<关键人物>` names; consumed by `kb_query entity …` and
+    (later) the relation network / audit passes."""
+    return kb_root / "entities.jsonl"
+
+
+def curated_entities_path(wiki_path: Path) -> Path:
+    """`<lore_wiki_path>/data/entities_curated.jsonl` — hand-curated
+    non-operator entity overrides (named NPCs, organizations, ...).
+    Sibling of the curated `char_alias.txt`."""
+    return Path(wiki_path) / "data" / "entities_curated.jsonl"
+
+
 # --- summaries path helpers -----------------------------------------------
 
 
