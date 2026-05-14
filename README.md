@@ -1,5 +1,7 @@
 # arknights_lore_wiki_lib
 
+> 🌐 **English** · [简体中文](./README.zh-Hans.md)
+
 Scripts that turn the upstream `ArknightsGameData` JSON dump into:
 1. A published lore wiki (story summaries, character pages) at [`arknights_lore_wiki`](https://github.com/littlepangding/arknights_lore_wiki).
 2. An agent-readable knowledge base on top of the raw game data (Q/A, audits).
@@ -147,6 +149,7 @@ docs/              # design history (REQUIREMENTS, DESIGN, PROMPTS, DECISIONS, r
 - **Implementation/reviewer:** read `docs/DESIGN.md` (architecture + risks) and `docs/DECISIONS.md` (substantial-decision log).
 - **Agent using the KB for Q/A or audits:** read `docs/AGENTS_GUIDE.md`.
 - **Modifying a prompt:** read `docs/PROMPTS.md`.
+- **Visual schema:** [`docs/schema/`](./docs/schema/) — interactive concept map + char-name lookup-flow diagram, served via GitHub Pages from `/docs`. Live at `https://littlepangding.github.io/arknights_lore_wiki_lib/schema/` once Pages is enabled.
 - **AI assistant orientation:** the per-folder `CLAUDE.md` files are a terser-and-current operational briefing.
 
 ## Conventions
