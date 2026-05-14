@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>明日方舟 KB —— 概念地图</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --ink: #e5e7eb;
+      --ink-dim: #94a3b8;
+      --ink-mute: #64748b;
+      --accent: #38bdf8;
+      --warn: #f59e0b;
+      --warn-bg: #422006;
+      --danger: #ef4444;
+      --rule: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, kbd { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 12px; background: rgba(148,163,184,.12); padding: 1px 5px; border-radius: 4px; }
+
+    .app { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+    header {
+      display: flex; align-items: center; gap: 16px; padding: 10px 16px;
+      border-bottom: 1px solid var(--rule); background: var(--panel);
+    }
+    header h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
+    header .nav { display: flex; gap: 8px; margin-left: 8px; }
+    header .nav a { font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rule); color: var(--ink-dim); text-decoration: none; }
+    header .nav a:hover { border-color: #334155; color: var(--ink); }
+    header .nav a.active { color: var(--ink); border-color: #475569; background: var(--panel-2); }
+    header .meta { color: var(--ink-mute); font-size: 12px; margin-left: 8px; }
+    header .spacer { flex: 1; }
+    header .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    header input[type="search"] {
+      width: 220px; padding: 5px 9px; background: var(--bg); color: var(--ink);
+      border: 1px solid var(--rule); border-radius: 6px; font-size: 12px;
+    }
+    header select, header button {
+      padding: 5px 9px; background: var(--bg); color: var(--ink); border: 1px solid var(--rule);
+      border-radius: 6px; font-size: 12px; cursor: pointer;
+    }
+    header button:hover, header select:hover { border-color: #334155; }
+
+    .main { display: grid; grid-template-columns: 240px 1fr 380px; min-height: 0; }
+    .sidebar, .detail { background: var(--panel); border-right: 1px solid var(--rule); overflow: auto; }
+    .detail { border-left: 1px solid var(--rule); border-right: none; }
+    .canvas { position: relative; min-width: 0; min-height: 0; background:
+      radial-gradient(ellipse at top, rgba(56,189,248,0.05), transparent 60%),
+      var(--bg);
+    }
+    #cy { width: 100%; height: 100%; }
+
+    .group { padding: 12px 14px; border-bottom: 1px solid var(--rule); }
+    .group h2 { font-size: 11px; font-weight: 600; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;
+      padding: 4px 8px; margin: 2px 4px 2px 0; font-size: 12px; line-height: 1.2;
+      background: var(--panel-2); color: var(--ink); border-radius: 999px; border: 1px solid transparent;
+    }
+    .chip.off { opacity: 0.35; }
+    .chip .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .chip:hover { border-color: #334155; }
+    .chip-toggle { font-size: 11px; padding: 3px 7px; }
+
+    .legend-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 4px 0; color: var(--ink-dim); }
+    .legend-edge { width: 32px; height: 0; border-top-width: 2px; border-top-style: solid; }
+
+    .detail .content { padding: 14px 16px; font-size: 13px; line-height: 1.55; }
+    .detail .kicker { font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .detail h3 { font-size: 15px; font-weight: 600; margin: 6px 0 8px; }
+    .detail .summary { color: var(--ink); margin-bottom: 10px; }
+    .detail .details { color: var(--ink-dim); white-space: pre-wrap; }
+    .detail .path { color: var(--ink-mute); font-size: 12px; margin: 6px 0; word-break: break-all; }
+    .detail .path code { color: var(--ink); }
+    .detail .weakness {
+      margin-top: 10px; padding: 8px 10px; background: var(--warn-bg);
+      border-left: 3px solid var(--warn); border-radius: 4px;
+      color: #fde68a; font-size: 12px; line-height: 1.5;
+    }
+    .detail .weakness .label { font-weight: 600; color: var(--warn); display: block; margin-bottom: 3px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .detail .wip {
+      display: inline-block; margin-top: 6px; padding: 2px 8px;
+      background: rgba(245,158,11,.16); color: var(--warn); font-size: 11px;
+      border-radius: 999px; font-weight: 600;
+    }
+    .detail .empty {
+      color: var(--ink-mute); font-size: 13px; padding: 14px 16px;
+    }
+    .detail dl { margin: 8px 0 0; font-size: 12px; color: var(--ink-dim); }
+    .detail dt { font-weight: 600; color: var(--ink); margin-top: 6px; }
+    .detail dd { margin: 2px 0 6px; word-break: break-all; }
+    .detail .count {
+      margin: 4px 0 10px; font-size: 22px; font-weight: 600; color: var(--accent); line-height: 1;
+    }
+    .detail .count span { color: var(--ink-mute); font-size: 11px; font-weight: 500; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .detail .under-hood {
+      margin-top: 16px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px;
+      background: rgba(15,23,42,0.55);
+    }
+    .detail .under-hood-title {
+      font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.1em;
+      font-weight: 600; margin-bottom: 6px;
+    }
+    .detail .under-hood-row { margin: 6px 0; font-size: 11.5px; color: var(--ink-dim); }
+    .detail .under-hood-row .uh-key {
+      display: block; font-size: 10px; color: var(--ink-mute); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 3px;
+    }
+    .detail .under-hood-row code {
+      color: var(--ink); font-size: 11px; background: rgba(148,163,184,.1); padding: 1px 5px;
+      border-radius: 3px; word-break: break-all;
+    }
+    .detail .under-hood ul { margin: 0; padding-left: 18px; font-size: 11.5px; }
+    .detail .under-hood ul li { margin: 2px 0; color: var(--ink-dim); }
+    .detail .under-hood ul li code { font-size: 11px; }
+
+    .footer { padding: 10px 14px; border-top: 1px solid var(--rule); font-size: 11px; color: var(--ink-mute); }
+    .footer code { font-size: 11px; }
+
+    @media (max-width: 1100px) {
+      .main { grid-template-columns: 200px 1fr; }
+      .detail { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>明日方舟 KB</h1>
+      <div class="nav">
+        <a href="index.html" class="active">概念地图</a>
+        <a href="lookup-flow.html">检索流程：角色名</a>
+      </div>
+      <span class="meta" id="schemaMeta">加载中…</span>
+      <div class="spacer"></div>
+      <div class="controls">
+        <input id="search" type="search" placeholder="搜索节点（如 卡片、别名、章节）…" />
+        <label class="chip chip-toggle"><input type="checkbox" id="hl-weak"/> 高亮弱点</label>
+        <label class="chip chip-toggle"><input type="checkbox" id="hl-wip"/> 弱化 WIP</label>
+        <select id="layout">
+          <option value="dagre" selected>布局：流向（横向）</option>
+          <option value="dagre-tb">布局：流向（纵向）</option>
+          <option value="fcose">布局：力导向</option>
+          <option value="concentric">布局：同心圆</option>
+          <option value="circle">布局：环形</option>
+        </select>
+        <button id="relayout" title="按当前布局重新排版">重新布局</button>
+        <button id="fit" title="把图缩放到视窗">适配</button>
+      </div>
+    </header>
+
+    <div class="main">
+      <aside class="sidebar">
+        <div class="group">
+          <h2>分组</h2>
+          <div id="layer-chips"></div>
+        </div>
+        <div class="group">
+          <h2>边的类型</h2>
+          <div id="edge-chips"></div>
+        </div>
+        <div class="group">
+          <h2>图例</h2>
+          <div id="legend"></div>
+        </div>
+        <div class="footer">
+          <strong>点击</strong>节点或边查看详情。<br/>
+          <strong>拖拽</strong>调整位置。点击分组芯片可以聚焦某一层。<br/>
+          数据来源：<code>schema.json</code> —— 修改它即可更新本图。
+        </div>
+      </aside>
+
+      <div class="canvas">
+        <div id="cy"></div>
+      </div>
+
+      <aside class="detail">
+        <div class="content" id="detail-content">
+          <div class="empty">选中节点或边以查看详情。</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+  <script>
+  (async function () {
+    const schema = await fetch('schema.json', { cache: 'no-cache' }).then(r => r.json());
+    document.getElementById('schemaMeta').textContent =
+      `${schema.nodes.length} 个节点 · ${schema.edges.length} 条边 · 截至 ${schema.as_of}`;
+
+    const layerById = Object.fromEntries(schema.layers.map(l => [l.id, l]));
+    const edgeKindById = Object.fromEntries(schema.edge_kinds.map(k => [k.id, k]));
+
+    // Compound parent nodes for layers
+    const compoundNodes = schema.layers.map(l => ({
+      data: { id: l.id, label: l.label, isLayer: true, color: l.color }
+    }));
+
+    // Style nodes/edges
+    const styles = [
+      {
+        selector: 'node[isLayer]',
+        style: {
+          'shape': 'round-rectangle',
+          'background-opacity': 0,
+          'border-width': 0,
+          'label': 'data(label)',
+          'text-valign': 'top',
+          'text-halign': 'center',
+          'text-margin-y': -2,
+          'font-size': 13,
+          'font-weight': 600,
+          'color': 'data(color)',
+          'text-opacity': 0.85,
+          'padding': 26,
+          'min-zoomed-font-size': 9,
+        }
+      },
+      {
+        selector: 'node[kind]',
+        style: {
+          'shape': 'round-rectangle',
+          'background-color': '#0f172a',
+          'background-opacity': 0.95,
+          'border-color': '#475569',
+          'border-width': 1.5,
+          'label': 'data(label)',
+          'text-wrap': 'wrap',
+          'text-max-width': 170,
+          'font-size': 13,
+          'font-weight': 500,
+          'line-height': 1.25,
+          'color': '#f1f5f9',
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'width': 'label',
+          'height': 'label',
+          'padding': 14,
+          'min-zoomed-font-size': 7,
+        }
+      },
+      { selector: 'node[kind = "entity"]',    style: { 'background-color': '#1c1410', 'border-color': '#f59e0b' } },
+      { selector: 'node[kind = "structure"]', style: { 'background-color': '#0c1820', 'border-color': '#0ea5e9' } },
+      { selector: 'node[parent = "lyr-op"]',  style: { 'background-color': '#0c1f1c', 'border-color': '#14b8a6' } },
+      { selector: 'node[kind = "link"]',      style: { 'background-color': '#1a0f24', 'border-color': '#a855f7' } },
+      { selector: 'node[kind = "workflow"]',  style: { 'background-color': '#1f0d14', 'border-color': '#f43f5e', 'border-width': 2 } },
+
+      // Layer-tinted borders
+      ...schema.layers.map(l => ({
+        selector: `node[parent = "${l.id}"][kind]`,
+        style: { 'border-color': l.color }
+      })),
+
+      // Weakness halo
+      {
+        selector: 'node[weakness]',
+        style: { 'border-color': '#f59e0b', 'border-width': 2 }
+      },
+      {
+        selector: 'node[built = "wip"], node[built = false]',
+        style: { 'opacity': 0.62, 'background-color': '#1f2937', 'border-style': 'dashed' }
+      },
+
+      // Selection / hover
+      { selector: 'node:selected', style: { 'border-color': '#38bdf8', 'border-width': 3 } },
+      { selector: '.faded', style: { 'opacity': 0.12 } },
+      { selector: '.hot', style: { 'border-color': '#fde68a', 'border-width': 3 } },
+
+      // Edges
+      {
+        selector: 'edge',
+        style: {
+          'curve-style': 'bezier',
+          'width': 2,
+          'line-color': '#64748b',
+          'target-arrow-color': '#64748b',
+          'target-arrow-shape': 'triangle',
+          'arrow-scale': 1.1,
+          'label': 'data(label)',
+          'font-size': 10,
+          'color': '#94a3b8',
+          'text-rotation': 'autorotate',
+          'text-margin-y': -8,
+          'text-background-color': '#0b1220',
+          'text-background-opacity': 0.85,
+          'text-background-padding': 3,
+          'min-zoomed-font-size': 7,
+        }
+      },
+      ...schema.edge_kinds.map(k => ({
+        selector: `edge[kind = "${k.id}"]`,
+        style: {
+          'line-color': k.color,
+          'target-arrow-color': k.color,
+          'line-style': k.style,
+          'color': k.color,
+        }
+      })),
+      { selector: 'edge:selected', style: { 'width': 3, 'line-color': '#38bdf8', 'target-arrow-color': '#38bdf8' } },
+      { selector: 'edge.dimmed', style: { 'opacity': 0.08 } },
+    ];
+
+    const cy = window.cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: [
+        ...compoundNodes,
+        ...schema.nodes,
+        ...schema.edges,
+      ],
+      style: styles,
+      wheelSensitivity: 0.18,
+      minZoom: 0.25,
+      maxZoom: 2.5,
+      autoungrabify: false,
+    });
+
+    const layouts = {
+      fcose: () => cy.layout({
+        name: 'fcose',
+        quality: 'proof',
+        nodeDimensionsIncludeLabels: true,
+        animate: false,
+        randomize: true,
+        idealEdgeLength: 140,
+        nodeRepulsion: 14000,
+        gravity: 0.18,
+        gravityRangeCompound: 1.6,
+        padding: 36,
+        tilingPaddingVertical: 28,
+        tilingPaddingHorizontal: 28,
+      }),
+      dagre: () => cy.layout({
+        name: 'dagre',
+        rankDir: 'LR',
+        nodeSep: 40,
+        edgeSep: 18,
+        rankSep: 130,
+        animate: false,
+        padding: 40,
+      }),
+      'dagre-tb': () => cy.layout({
+        name: 'dagre',
+        rankDir: 'TB',
+        nodeSep: 36,
+        edgeSep: 14,
+        rankSep: 100,
+        animate: false,
+        padding: 40,
+      }),
+      concentric: () => cy.layout({
+        name: 'concentric',
+        animate: false,
+        padding: 32,
+        concentric: (n) => layerById[n.data('parent')]
+          ? (schema.layers.length - layerById[n.data('parent')].order)
+          : 1,
+        levelWidth: () => 1,
+        minNodeSpacing: 28,
+      }),
+      circle: () => cy.layout({ name: 'circle', animate: false, padding: 32 }),
+    };
+
+    // Initial layout — dagre LR reads the narrative best.
+    let currentLayout = 'dagre';
+    layouts.dagre().run();
+    setTimeout(() => cy.fit(undefined, 56), 50);
+
+    document.getElementById('relayout').onclick = () => { layouts[currentLayout]().run(); setTimeout(() => cy.fit(undefined, 36), 50); };
+    document.getElementById('fit').onclick = () => cy.fit(undefined, 36);
+    document.getElementById('layout').onchange = (e) => {
+      currentLayout = e.target.value;
+      layouts[currentLayout]().run();
+      setTimeout(() => cy.fit(undefined, 36), 50);
+    };
+
+    // Build layer chips
+    const layerChipsEl = document.getElementById('layer-chips');
+    schema.layers.forEach(l => {
+      const c = document.createElement('span');
+      c.className = 'chip';
+      c.innerHTML = `<span class="dot" style="background:${l.color}"></span><span>${l.label.split(' — ')[0]}</span>`;
+      c.title = l.label;
+      c.dataset.layer = l.id;
+      c.onclick = () => {
+        c.classList.toggle('off');
+        applyFilters();
+      };
+      layerChipsEl.appendChild(c);
+    });
+
+    // Build edge-kind chips
+    const edgeChipsEl = document.getElementById('edge-chips');
+    schema.edge_kinds.forEach(k => {
+      const c = document.createElement('span');
+      c.className = 'chip';
+      c.innerHTML = `<span class="dot" style="background:${k.color}"></span><span>${k.label}</span>`;
+      c.dataset.edgeKind = k.id;
+      c.onclick = () => {
+        c.classList.toggle('off');
+        applyFilters();
+      };
+      edgeChipsEl.appendChild(c);
+    });
+
+    // Legend
+    const legend = document.getElementById('legend');
+    legend.innerHTML = `
+      <div class="legend-row"><span style="display:inline-block;width:16px;height:11px;border:1.5px solid #f59e0b;border-radius:3px;background:#1c1410"></span><span>实体（干员 / NPC / …）</span></div>
+      <div class="legend-row"><span style="display:inline-block;width:16px;height:11px;border:1.5px solid #0ea5e9;border-radius:3px;background:#0c1820"></span><span>叙事结构</span></div>
+      <div class="legend-row"><span style="display:inline-block;width:16px;height:11px;border:1.5px solid #14b8a6;border-radius:3px;background:#0c1f1c"></span><span>干员相关知识</span></div>
+      <div class="legend-row"><span style="display:inline-block;width:16px;height:11px;border:1.5px solid #a855f7;border-radius:3px;background:#1a0f24"></span><span>交叉引用</span></div>
+      <div class="legend-row"><span style="display:inline-block;width:16px;height:11px;border:2px solid #f43f5e;border-radius:3px;background:#1f0d14"></span><span>agent 工作流</span></div>
+      <div class="legend-row" style="margin-top:8px;border-top:1px solid var(--rule);padding-top:6px;"><span style="display:inline-block;width:16px;height:11px;border:2px solid #f59e0b;border-radius:3px;background:#1c1410"></span><span>存在已知弱点</span></div>
+      <div class="legend-row"><span style="display:inline-block;width:16px;height:11px;border:1.5px dashed #64748b;border-radius:3px;background:#1f2937;opacity:0.6"></span><span>尚未构建 / WIP</span></div>
+    `;
+
+    // Search
+    document.getElementById('search').oninput = (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      cy.elements().removeClass('hot faded');
+      if (!q) return;
+      const matches = cy.nodes('[kind]').filter(n => {
+        const d = n.data();
+        return (d.label && d.label.toLowerCase().includes(q))
+            || (d.id && d.id.toLowerCase().includes(q))
+            || (d.summary && d.summary.toLowerCase().includes(q))
+            || (d.path && d.path.toLowerCase().includes(q));
+      });
+      if (matches.length === 0) return;
+      cy.elements().addClass('faded');
+      const halo = matches.union(matches.connectedEdges()).union(matches.openNeighborhood());
+      halo.removeClass('faded');
+      matches.addClass('hot');
+      cy.fit(matches, 80);
+    };
+
+    // Highlight weaknesses
+    document.getElementById('hl-weak').onchange = (e) => {
+      cy.elements().removeClass('faded hot');
+      if (!e.target.checked) return;
+      const weak = cy.nodes('[?weakness]');
+      cy.elements().addClass('faded');
+      weak.union(weak.connectedEdges()).union(weak.openNeighborhood()).removeClass('faded');
+      weak.addClass('hot');
+    };
+
+    // Dim WIP
+    document.getElementById('hl-wip').onchange = (e) => {
+      const wip = cy.nodes().filter(n => n.data('built') === 'wip' || n.data('built') === false);
+      if (e.target.checked) wip.addClass('faded');
+      else wip.removeClass('faded');
+    };
+
+    function applyFilters () {
+      const offLayers = new Set(
+        [...layerChipsEl.querySelectorAll('.chip.off')].map(c => c.dataset.layer)
+      );
+      const offKinds = new Set(
+        [...edgeChipsEl.querySelectorAll('.chip.off')].map(c => c.dataset.edgeKind)
+      );
+
+      cy.batch(() => {
+        cy.nodes('[kind]').forEach(n => {
+          const p = n.data('parent');
+          n.style('display', offLayers.has(p) ? 'none' : 'element');
+        });
+        cy.nodes('[isLayer]').forEach(n => {
+          n.style('display', offLayers.has(n.data('id')) ? 'none' : 'element');
+        });
+        cy.edges().forEach(e => {
+          const hideByKind = offKinds.has(e.data('kind'));
+          const sHidden = offLayers.has(e.source().data('parent'));
+          const tHidden = offLayers.has(e.target().data('parent'));
+          e.style('display', (hideByKind || sHidden || tHidden) ? 'none' : 'element');
+        });
+      });
+    }
+
+    // Detail panel
+    const detailEl = document.getElementById('detail-content');
+    function renderDetail (ele) {
+      if (!ele) {
+        detailEl.innerHTML = `<div class="empty">选中节点或边以查看详情。</div>`;
+        return;
+      }
+      const d = ele.data();
+      if (ele.isNode()) {
+        const layer = layerById[d.parent];
+        const cleanLabel = (d.label || d.id).replace(/\n/g, ' ');
+        const builtBadge = d.built === false ? `<span class="wip">尚未构建</span>`
+                        : d.built === 'wip' ? `<span class="wip">进行中</span>`
+                        : '';
+        const whereList = Array.isArray(d.where)
+          ? `<ul>${d.where.map(w => `<li>${escapeHTML(w)}</li>`).join('')}</ul>`
+          : '';
+        const underHood = (d.queries_via || whereList) ? `
+          <div class="under-hood">
+            <div class="under-hood-title">底层细节</div>
+            ${d.queries_via ? `<div class="under-hood-row"><span class="uh-key">查询方式</span><code>${escapeHTML(d.queries_via)}</code></div>` : ''}
+            ${whereList ? `<div class="under-hood-row"><span class="uh-key">落地位置</span>${whereList}</div>` : ''}
+          </div>` : '';
+        detailEl.innerHTML = `
+          <div class="kicker">${layer ? escapeHTML(layer.label) : ''}</div>
+          <h3>${escapeHTML(cleanLabel)}</h3>
+          ${d.count ? `<div class="count">${escapeHTML(d.count)} <span>当前语料</span></div>` : ''}
+          ${builtBadge}
+          <div class="summary">${escapeHTML(d.summary || '')}</div>
+          ${d.details ? `<div class="details">${escapeHTML(d.details)}</div>` : ''}
+          ${d.weakness ? `<div class="weakness"><span class="label">⚠ 已知弱点</span>${escapeHTML(d.weakness)}</div>` : ''}
+          ${underHood}
+        `;
+      } else {
+        const kind = edgeKindById[d.kind] || {};
+        const src = cy.getElementById(d.source).data();
+        const tgt = cy.getElementById(d.target).data();
+        detailEl.innerHTML = `
+          <div class="kicker">边 · ${escapeHTML(kind.label || d.kind)}</div>
+          <h3>${escapeHTML(src.label || d.source)} → ${escapeHTML(tgt.label || d.target)}</h3>
+          <div class="summary">${escapeHTML(d.label || '')}</div>
+          ${d.details ? `<div class="details">${escapeHTML(d.details)}</div>` : ''}
+          <dl>
+            <dt>类型</dt><dd>${escapeHTML(d.kind)}</dd>
+            <dt>起点</dt><dd><code>${escapeHTML(d.source)}</code></dd>
+            <dt>终点</dt><dd><code>${escapeHTML(d.target)}</code></dd>
+          </dl>
+        `;
+      }
+    }
+    function escapeHTML (s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    cy.on('tap', (e) => {
+      if (e.target === cy) renderDetail(null);
+      else renderDetail(e.target);
+    });
+
+    // Click outside any node clears highlight
+    cy.on('tap', (e) => {
+      if (e.target === cy) {
+        cy.elements().removeClass('hot');
+      }
+    });
+  })().catch(err => {
+    document.body.innerHTML = `<pre style="color:#fca5a5;padding:24px">加载 schema.json 失败：${err}</pre>`;
+    console.error(err);
+  });
+  </script>
+</body>
+</html>

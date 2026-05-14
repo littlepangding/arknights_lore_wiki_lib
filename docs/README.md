@@ -11,6 +11,7 @@ This folder is the agent working area: requirements, design docs, prompts, decis
 | `PROMPTS.md` | All Chinese prompts used by `summarize` and `audit` flows, with required output tags. | You're tweaking a prompt, or debugging an LLM-output validation failure. |
 | `AGENTS_GUIDE.md` | How an agent should *use* the KB (CLI surface + recipes). | You've been asked to do Q/A or audit work. |
 | `DECISIONS.md` | Substantial-decision log. Append-only. | You're tracing why something is built the way it is. |
+| `schema/` | Interactive HTML diagram of how KB concepts (character / NPC / event / stage / edge layers / queries) connect, with `weakness` callouts on known agent-lookup gaps. Served via GitHub Pages from `/docs`. | You want a visual of the KB's shape, or you've changed the schema and need to update the picture. See `schema/README.md` for the maintenance rule and Pages setup. |
 
 ## Where the rest of the project's docs are
 
