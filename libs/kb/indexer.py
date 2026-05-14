@@ -377,6 +377,8 @@ def build_all_indexes(
     curated_aliases_path: Path | str | None = None,
     summaries_root: Path | str | None = None,
     curated_entities_path: Path | str | None = None,
+    relations_root: Path | str | None = None,
+    curated_relations_path: Path | str | None = None,
 ) -> dict:
     """Read existing event/char manifests + storysets, build every
     index, write `kb_root/indexes/*.json` + `kb_root/entities.jsonl`.
@@ -394,7 +396,7 @@ def build_all_indexes(
     # Local import: `participants` and `entities` both reach back into
     # this module, so importing them at module scope would be circular.
     # `cooccurrence` is fine module-scoped but co-located here for symmetry.
-    from libs.kb import cooccurrence, entities, participants
+    from libs.kb import cooccurrence, entities, participants, relations
 
     event_manifests = load_event_manifests(kb_root)
     char_manifests = load_char_manifests(kb_root)
@@ -467,6 +469,18 @@ def build_all_indexes(
         paths.cooccurrence_jsonl_path(kb_root), cooccur_rows
     )
 
+    rel_root = Path(relations_root) if relations_root else None
+    rel_curated = Path(curated_relations_path) if curated_relations_path else None
+    if rel_root is not None and rel_root.is_dir():
+        relation_rows, relation_curated_errors = relations.collate_relations(
+            rel_root, rel_curated
+        )
+    else:
+        relation_rows, relation_curated_errors = [], []
+    relations.write_relations_jsonl(
+        paths.relations_jsonl_path(kb_root), relation_rows
+    )
+
     return {
         "events": len(event_manifests),
         "chars": len(char_manifests),
@@ -488,4 +502,8 @@ def build_all_indexes(
         "entity_curated_warnings": ent_summary["curated_warnings"],
         "cooccurrence_pair_count": len(cooccur_rows),
         "cooccurrence_stage_total": sum(r["co_stage_count"] for r in cooccur_rows),
+        "relation_count": len(relation_rows),
+        "relation_bake_count": sum(1 for r in relation_rows if r.get("source") == "bake"),
+        "relation_curated_count": sum(1 for r in relation_rows if r.get("source") == "curated"),
+        "relation_curated_errors": relation_curated_errors,
     }

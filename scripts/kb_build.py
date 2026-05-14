@@ -88,6 +88,28 @@ def _resolve_curated_entities_path(args: argparse.Namespace) -> Path | None:
     return None
 
 
+def _resolve_curated_relations_path(args: argparse.Namespace) -> Path | None:
+    """Same lookup pattern as `_resolve_curated_path`, but for the
+    optional `relations_curated.jsonl` typed-relation overrides.
+    Missing → only the bake's per-char files contribute to relations.jsonl."""
+    if args.curated_relations:
+        p = Path(args.curated_relations).expanduser()
+        if not p.is_file():
+            print(
+                f"warning: --curated-relations {p} does not exist; "
+                "skipping curated relation overrides",
+                file=sys.stderr,
+            )
+            return None
+        return p
+    wiki_path = args.wiki_path or try_get_value("lore_wiki_path")
+    if wiki_path:
+        candidate = paths.curated_relations_path(Path(wiki_path).expanduser())
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 def _prune_extra_dirs(parent: Path, keep: set[str]) -> list[str]:
     if not parent.is_dir():
         return []
@@ -115,6 +137,24 @@ def main() -> int:
             "Explicit path to entities_curated.jsonl (non-operator entity "
             "overrides); overrides --wiki-path lookup. Optional — when "
             "missing, entities.jsonl carries operator + auto-seeded rows only."
+        ),
+    )
+    parser.add_argument(
+        "--curated-relations",
+        default="",
+        help=(
+            "Explicit path to relations_curated.jsonl (typed-relation overrides); "
+            "overrides --wiki-path lookup. Optional — when missing, relations.jsonl "
+            "carries only the bake's per-char rows."
+        ),
+    )
+    parser.add_argument(
+        "--relations-root",
+        default="",
+        help=(
+            f"Per-char relation bake root. Defaults to ./{paths.RELATIONS_DIRNAME} "
+            "when it exists; otherwise relations.jsonl is empty (kb_relations bake "
+            "hasn't run yet). Pass a non-dir / empty to skip."
         ),
     )
     parser.add_argument(
@@ -153,10 +193,18 @@ def main() -> int:
     if summaries_root is not None and not summaries_root.is_dir():
         summaries_root = None
 
+    if args.relations_root:
+        relations_root: Path | None = Path(args.relations_root)
+    else:
+        relations_root = paths.default_relations_root()
+    if relations_root is not None and not relations_root.is_dir():
+        relations_root = None
+
     data_version = _read_data_version(game_data_path)
     clean_hash = _clean_script_hash()
     curated_path = _resolve_curated_path(args)
     curated_entities_path = _resolve_curated_entities_path(args)
+    curated_relations_path = _resolve_curated_relations_path(args)
 
     print(f"kb_build: game_data_path={game_data_path}")
     print(f"kb_build: kb_root={kb_root}")
@@ -164,7 +212,9 @@ def main() -> int:
     print(f"kb_build: clean_script_hash={clean_hash}")
     print(f"kb_build: curated_aliases={curated_path or '(none)'}")
     print(f"kb_build: curated_entities={curated_entities_path or '(none)'}")
+    print(f"kb_build: curated_relations={curated_relations_path or '(none)'}")
     print(f"kb_build: summaries_root={summaries_root or '(none)'}")
+    print(f"kb_build: relations_root={relations_root or '(none)'}")
 
     t0 = time.monotonic()
 
@@ -223,6 +273,8 @@ def main() -> int:
         curated_aliases_path=curated_path,
         summaries_root=summaries_root,
         curated_entities_path=curated_entities_path,
+        relations_root=relations_root,
+        curated_relations_path=curated_relations_path,
     )
 
     family_counts = {f: len(summary["events_by_family"].get(f, [])) for f in FAMILIES}
@@ -262,6 +314,14 @@ def main() -> int:
         "entity_curated_warnings": summary["entity_curated_warnings"],
         "cooccurrence_pair_count": summary["cooccurrence_pair_count"],
         "cooccurrence_stage_total": summary["cooccurrence_stage_total"],
+        "relations_root": str(relations_root) if relations_root else None,
+        "curated_relations_path": (
+            str(curated_relations_path) if curated_relations_path else None
+        ),
+        "relation_count": summary["relation_count"],
+        "relation_bake_count": summary["relation_bake_count"],
+        "relation_curated_count": summary["relation_curated_count"],
+        "relation_curated_errors": summary["relation_curated_errors"],
         "skipped_nameless_char_ids": skipped_nameless,
         "storyset_warnings": storyset_warnings,
         "pruned_event_dirs": pruned_events,
@@ -316,6 +376,15 @@ def main() -> int:
         f"  cooccurrence pairs: {summary['cooccurrence_pair_count']} "
         f"(stage co-appearances: {summary['cooccurrence_stage_total']})"
     )
+    print(
+        f"  relations: {summary['relation_count']} "
+        f"(bake={summary['relation_bake_count']}, curated={summary['relation_curated_count']})"
+    )
+    if summary["relation_curated_errors"]:
+        print(
+            f"  relation curated errors: {len(summary['relation_curated_errors'])} "
+            "(see manifest)"
+        )
     if storyset_warnings:
         print(f"  storyset warnings: {len(storyset_warnings)} (see manifest)")
     if pruned_events:

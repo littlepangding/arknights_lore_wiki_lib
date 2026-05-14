@@ -30,8 +30,9 @@ On a fresh checkout: `python3 -m venv .venv && .venv/bin/pip install -r requirem
 | Build raw chunks (`data/kb/`, ~10s, no LLM) | `.venv/bin/python -m scripts.kb_build` |
 | Bake event summaries | `.venv/bin/python -m scripts.kb_summarize --llm cli --model gemini-3.1-pro-preview` |
 | Bake stage summaries | `.venv/bin/python -m scripts.kb_summarize --stages --llm cli --model gemini-3.1-pro-preview` |
+| Bake typed relations | `.venv/bin/python -m scripts.kb_relations --llm cli --model gemini-3.1-pro-preview` |
 | Cost estimate only | append `--estimate` |
-| Limit to one event | append `--event <event_id>` |
+| Limit to one event | append `--event <event_id>` (use `--char <char_id>` for `kb_relations`) |
 | Force re-bake | append `--force` |
 | Compile wiki site | `.venv/bin/python -m scripts.compile_website` |
 | Find new stories vs upstream | `.venv/bin/python -m scripts.find_new_stories` |

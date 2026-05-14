@@ -1,36 +1,40 @@
-"""Typed relation network (skeleton — no LLM bake yet).
+"""Typed relation network — load / query / collation.
 
-This module is the *load/query* half of the P-D relation network. The
-*build* half — an LLM pass that reads each char's handbook plus the
-chapters they appear in and emits typed assertions — will land in a
-follow-up commit (``scripts/kb_relations.py``) once the stage-summary
-bake has finished. Keeping the load/query surface ready now lets
-:func:`query.load_kb` and the ``kb_query relations …`` CLI degrade
-cleanly while the file is absent: queries return ``[]`` rather than
-crashing.
+Three artifacts:
 
-Row shape (one JSON object per line in ``data/kb/relations.jsonl``)::
+* ``kb_relations/chars/<char_id>.jsonl`` — per-char LLM bake output
+  (tracked in git). Written by :mod:`libs.kb.relations_bake` via
+  ``scripts/kb_relations.py``.
+* ``<lore_wiki_path>/data/relations_curated.jsonl`` — optional curated
+  override (same row shape; the curator pins assertions the bake
+  missed or hallucinated).
+* ``data/kb/relations.jsonl`` — collated view; gitignored. Built by
+  ``kb_build`` from the two above; consumed by ``kb_query relations …``.
+
+Row shape (one JSON object per line)::
 
     {
-      "head": "char_002_amiya" | "ent_<6hex>",   # entity id, required
-      "type": "<relation_type>",                   # free string for now
-      "tail": "char_xxx" | "ent_<6hex>",           # entity id, required
-      "source_event_ids": ["main_12", ...],        # provenance, optional
-      "notes": "...",                              # human context, optional
-      "confidence": "high" | "medium" | "low"      # set by the bake, optional
+      "head": "char_002_amiya" | "ent_<6hex>",     # entity id, required
+      "type": "member_of" | "ally_of" | ...,       # see RELATION_TYPES in relations_bake
+      "tail": "char_xxx" | "ent_<6hex>" | null,    # entity id; null when ambiguous
+      "tail_name": "<surface name>",               # the LLM's emitted surface
+      "ambiguous_candidates": ["char_a", ...],     # only when tail is null
+      "notes": "...",                              # short context (≤30字 by prompt)
+      "source": "bake" | "curated"                 # added at collation
     }
 
-The ``type`` vocabulary is intentionally unfrozen at this layer — when
-the bake lands it will commit a controlled list (probably ``member_of``,
-``ally_of``, ``creator_of``, ``identifies_as``, ``aka``, ...). Until
-then, the module accepts any string so it doesn't pre-commit to a
-typology that hasn't faced live data.
+``tail`` is allowed to be ``null`` so an ambiguous-tail assertion isn't
+silently dropped — `tail_name` carries the surface and the curator can
+disambiguate later by adding an entry to ``entities_curated.jsonl`` and
+re-baking. Missing-tail assertions (no alias matches at all) are
+dropped at bake time with a warning in the bake report instead of
+landing here.
 
-Provenance pointing at ``source_event_ids`` (not stage ids) keeps the
-relation table stable across the bake's incremental progress: an
-assertion mined from one chapter remains valid when more chapters get
-baked. The originating stage indices live in the relation bake's
-working file, not in ``relations.jsonl``.
+The ``type`` field at this layer is a free string. The bake's prompt
+hints :data:`relations_bake.RELATION_TYPES` (9 starter types); novel
+types from the LLM aren't rejected — they're flagged in bake warnings
+so a curator can decide whether to extend the vocabulary, but the
+assertion is kept.
 """
 
 from __future__ import annotations
@@ -42,13 +46,21 @@ from libs.kb._io import atomic_write_text
 
 
 def _ensure_row(row: dict) -> dict:
-    """Light validation. Hard-required keys produce a ``ValueError`` —
-    callers (the future bake script, tests) get a useful error instead
-    of a malformed line on disk. Optional keys are passed through."""
-    for k in ("head", "type", "tail"):
+    """Light validation. `head` and `type` must be non-empty strings.
+    `tail` is required as a key but may be `null` — that's how an
+    ambiguous-tail assertion (`ambiguous_candidates` set) is preserved
+    rather than silently dropped; `tail_name` carries the surface in
+    that case. Callers (the bake, tests) get a useful error instead of
+    a malformed line on disk."""
+    for k in ("head", "type"):
         v = row.get(k)
         if not isinstance(v, str) or not v:
             raise ValueError(f"relations row missing/empty {k!r}: {row!r}")
+    if "tail" not in row:
+        raise ValueError(f"relations row missing key 'tail': {row!r}")
+    tail = row["tail"]
+    if tail is not None and (not isinstance(tail, str) or not tail):
+        raise ValueError(f"relations row 'tail' must be str or null: {row!r}")
     return row
 
 
@@ -110,3 +122,90 @@ def list_relation_types(rows: list[dict]) -> list[str]:
     for `kb_query relations list --type` autocompletion and for the
     bake's curated-override review (knowing which types exist)."""
     return sorted({r["type"] for r in rows})
+
+
+# --- per-char file I/O + collation -----------------------------------
+
+
+def load_char_relations_file(path: Path) -> list[dict]:
+    """Read a single ``kb_relations/chars/<char_id>.jsonl``. Same
+    `_ensure_row` validation as the collated load — a malformed bake
+    output fails loud rather than silently truncating one char's
+    relations."""
+    if not path.is_file():
+        return []
+    out: list[dict] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        s = line.strip()
+        if s:
+            out.append(_ensure_row(json.loads(s)))
+    return out
+
+
+def parse_curated_relations_file(
+    path: Path,
+) -> tuple[list[dict], list[dict]]:
+    """Read ``<wiki>/data/relations_curated.jsonl``. Same posture as
+    :func:`entities.parse_curated_entities_file` — broken lines land
+    in `errors` instead of killing `kb_build`. `#` comment lines and
+    blank lines are skipped."""
+    entries: list[dict] = []
+    errors: list[dict] = []
+    if not path.is_file():
+        return entries, errors
+    for i, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError as e:
+            errors.append({"line_no": i, "raw": raw, "reason": f"invalid JSON: {e}"})
+            continue
+        if not isinstance(row, dict):
+            errors.append({"line_no": i, "raw": raw, "reason": "not a JSON object"})
+            continue
+        try:
+            entries.append(_ensure_row(row))
+        except ValueError as e:
+            errors.append({"line_no": i, "raw": raw, "reason": str(e)})
+    return entries, errors
+
+
+def _row_dedup_key(row: dict) -> tuple[str, str, str | None, str | None]:
+    """Identity key for collation dedup: same (head, type, tail) — and
+    `tail_name` when `tail` is null so two ambiguous-tail rows pointing
+    at different surfaces aren't collapsed."""
+    return (row["head"], row["type"], row.get("tail"), row.get("tail_name"))
+
+
+def collate_relations(
+    relations_root: Path,
+    curated_path: Path | None = None,
+) -> tuple[list[dict], list[dict]]:
+    """Walk ``kb_relations/chars/*.jsonl``, append the curated override
+    file, dedup by (head, type, tail, tail_name) with **curated winning**.
+    Returns `(rows, curated_errors)`.
+
+    A curated entry with the same key as a baked row replaces it — the
+    curator's hand-edits override the LLM. Sort is stable by `(head,
+    type, tail)` so the collated file diffs cleanly across rebuilds.
+    """
+    seen: dict[tuple, dict] = {}
+    chars_root = relations_root / "chars"
+    if chars_root.is_dir():
+        for p in sorted(chars_root.glob("*.jsonl")):
+            for row in load_char_relations_file(p):
+                seen[_row_dedup_key(row)] = {**row, "source": "bake"}
+
+    curated_errors: list[dict] = []
+    if curated_path is not None:
+        curated_entries, curated_errors = parse_curated_relations_file(curated_path)
+        for row in curated_entries:
+            seen[_row_dedup_key(row)] = {**row, "source": "curated"}
+
+    rows = sorted(
+        seen.values(),
+        key=lambda r: (r["head"], r["type"], r.get("tail") or "", r.get("tail_name") or ""),
+    )
+    return rows, curated_errors

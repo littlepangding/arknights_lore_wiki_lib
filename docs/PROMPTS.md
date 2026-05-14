@@ -97,7 +97,59 @@ Required output tags (validated): same as P1 (`一句话概要`, `核心剧情`,
 
 ---
 
-## P2 — Per-character one-liner (DEFERRED, not used in v1)
+## P2 — Per-character typed relations (`scripts/kb_relations.py`, committed to `kb_relations/chars/<char_id>.jsonl`)
+
+One LLM call per operator reads `profile.txt` + `archive.txt` + `voice.txt` and emits typed assertions against the entity layer. Output is JSONL (one assertion per line). The collated view at `data/kb/relations.jsonl` is built by `kb_build` from these per-char files plus the optional curated override at `<lore_wiki_path>/data/relations_curated.jsonl`.
+
+**System:**
+```
+你是一个明日方舟剧情资料编写助手。你的任务是阅读一名干员的档案文本，提取该干员与其他实体（组织、地点、其他角色）之间的类型化关系，仅供索引和检索。你严格遵守输出格式，使用简体中文，不引申、不评价、不揣测原作未交代的内容。
+```
+
+**User (single-pass, one call per char):**
+```
+以下是明日方舟干员 **<<<CHAR_NAME>>>** 的档案文本（含基础档案、客观履历、语音、回忆等）。请基于这些文本，提取该干员与其他实体之间的 **类型化关系**。
+
+输出格式：
+<关系>
+type;tail;notes
+</关系>
+
+每行一条关系。字段含义：
+
+- `type`（关系类型，必填）：仅使用以下 9 个之一。novel 类型会被记录为警告，请尽量使用预设值。
+  - `member_of` — head 属于 tail（组织或团体），例：`member_of;罗德岛`
+  - `ally_of` — head 与 tail 互为同伴 / 盟友（双向），例：`ally_of;凯尔希`
+  - `rival_of` — head 与 tail 互为对手（双向）
+  - `family_of` — head 与 tail 有血缘 / 家族关系（具体关系写到 notes），例：`family_of;<姐姐名>;长姐`
+  - `mentor_of` — head 教导过 tail
+  - `subordinate_of` — head 在工作 / 阶层上隶属于 tail
+  - `creator_of` — head 创建 / 创造了 tail
+  - `identifies_as` — head 的另一个身份是 tail（同一人物的不同名号 / 化身 / 过去身份）
+  - `origin_from` — head 来自 tail（出身地、国籍、阵营出身）
+- `tail`（关系对象，必填）：该关系指向的实体名称（人物名 / 组织名 / 地点名）。**`head` 自动设为本干员，不需要写出。**
+- `notes`（说明，选填）：简短中文说明（≤30 字）。
+
+【硬性要求】
+- 严格使用简体中文。
+- 只提取档案中明确陈述或强烈暗示的关系，不要凭剧情常识或泛文化背景补全。
+- 不要列出"博士"作为 tail。
+- 不要把"罗德岛"列为 `member_of` 之外的类型。
+- 如果没有可提取的关系，输出空的 `<关系>` 标签。
+
+干员档案：
+<<<HANDBOOK_TEXT>>>
+```
+
+Required output tag (validated): `关系`. The block body is one assertion per line — `type;tail[;notes]`. Empty body or `无` means the LLM found no assertions in the handbook (a valid outcome).
+
+**Tail resolution** is post-processing: surface names are looked up against `KB.entity_alias_to_ids`. A `Resolved` tail yields `tail=<entity_id>` + `tail_name=<surface>`; an `Ambiguous` tail yields `tail=null` + `ambiguous_candidates`; a `Missing` tail is dropped with a warning (the curator's punch list for `entities_curated.jsonl`).
+
+Hash-gated: a char's handbook text hash lives in `kb_relations/manifest.json` so re-runs over unchanged inputs are no-ops.
+
+---
+
+## P2-legacy — Per-character one-liner (DEFERRED, not used in v1)
 
 > Per Codex review 04 finding 3: dropped from v1 because char data is already sectional and small (median ~5 KB, max ~11 KB) and `manifest.json` carries the structured navigation aids. Keeping the prompt here for possible v2 reuse.
 
