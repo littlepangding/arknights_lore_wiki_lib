@@ -59,6 +59,8 @@ Every char↔stage link in the KB carries a `source` (and, for `participant`, a 
 
 **Before falling back to grep, try `kb_query entity resolve <name>`.** That's the broader resolver — it covers operators *and* curated non-operator entities (`绩`, `颉`, `神农`, `罗德岛`, … via `<lore_wiki_path>/data/entities_curated.jsonl`) *and* auto-seeded `entity_type="unknown"` placeholders (any `<关键人物>` surface name that turned up in a baked summary and didn't resolve). `entity resolve 绩` → `ResolvedEntity(ent_<6hex>)` once curated; while uncurated it's still `Resolved` (just `entity_type=unknown` until a curator types it). `entity get <id>` reads the full row. Operator-only checks should stay on `char resolve`; the broader entity layer is what you want for "is this a real named thing the corpus knows about?"
 
+**For "who does X mostly co-star with?", use `kb_query relations cooccur for <char_id>`.** Deterministic, derived from the WS-0 char↔stage edges — `co_stage_count` is the high-signal metric (both chars share an explicit stage), `co_event_count` is the wider net. Defaults to `--min-tier named` so lone `mentioned` participant edges don't drown the table. `cooccur top` lists the corpus-wide leaders (good for "who are the central recurring pairings?"); `cooccur between <a> <b>` is a fast yes/no for whether two chars overlap at all. The typed `relations for|between|list` subcommands return `[]` until the LLM relation-extraction bake runs — once it does, an assertion like `{head: char_002_amiya, type: member_of, tail: ent_<rhodes>}` will resolve "is Amiya a Rhodes Island member?" without grep.
+
 **When the resolver returns `Missing`, fall back to `kb_query grep "<name>"`.** The grep search is **literal substring by default** (use `--regex` only if you actually want regex semantics) and finds any occurrence in stage text or char-section files, regardless of entity type. For NPCs and groups, literal grep is the v1 retrieval mechanism, and it handles names with parentheses / hyphens / smart quotes (`AUS (群体)`, `Ishar-mla`, `"桥夹"克里夫`) correctly without escaping.
 
 Example resolver flow when uncertain:
@@ -92,6 +94,12 @@ All commands run from the lib repo root with `.venv/bin/python`:
 .venv/bin/python -m scripts.kb_query entity resolve <name>            # BROADER than `char resolve`: covers operators + curated named NPCs + auto-seeded unknowns
 .venv/bin/python -m scripts.kb_query entity list [--type operator|npc|organization|location|group|unknown]
 .venv/bin/python -m scripts.kb_query entity get <entity_id>           # char_id for operators, ent_<6hex> for non-operators
+.venv/bin/python -m scripts.kb_query relations cooccur for <char_id> [--limit N]     # other chars this one most-often co-appears with (deterministic, from WS-0 edges)
+.venv/bin/python -m scripts.kb_query relations cooccur top [--limit N]               # highest-co-occurrence pairs corpus-wide
+.venv/bin/python -m scripts.kb_query relations cooccur between <a> <b>               # one pair's co-occurrence (co_stage_count, co_event_count, sample events) or non-zero exit
+.venv/bin/python -m scripts.kb_query relations for <entity_id>                       # typed assertions touching one entity — empty until the relation bake runs
+.venv/bin/python -m scripts.kb_query relations between <a> <b> [--directed]
+.venv/bin/python -m scripts.kb_query relations list [--type <relation_type>]
 # `summary char <id>` is intentionally absent in v1 — read the char dossier directly via `char get`.
 ```
 

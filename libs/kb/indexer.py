@@ -393,7 +393,8 @@ def build_all_indexes(
     from unresolved `<关键人物>` names."""
     # Local import: `participants` and `entities` both reach back into
     # this module, so importing them at module scope would be circular.
-    from libs.kb import entities, participants
+    # `cooccurrence` is fine module-scoped but co-located here for symmetry.
+    from libs.kb import cooccurrence, entities, participants
 
     event_manifests = load_event_manifests(kb_root)
     char_manifests = load_char_manifests(kb_root)
@@ -461,6 +462,11 @@ def build_all_indexes(
         paths.entities_jsonl_path(kb_root), ent_summary["entities"]
     )
 
+    cooccur_rows = cooccurrence.build_cooccurrence(event_to_chars)
+    cooccurrence.write_cooccurrence_jsonl(
+        paths.cooccurrence_jsonl_path(kb_root), cooccur_rows
+    )
+
     return {
         "events": len(event_manifests),
         "chars": len(char_manifests),
@@ -480,4 +486,6 @@ def build_all_indexes(
         "entity_auto_seeded_count": ent_summary["auto_seeded_count"],
         "entity_curated_errors": ent_summary["curated_errors"],
         "entity_curated_warnings": ent_summary["curated_warnings"],
+        "cooccurrence_pair_count": len(cooccur_rows),
+        "cooccurrence_stage_total": sum(r["co_stage_count"] for r in cooccur_rows),
     }

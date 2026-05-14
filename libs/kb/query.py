@@ -17,8 +17,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Literal
 
+from libs.kb import cooccurrence as cooccurrence_mod
 from libs.kb import entities as entities_mod
 from libs.kb import indexer, paths
+from libs.kb import relations as relations_mod
 from libs.kb._io import read_json, read_json_or
 from libs.kb.entities import ENTITY_TYPES, EntityType
 from libs.kb.participants import Tier, TIERS, tier_at_least
@@ -197,6 +199,12 @@ class KB:
     entities: list[dict] = field(default_factory=list)
     entities_by_id: dict[str, dict] = field(default_factory=dict)
     entity_alias_to_ids: dict[str, list[str]] = field(default_factory=dict)
+    # Co-occurrence: deterministic char-pair table. `relations`: typed
+    # relation assertions (empty until the LLM bake runs). Both degrade
+    # to `[]` when the file is absent — a pre-cooccurrence build still
+    # loads cleanly.
+    cooccurrence: list[dict] = field(default_factory=list)
+    relations: list[dict] = field(default_factory=list)
 
 
 def load_kb(
@@ -240,6 +248,11 @@ def load_kb(
     entities_by_id = {e["id"]: e for e in ent_list}
     entity_alias_index = entities_mod.build_entity_alias_index(ent_list)
 
+    cooccur_rows = cooccurrence_mod.load_cooccurrence(
+        paths.cooccurrence_jsonl_path(root)
+    )
+    relation_rows = relations_mod.load_relations(paths.relations_jsonl_path(root))
+
     return KB(
         root=root,
         summaries_root=sumroot,
@@ -257,6 +270,8 @@ def load_kb(
         entities=ent_list,
         entities_by_id=entities_by_id,
         entity_alias_to_ids=entity_alias_index,
+        cooccurrence=cooccur_rows,
+        relations=relation_rows,
     )
 
 
@@ -662,3 +677,47 @@ def list_entities(
 def get_entity(kb: KB, entity_id: str) -> dict | None:
     """The full entity row, or `None` if no entity has that id."""
     return kb.entities_by_id.get(entity_id)
+
+
+# --- relation network -------------------------------------------------
+
+
+def cooccurrence_for_char(
+    kb: KB, char_id: str, limit: int | None = None
+) -> list[dict]:
+    """Pairs touching `char_id`, most-coupled first. Thin wrapper over
+    :func:`cooccurrence.cooccurrence_for` for the CLI."""
+    return cooccurrence_mod.cooccurrence_for(kb.cooccurrence, char_id, limit=limit)
+
+
+def cooccurrence_top(kb: KB, limit: int = 50) -> list[dict]:
+    """Top co-occurring pairs across the whole corpus."""
+    return cooccurrence_mod.cooccurrence_top(kb.cooccurrence, limit=limit)
+
+
+def cooccurrence_between(kb: KB, a: str, b: str) -> dict | None:
+    """One pair's row, or `None` if they never co-occur."""
+    return cooccurrence_mod.cooccurrence_between(kb.cooccurrence, a, b)
+
+
+def relations_for_entity(kb: KB, entity_id: str) -> list[dict]:
+    """All typed-relation assertions touching `entity_id`. Empty until
+    the LLM relation bake has populated `relations.jsonl`."""
+    return relations_mod.relations_for(kb.relations, entity_id)
+
+
+def relations_between_entities(
+    kb: KB, a: str, b: str, *, directed: bool = False
+) -> list[dict]:
+    """Typed relations between two entities. Undirected by default —
+    matches `head=a tail=b` and `head=b tail=a` so the caller need not
+    know the assertion direction."""
+    return relations_mod.relations_between(kb.relations, a, b, directed=directed)
+
+
+def list_relations(kb: KB, type_filter: str | None = None) -> list[dict]:
+    """Every relation row, optionally filtered by `type`. Empty until
+    the bake runs."""
+    if type_filter is None:
+        return list(kb.relations)
+    return [r for r in kb.relations if r["type"] == type_filter]

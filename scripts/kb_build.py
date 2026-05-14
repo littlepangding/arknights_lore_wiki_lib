@@ -260,6 +260,8 @@ def main() -> int:
         "entity_auto_seeded_count": summary["entity_auto_seeded_count"],
         "entity_curated_errors": summary["entity_curated_errors"],
         "entity_curated_warnings": summary["entity_curated_warnings"],
+        "cooccurrence_pair_count": summary["cooccurrence_pair_count"],
+        "cooccurrence_stage_total": summary["cooccurrence_stage_total"],
         "skipped_nameless_char_ids": skipped_nameless,
         "storyset_warnings": storyset_warnings,
         "pruned_event_dirs": pruned_events,
@@ -310,6 +312,10 @@ def main() -> int:
             f"  entity curated warnings: {len(summary['entity_curated_warnings'])} "
             "(see manifest)"
         )
+    print(
+        f"  cooccurrence pairs: {summary['cooccurrence_pair_count']} "
+        f"(stage co-appearances: {summary['cooccurrence_stage_total']})"
+    )
     if storyset_warnings:
         print(f"  storyset warnings: {len(storyset_warnings)} (see manifest)")
     if pruned_events:

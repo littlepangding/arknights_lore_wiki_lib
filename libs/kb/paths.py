@@ -155,6 +155,21 @@ def entities_jsonl_path(kb_root: Path) -> Path:
     return kb_root / "entities.jsonl"
 
 
+def cooccurrence_jsonl_path(kb_root: Path) -> Path:
+    """Deterministic char-pair co-occurrence — one row per unordered
+    `(a, b)`. Built by `kb_build` from the merged WS-0 `event_to_chars`
+    index; consumed by `kb_query relations cooccur …` and (later) the
+    relation bake's candidate-pair list."""
+    return kb_root / "cooccurrence.jsonl"
+
+
+def relations_jsonl_path(kb_root: Path) -> Path:
+    """Typed relation table — one assertion per line. Populated by a
+    future LLM bake (`scripts/kb_relations.py`); until then the file is
+    absent and `load_relations` returns `[]`."""
+    return kb_root / "relations.jsonl"
+
+
 def curated_entities_path(wiki_path: Path) -> Path:
     """`<lore_wiki_path>/data/entities_curated.jsonl` — hand-curated
     non-operator entity overrides (named NPCs, organizations, ...).

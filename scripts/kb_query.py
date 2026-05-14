@@ -265,6 +265,51 @@ def cmd_entity_get(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_relations_cooccur_for(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    _print_json(query.cooccurrence_for_char(kb, args.char_id, limit=args.limit))
+    return 0
+
+
+def cmd_relations_cooccur_top(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    _print_json(query.cooccurrence_top(kb, limit=args.limit))
+    return 0
+
+
+def cmd_relations_cooccur_between(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    row = query.cooccurrence_between(kb, args.a, args.b)
+    if row is None:
+        print(
+            f"kb_query: no co-occurrence between {args.a!r} and {args.b!r}",
+            file=sys.stderr,
+        )
+        return 1
+    _print_json(row)
+    return 0
+
+
+def cmd_relations_for(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    _print_json(query.relations_for_entity(kb, args.entity_id))
+    return 0
+
+
+def cmd_relations_between(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    _print_json(
+        query.relations_between_entities(kb, args.a, args.b, directed=args.directed)
+    )
+    return 0
+
+
+def cmd_relations_list(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    _print_json(query.list_relations(kb, type_filter=args.type))
+    return 0
+
+
 def cmd_summary_event(args: argparse.Namespace) -> int:
     kb = _load(args)
     text = query.get_event_summary(kb, args.event_id)
@@ -447,6 +492,72 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common(p)
     p.add_argument("entity_id")
     p.set_defaults(fn=cmd_entity_get)
+
+    g_relations = sub.add_parser(
+        "relations",
+        help="Relation network: deterministic cooccur substrate + (later) typed assertions.",
+    )
+    g_rel_sub = g_relations.add_subparsers(dest="cmd", required=True)
+
+    # Cooccurrence sub-tree — always populated by kb_build.
+    p = g_rel_sub.add_parser(
+        "cooccur",
+        help="Deterministic char-pair co-occurrence (from WS-0 edges).",
+    )
+    p_cooccur_sub = p.add_subparsers(dest="cooccur_cmd", required=True)
+
+    p2 = p_cooccur_sub.add_parser(
+        "for", help="Pairs touching one char, most-coupled first."
+    )
+    _add_common(p2)
+    p2.add_argument("char_id")
+    p2.add_argument("--limit", type=int, default=20, help="Default 20.")
+    p2.set_defaults(fn=cmd_relations_cooccur_for)
+
+    p2 = p_cooccur_sub.add_parser("top", help="Top co-occurring pairs corpus-wide.")
+    _add_common(p2)
+    p2.add_argument("--limit", type=int, default=50, help="Default 50.")
+    p2.set_defaults(fn=cmd_relations_cooccur_top)
+
+    p2 = p_cooccur_sub.add_parser(
+        "between", help="One pair's co-occurrence row, or non-zero exit if absent."
+    )
+    _add_common(p2)
+    p2.add_argument("a")
+    p2.add_argument("b")
+    p2.set_defaults(fn=cmd_relations_cooccur_between)
+
+    # Typed-relation sub-tree — empty list until the LLM bake runs.
+    p = g_rel_sub.add_parser(
+        "for", help="Typed relations touching one entity (empty pre-bake)."
+    )
+    _add_common(p)
+    p.add_argument("entity_id")
+    p.set_defaults(fn=cmd_relations_for)
+
+    p = g_rel_sub.add_parser(
+        "between", help="Typed relations between two entities (empty pre-bake)."
+    )
+    _add_common(p)
+    p.add_argument("a")
+    p.add_argument("b")
+    p.add_argument(
+        "--directed",
+        action="store_true",
+        help="Only `head=a, tail=b` (default matches both directions).",
+    )
+    p.set_defaults(fn=cmd_relations_between)
+
+    p = g_rel_sub.add_parser(
+        "list", help="Every typed relation, optional --type filter (empty pre-bake)."
+    )
+    _add_common(p)
+    p.add_argument(
+        "--type",
+        default=None,
+        help="Filter by relation type (free string; bake will define vocabulary).",
+    )
+    p.set_defaults(fn=cmd_relations_list)
 
     g_summary = sub.add_parser("summary", help="LLM summaries (Phase 5).")
     g_summary_sub = g_summary.add_subparsers(dest="cmd", required=True)
