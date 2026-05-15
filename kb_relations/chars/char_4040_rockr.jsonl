@@ -1,0 +1,7 @@
+{"head": "char_4040_rockr", "type": "family_of", "tail": "ent_1ed0a9", "tail_name": "洛洛的父亲", "notes": "父亲"}
+{"head": "char_4040_rockr", "type": "subordinate_of", "tail": "char_4072_ironmn", "tail_name": "费斯特", "notes": "自救军队长"}
+{"head": "char_4040_rockr", "type": "ally_of", "tail": "char_4072_ironmn", "tail_name": "费斯特", "notes": "自救军同伴"}
+{"head": "char_4040_rockr", "type": "ally_of", "tail": "ent_72a8bb", "tail_name": "比尔", "notes": "自救军同伴，曾被洛洛父亲救下"}
+{"head": "char_4040_rockr", "type": "ally_of", "tail": "char_4045_heidi", "tail_name": "海蒂", "notes": "互相送礼的朋友"}
+{"head": "char_4040_rockr", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "并肩作战的伙伴"}
+{"head": "char_4040_rockr", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "罗德岛领袖"}

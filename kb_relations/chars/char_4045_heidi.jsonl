@@ -1,0 +1,8 @@
+{"head": "char_4045_heidi", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "担任其私人信使多年"}
+{"head": "char_4045_heidi", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "多年合作伙伴，受其指引与教导"}
+{"head": "char_4045_heidi", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "罗德岛领袖，对其报以关怀与喜爱"}
+{"head": "char_4045_heidi", "type": "ally_of", "tail": "ent_d0c986", "tail_name": "克洛维希娅", "notes": "伦蒂尼姆自救军指挥官"}
+{"head": "char_4045_heidi", "type": "ally_of", "tail": "ent_e16802", "tail_name": "戈尔丁", "notes": "互通私密信件的文学友人"}
+{"head": "char_4045_heidi", "type": "ally_of", "tail": "char_4123_ela", "tail_name": "艾拉", "notes": "在自救军行动中牺牲的同伴"}
+{"head": "char_4045_heidi", "type": "family_of", "tail": "ent_9a17fe", "tail_name": "汤姆森", "notes": "父亲，海蒂的信使事业引路人"}
+{"head": "char_4045_heidi", "type": "rival_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "维多利亚摄政王，其情报活动的规避对象"}

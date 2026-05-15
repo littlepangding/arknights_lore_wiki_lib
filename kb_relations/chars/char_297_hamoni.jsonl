@@ -1,0 +1,4 @@
+{"head": "char_297_hamoni", "type": "subordinate_of", "tail": "ent_33b188", "tail_name": "威灵顿公爵", "notes": "作为其外交使臣"}
+{"head": "char_297_hamoni", "type": "mentor_of", "tail": "char_261_sddrag", "tail_name": "苇草", "notes": "在深池时期担任其辅导者"}
+{"head": "char_297_hamoni", "type": "ally_of", "tail": "char_261_sddrag", "tail_name": "苇草", "notes": "深池时期的伙伴，曾保护过对方"}
+{"head": "char_297_hamoni", "type": "ally_of", "tail": "ent_fddfa1", "tail_name": "丽塔", "notes": "士官学校时期的同学"}

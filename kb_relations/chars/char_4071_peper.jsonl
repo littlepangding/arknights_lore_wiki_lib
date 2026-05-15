@@ -1,0 +1,8 @@
+{"head": "char_4071_peper", "type": "subordinate_of", "tail": "ent_2075e4", "tail_name": "格林", "notes": "原所属萨卡兹雇佣兵小队队长"}
+{"head": "char_4071_peper", "type": "subordinate_of", "tail": "ent_d92222", "tail_name": "曼弗雷德", "notes": "曾受其召集至伦蒂尼姆阵营"}
+{"head": "char_4071_peper", "type": "rival_of", "tail": "ent_d92222", "tail_name": "曼弗雷德", "notes": "因理念不合脱离其阵营并产生私怨"}
+{"head": "char_4071_peper", "type": "ally_of", "tail": "char_113_cqbw", "tail_name": "W", "notes": "在伦蒂尼姆被其搭救，有私交"}
+{"head": "char_4071_peper", "type": "ally_of", "tail": "char_4087_ines", "tail_name": "伊内丝", "notes": "在伦蒂尼姆被其搭救"}
+{"head": "char_4071_peper", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅"}
+{"head": "char_4071_peper", "type": "ally_of", "tail": "char_120_hibisc", "tail_name": "芙蓉", "notes": "与其关系良好，赠送过医疗包"}
+{"head": "char_4071_peper", "type": "ally_of", "tail": "char_452_bstalk", "tail_name": "豆苗", "notes": "好友，与其商议售卖编织周边"}

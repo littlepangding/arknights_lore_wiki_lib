@@ -1,0 +1,5 @@
+{"head": "char_4182_oblvns", "type": "family_of", "tail": "ent_069af8", "tail_name": "父亲"}
+{"head": "char_4182_oblvns", "type": "family_of", "tail": "ent_568f6d", "tail_name": "母亲"}
+{"head": "char_4182_oblvns", "type": "ally_of", "tail": "ent_7edd91", "tail_name": "初华", "notes": "乐队同伴"}
+{"head": "char_4182_oblvns", "type": "ally_of", "tail": "char_338_iris", "tail_name": "爱丽丝", "notes": "为其提供担保"}
+{"head": "char_4182_oblvns", "type": "ally_of", "tail": "char_369_bena", "tail_name": "贝娜", "notes": "赠送其洋娃娃"}

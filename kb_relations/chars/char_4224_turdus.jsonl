@@ -1,0 +1,6 @@
+{"head": "char_4224_turdus", "type": "identifies_as", "tail": "char_4224_turdus", "tail_name": "乌克西克"}
+{"head": "char_4224_turdus", "type": "ally_of", "tail": "ent_3ceb62", "tail_name": "马特维", "notes": "无缚者同盟同伴"}
+{"head": "char_4224_turdus", "type": "ally_of", "tail": "ent_039e67", "tail_name": "安托沙", "notes": "无缚者同盟同伴"}
+{"head": "char_4224_turdus", "type": "ally_of", "tail": "ent_2ce949", "tail_name": "尤拉", "notes": "无缚者同盟同伴"}
+{"head": "char_4224_turdus", "type": "subordinate_of", "tail": "char_115_headbr", "tail_name": "凛冬", "notes": "称其为老大"}
+{"head": "char_4224_turdus", "type": "ally_of", "tail": "char_194_leto", "tail_name": "烈夏", "notes": "监护人"}

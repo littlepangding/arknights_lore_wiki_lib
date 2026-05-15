@@ -1,0 +1,4 @@
+{"head": "char_164_nightm", "type": "identifies_as", "tail": "char_164_nightm", "tail_name": "葛罗莉亚", "notes": "本名及主人格"}
+{"head": "char_164_nightm", "type": "identifies_as", "tail": "char_164_nightm", "tail_name": "瑞贝尔·帕斯贝莱蒂·葛罗莉亚", "notes": "登记姓名"}
+{"head": "char_164_nightm", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "负责医师，签发医疗监控协议"}
+{"head": "char_164_nightm", "type": "subordinate_of", "tail": "char_181_flower", "tail_name": "莱娜", "notes": "协议监护人"}

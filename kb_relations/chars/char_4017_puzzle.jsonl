@@ -1,0 +1,5 @@
+{"head": "char_4017_puzzle", "type": "subordinate_of", "tail": "ent_f60253", "tail_name": "开斯特公爵", "notes": "持有公爵署名信并为其效力"}
+{"head": "char_4017_puzzle", "type": "rival_of", "tail": "char_261_sddrag", "tail_name": "苇草", "notes": "曾受命对其进行调查"}
+{"head": "char_4017_puzzle", "type": "rival_of", "tail": "char_222_bpipe", "tail_name": "风笛", "notes": "曾因调查任务与其发生冲突"}
+{"head": "char_4017_puzzle", "type": "rival_of", "tail": "char_010_chen", "tail_name": "陈", "notes": "曾因调查任务与其发生冲突"}
+{"head": "char_4017_puzzle", "type": "rival_of", "tail": "char_297_hamoni", "tail_name": "阿赫茉妮", "notes": "曾评估其计划破绽，对方曾向其推荐罗德岛"}

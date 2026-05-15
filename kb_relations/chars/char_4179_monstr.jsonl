@@ -1,0 +1,10 @@
+{"head": "char_4179_monstr", "type": "identifies_as", "tail": "char_003_kalts", "tail_name": "AMa-10", "notes": "项目代号"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "相伴度过漫长的时间，继承了其记忆"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_171_bldsk", "tail_name": "华法琳", "notes": "医疗部同事"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_391_rosmon", "tail_name": "迷迭香", "notes": "罗德岛同伴"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_017_huang", "tail_name": "煌", "notes": "训练场对手与新战友"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": null, "tail_name": "Stormeye", "ambiguous_candidates": ["char_511_asnipe", "char_611_acnipe"], "notes": "新战友"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "重点保护对象与同伴"}
+{"head": "char_4179_monstr", "type": "subordinate_of", "tail": "ent_a7834e", "tail_name": "预言家", "notes": "向其下达最后指令的管理员"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_144_red", "tail_name": "红", "notes": "罗德岛同伴"}
+{"head": "char_4179_monstr", "type": "ally_of", "tail": "char_345_folnic", "tail_name": "亚叶", "notes": "罗德岛同伴"}

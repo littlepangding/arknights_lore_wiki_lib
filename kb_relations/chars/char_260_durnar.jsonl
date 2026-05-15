@@ -1,0 +1,4 @@
+{"head": "char_260_durnar", "type": "ally_of", "tail": "char_193_frostl", "tail_name": "霜叶", "notes": "现为罗德岛任务搭档"}
+{"head": "char_260_durnar", "type": "rival_of", "tail": "char_193_frostl", "tail_name": "霜叶", "notes": "过去在战场上曾为敌对关系"}
+{"head": "char_260_durnar", "type": "mentor_of", "tail": "ent_1e304e", "tail_name": "罗德岛干员", "notes": "担任中级标准课程与重装干员入门课程教官"}
+{"head": "char_260_durnar", "type": "subordinate_of", "tail": "char_130_doberm", "tail_name": "杜宾", "notes": "教官工作及其管理受其监督"}

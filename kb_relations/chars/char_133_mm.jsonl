@@ -1,0 +1,4 @@
+{"head": "char_133_mm", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "经其同意在罗德岛留驻并行动"}
+{"head": "char_133_mm", "type": "rival_of", "tail": "ent_f207a2", "tail_name": "大帝", "notes": "调查目标，语音中称其为“那只企鹅”"}
+{"head": "char_133_mm", "type": "ally_of", "tail": "char_103_angel", "tail_name": "能天使", "notes": "经常询问对方关于企鹅物流的情报"}
+{"head": "char_133_mm", "type": "ally_of", "tail": "char_201_moeshd", "tail_name": "可颂", "notes": "向其购买企鹅物流的情报"}

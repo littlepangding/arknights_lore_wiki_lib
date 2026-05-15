@@ -1,0 +1,3 @@
+{"head": "char_263_skadi", "type": "identifies_as", "tail": "ent_b76b6e", "tail_name": "赏金猎人", "notes": "干员当前的职业身份"}
+{"head": "char_263_skadi", "type": "ally_of", "tail": "char_143_ghost", "tail_name": "幽灵鲨", "notes": "知晓其过去并要求博士帮其记起职责"}
+{"head": "char_263_skadi", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "档案审查及医疗权限管理者"}

@@ -1,0 +1,8 @@
+{"head": "char_1013_chen2", "type": "identifies_as", "tail": "char_010_chen", "tail_name": "陈", "notes": "本名陈，曾任龙门警官"}
+{"head": "char_1013_chen2", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "罗德岛领袖"}
+{"head": "char_1013_chen2", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "罗德岛管理层"}
+{"head": "char_1013_chen2", "type": "subordinate_of", "tail": "ent_8a3069", "tail_name": "魏彦吾", "notes": "龙门执政官，陈的前上级"}
+{"head": "char_1013_chen2", "type": "ally_of", "tail": "char_136_hsguma", "tail_name": "星熊", "notes": "龙门时期的搭档与亲密友人"}
+{"head": "char_1013_chen2", "type": "ally_of", "tail": "char_308_swire", "tail_name": "诗怀雅", "notes": "龙门时期的同僚与友人"}
+{"head": "char_1013_chen2", "type": "ally_of", "tail": "char_486_takila", "tail_name": "龙舌兰", "notes": "在多索雷斯期间提供武器支持"}
+{"head": "char_1013_chen2", "type": "rival_of", "tail": "ent_7cc28a", "tail_name": "塔露拉", "notes": "档案记载关系密切，立志审判对方"}

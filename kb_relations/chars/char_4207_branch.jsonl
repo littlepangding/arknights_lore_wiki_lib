@@ -1,0 +1,5 @@
+{"head": "char_4207_branch", "type": "identifies_as", "tail": "char_4207_branch", "tail_name": "别乔克", "notes": "常用名"}
+{"head": "char_4207_branch", "type": "ally_of", "tail": "char_193_frostl", "tail_name": "霜叶", "notes": "在罗德岛结交的同伴"}
+{"head": "char_4207_branch", "type": "family_of", "tail": "ent_acb645", "tail_name": "娜迦", "notes": "奶奶（实为“圣愚”）"}
+{"head": "char_4207_branch", "type": "ally_of", "tail": "ent_7474b1", "tail_name": "阿洛伊泽"}
+{"head": "char_4207_branch", "type": "ally_of", "tail": null, "tail_name": "Raidian", "ambiguous_candidates": ["char_4195_radian", "char_614_acsupo"]}

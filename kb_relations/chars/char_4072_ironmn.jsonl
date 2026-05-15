@@ -1,0 +1,5 @@
+{"head": "char_4072_ironmn", "type": "identifies_as", "tail": "char_4072_ironmn", "tail_name": "费斯特", "notes": "本名"}
+{"head": "char_4072_ironmn", "type": "subordinate_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "罗德岛工程部负责人"}
+{"head": "char_4072_ironmn", "type": "ally_of", "tail": "char_4040_rockr", "tail_name": "洛洛", "notes": "自救军同伴"}
+{"head": "char_4072_ironmn", "type": "ally_of", "tail": "char_610_acfend", "tail_name": "Mechanist", "notes": "工程部同事"}
+{"head": "char_4072_ironmn", "type": "family_of", "tail": "ent_b50dde", "tail_name": "奶奶", "notes": "祖母"}

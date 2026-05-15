@@ -1,0 +1,14 @@
+{"head": "char_1016_agoat2", "type": "identifies_as", "tail": "char_180_amgoat", "tail_name": "阿黛尔", "notes": "本名"}
+{"head": "char_1016_agoat2", "type": "family_of", "tail": "ent_61fd8f", "tail_name": "玛格娜", "notes": "母亲"}
+{"head": "char_1016_agoat2", "type": "family_of", "tail": "ent_cbe598", "tail_name": "卡提亚", "notes": "父亲"}
+{"head": "char_1016_agoat2", "type": "subordinate_of", "tail": "ent_bcdc6f", "tail_name": "凯勒", "notes": "学生"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "ent_bcdc6f", "tail_name": "凯勒", "notes": "导师，研究伙伴"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "ent_644897", "tail_name": "卡恩", "notes": "学术前辈，父母旧友"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_166_skfire", "tail_name": "天火", "notes": "学姐"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "ent_b8d7a8", "tail_name": "多利", "notes": "兽主，以粉色小羊形象出现"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_193_frostl", "tail_name": "霜叶"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_185_frncat", "tail_name": "慕斯"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_183_skgoat", "tail_name": "地灵"}
+{"head": "char_1016_agoat2", "type": "ally_of", "tail": "char_145_prove", "tail_name": "普罗旺斯"}

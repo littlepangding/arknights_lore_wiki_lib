@@ -1,0 +1,9 @@
+{"head": "char_1019_siege2", "type": "identifies_as", "tail": "char_112_siege", "tail_name": "推进之王", "notes": "代号"}
+{"head": "char_1019_siege2", "type": "ally_of", "tail": "char_155_tiger", "tail_name": "因陀罗", "notes": "格拉斯哥帮成员"}
+{"head": "char_1019_siege2", "type": "ally_of", "tail": "char_154_morgan", "tail_name": "摩根", "notes": "格拉斯哥帮成员"}
+{"head": "char_1019_siege2", "type": "ally_of", "tail": "char_157_dagda", "tail_name": "达格达", "notes": "格拉斯哥帮成员"}
+{"head": "char_1019_siege2", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "引导者与合作伙伴"}
+{"head": "char_1019_siege2", "type": "ally_of", "tail": "char_4110_delphn", "tail_name": "戴菲恩", "notes": "情报伙伴与合作者"}
+{"head": "char_1019_siege2", "type": "ally_of", "tail": "char_4072_ironmn", "tail_name": "费斯特", "notes": "技术交流对象"}
+{"head": "char_1019_siege2", "type": "rival_of", "tail": "ent_f60253", "tail_name": "开斯特公爵", "notes": "政治对手"}
+{"head": "char_1019_siege2", "type": "rival_of", "tail": "ent_33b188", "tail_name": "威灵顿公爵", "notes": "政治对手"}

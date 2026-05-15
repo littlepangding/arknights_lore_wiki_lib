@@ -1,0 +1,6 @@
+{"head": "char_1032_excu2", "type": "identifies_as", "tail": "char_279_excu", "tail_name": "费德里科·吉亚洛", "notes": "本名"}
+{"head": "char_1032_excu2", "type": "identifies_as", "tail": "ent_a2ce3a", "tail_name": "圣徒", "notes": "由教宗亲自授予的千年首位非常规封号"}
+{"head": "char_1032_excu2", "type": "subordinate_of", "tail": "ent_6a3d5d", "tail_name": "伊万杰利斯塔十一世", "notes": "拉特兰教宗，授予其圣徒头衔并指派任务"}
+{"head": "char_1032_excu2", "type": "family_of", "tail": "char_245_cello", "tail_name": "阿尔图罗", "notes": "远亲，亦为其主导追捕的拉特兰通缉对象"}
+{"head": "char_1032_excu2", "type": "ally_of", "tail": "char_4015_spuria", "tail_name": "空构", "notes": "拉特兰公证所及罗德岛同僚"}
+{"head": "char_1032_excu2", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "语音提及协作应对灾异，代指“魔王”"}

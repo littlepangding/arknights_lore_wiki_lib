@@ -1,0 +1,10 @@
+{"head": "char_4088_hodrer", "type": "member_of", "tail": "ent_9d8a40", "tail_name": "整合运动", "notes": "曾作为所属萨卡兹雇佣兵参与行动"}
+{"head": "char_4088_hodrer", "type": "subordinate_of", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "巴别塔时期领导者"}
+{"head": "char_4088_hodrer", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "与其沟通后重新签订合作条款"}
+{"head": "char_4088_hodrer", "type": "subordinate_of", "tail": "ent_d92222", "tail_name": "曼弗雷德", "notes": "在军事委员会期间向其负责"}
+{"head": "char_4088_hodrer", "type": "subordinate_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "效力于其领导的军事委员会"}
+{"head": "char_4088_hodrer", "type": "ally_of", "tail": "char_4087_ines", "tail_name": "伊内丝", "notes": "长期共同行动的战友与搭档"}
+{"head": "char_4088_hodrer", "type": "ally_of", "tail": "char_113_cqbw", "tail_name": "W", "notes": "长期共同行动的战友与搭档"}
+{"head": "char_4088_hodrer", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "巴别塔时期的共事者"}
+{"head": "char_4088_hodrer", "type": "rival_of", "tail": "ent_8a1db4", "tail_name": "Scout", "notes": "切尔诺伯格事件中处于敌对立场并将其杀害"}
+{"head": "char_4088_hodrer", "type": "family_of", "tail": "ent_568f6d", "tail_name": "母亲", "notes": "生母，已因矿石病去世"}

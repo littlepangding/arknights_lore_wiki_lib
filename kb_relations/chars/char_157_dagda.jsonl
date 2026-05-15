@@ -1,0 +1,6 @@
+{"head": "char_157_dagda", "type": "identifies_as", "tail": "char_157_dagda", "tail_name": "伊莎贝尔·孟塔古", "notes": "原名，第三代曼彻斯特伯爵之女"}
+{"head": "char_157_dagda", "type": "subordinate_of", "tail": "char_112_siege", "tail_name": "推进之王", "notes": "所属小队首领及宣誓效忠的对象"}
+{"head": "char_157_dagda", "type": "ally_of", "tail": "char_112_siege", "tail_name": "推进之王", "notes": "被其视为重要的朋友"}
+{"head": "char_157_dagda", "type": "ally_of", "tail": "char_155_tiger", "tail_name": "因陀罗", "notes": "格拉斯哥帮成员"}
+{"head": "char_157_dagda", "type": "ally_of", "tail": "char_154_morgan", "tail_name": "摩根", "notes": "格拉斯哥帮成员"}
+{"head": "char_157_dagda", "type": "subordinate_of", "tail": "ent_fd6344", "tail_name": "芬恩", "notes": "塔楼骑士警戒长，达格达的导师"}

@@ -1,0 +1,8 @@
+{"head": "char_4134_cetsyr", "type": "identifies_as", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "为特蕾西娅留下的记忆与程序"}
+{"head": "char_4134_cetsyr", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希"}
+{"head": "char_4134_cetsyr", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅"}
+{"head": "char_4134_cetsyr", "type": "ally_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "卫国战争时期的战友"}
+{"head": "char_4134_cetsyr", "type": "rival_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "后敌对并被其刺杀"}
+{"head": "char_4134_cetsyr", "type": "ally_of", "tail": "ent_165be5", "tail_name": "菈玛莲"}
+{"head": "char_4134_cetsyr", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔"}
+{"head": "char_4134_cetsyr", "type": "ally_of", "tail": "char_4132_ascln", "tail_name": "阿斯卡纶"}

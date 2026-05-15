@@ -1,0 +1,6 @@
+{"head": "char_245_cello", "type": "identifies_as", "tail": "ent_8ad01f", "tail_name": "阿尔图罗·吉亚洛", "notes": "本名"}
+{"head": "char_245_cello", "type": "subordinate_of", "tail": "char_279_excu", "tail_name": "送葬人", "notes": "监管人，即费德里科"}
+{"head": "char_245_cello", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "罗德岛同僚"}
+{"head": "char_245_cello", "type": "ally_of", "tail": "ent_c6ac39", "tail_name": "巫王", "notes": "莱塔尼亚关联人物/听众"}
+{"head": "char_245_cello", "type": "ally_of", "tail": "ent_a974f7", "tail_name": "尤利娅", "notes": "关联人物/听众"}
+{"head": "char_245_cello", "type": "ally_of", "tail": "ent_8c4270", "tail_name": "珂拉", "notes": "关联人物/听众"}

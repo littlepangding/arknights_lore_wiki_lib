@@ -1,0 +1,6 @@
+{"head": "char_474_glady", "type": "family_of", "tail": "ent_069af8", "tail_name": "父亲", "notes": "生父"}
+{"head": "char_474_glady", "type": "family_of", "tail": "ent_568f6d", "tail_name": "母亲", "notes": "生母"}
+{"head": "char_474_glady", "type": "ally_of", "tail": "char_263_skadi", "tail_name": "斯卡蒂"}
+{"head": "char_474_glady", "type": "ally_of", "tail": "char_143_ghost", "tail_name": "幽灵鲨"}
+{"head": "char_474_glady", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希"}
+{"head": "char_474_glady", "type": "rival_of", "tail": "ent_bf4230", "tail_name": "海嗣"}

@@ -1,0 +1,10 @@
+{"head": "char_1035_wisdel", "type": "identifies_as", "tail": "char_113_cqbw", "tail_name": "W", "notes": "曾用代号及萨卡兹雇佣兵领袖身份"}
+{"head": "char_1035_wisdel", "type": "subordinate_of", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "效忠的巴别塔领袖，名字由其亲自命名"}
+{"head": "char_1035_wisdel", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "罗德岛领袖，执行其指派的任务"}
+{"head": "char_1035_wisdel", "type": "ally_of", "tail": "char_4088_hodrer", "tail_name": "赫德雷", "notes": "长期共同行动的雇佣兵战友"}
+{"head": "char_1035_wisdel", "type": "ally_of", "tail": "char_4087_ines", "tail_name": "伊内丝", "notes": "长期共同行动的雇佣兵战友"}
+{"head": "char_1035_wisdel", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "罗德岛高层，战略合作与医疗对象"}
+{"head": "char_1035_wisdel", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "工程部部长，协助其进行武器维护"}
+{"head": "char_1035_wisdel", "type": "ally_of", "tail": "ent_9f2c59", "tail_name": "死魂灵", "notes": "寄宿在其武器增幅单元中的萨卡兹意志"}
+{"head": "char_1035_wisdel", "type": "rival_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "军事委员会首领，主要的复仇与敌对目标"}
+{"head": "char_1035_wisdel", "type": "rival_of", "tail": "ent_d92222", "tail_name": "曼弗雷德", "notes": "军事委员会将领，战场上的对手"}

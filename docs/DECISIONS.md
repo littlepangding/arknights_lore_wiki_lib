@@ -3,6 +3,12 @@
 > Tracks substantial user instructions and project direction changes.
 > Each entry summarizes the user's intent so future sessions have full context.
 
+### 2026-05-14 — kb_relations bake with flash (not pro)
+
+**User intent:** With `kb_summaries` confirmed complete (461 events / 1937 stages) and `ArknightsGameData` pulled (CI-only delta, no new content), kick off the next remaining headline work — the kb_relations bake — and use `gemini-3-flash-preview` instead of the CLAUDE.md-default `gemini-3.1-pro-preview` to keep cost down.
+
+**Outcome:** Smoke-tested flash on `char_002_amiya` (25s, ~19k tokens, validated output). Full corpus bake (422 chars, ~6.2M-token estimate) started in background on branch `kb-relations` via `.venv/bin/python -m scripts.kb_relations --llm cli --model gemini-3-flash-preview`. Resume-safe (hash-gated manifest) so interruption is cheap. After completion, `kb_build` must re-run to collate per-char files into `data/kb/relations.jsonl`.
+
 ### 2026-05-08 — Build an agent-readable knowledge base
 
 **User intent:** Stand up a parsed, searchable KB on top of `ArknightsGameData` so an LLM agent can do ad-hoc lore Q/A, audit new wiki updates, and audit existing wiki pages — all from `arknights_lore_wiki_lib/` as the working root. Code-and-tests should do the deterministic work; LLM access should be offloadable to Gemini CLI / Gemini API / Claude CLI rather than burning the agent's own context. Prompts should be written in Chinese to match the source. Document everything in `docs/` so reviewers (or future agents) can audit the design before any implementation.

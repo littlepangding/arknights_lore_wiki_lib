@@ -1,0 +1,5 @@
+{"head": "char_1039_thorn2", "type": "ally_of", "tail": "char_401_elysm", "tail_name": "极境", "notes": "挚友与冒险搭档"}
+{"head": "char_1039_thorn2", "type": "subordinate_of", "tail": "ent_533598", "tail_name": "奥卢斯", "notes": "学生，受其炼金术教导"}
+{"head": "char_1039_thorn2", "type": "rival_of", "tail": "ent_533598", "tail_name": "奥卢斯", "notes": "宿敌，立场对立"}
+{"head": "char_1039_thorn2", "type": "rival_of", "tail": "ent_bf4230", "tail_name": "海嗣", "notes": "主要的防范与狩猎对象"}
+{"head": "char_1039_thorn2", "type": "identifies_as", "tail": "char_293_thorns", "tail_name": "棘刺", "notes": "原干员代号"}

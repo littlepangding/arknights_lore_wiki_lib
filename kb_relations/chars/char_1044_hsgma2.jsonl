@@ -1,0 +1,7 @@
+{"head": "char_1044_hsgma2", "type": "subordinate_of", "tail": "char_308_swire", "tail_name": "诗怀雅", "notes": "隶属于现任近卫局局长诗怀雅"}
+{"head": "char_1044_hsgma2", "type": "subordinate_of", "tail": "ent_8a3069", "tail_name": "魏彦吾", "notes": "隶属于龙门执政官"}
+{"head": "char_1044_hsgma2", "type": "ally_of", "tail": "char_308_swire", "tail_name": "诗怀雅", "notes": "互为好友与搭档"}
+{"head": "char_1044_hsgma2", "type": "ally_of", "tail": "char_010_chen", "tail_name": "陈", "notes": "互为好友与搭档"}
+{"head": "char_1044_hsgma2", "type": "ally_of", "tail": "ent_4c8ded", "tail_name": "阿发", "notes": "旧识，临终前托付陈照顾星熊"}
+{"head": "char_1044_hsgma2", "type": "ally_of", "tail": "ent_00ee34", "tail_name": "铁斋", "notes": "前金石会会长，关系亲近的长辈"}
+{"head": "char_1044_hsgma2", "type": "rival_of", "tail": "ent_dc9f92", "tail_name": "三船光平", "notes": "曾为同僚，后在御机冲突中对立"}

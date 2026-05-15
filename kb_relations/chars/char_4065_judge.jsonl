@@ -1,0 +1,5 @@
+{"head": "char_4065_judge", "type": "identifies_as", "tail": "char_4065_judge", "tail_name": "拉维妮娅·法尔科内", "notes": "本名"}
+{"head": "char_4065_judge", "type": "ally_of", "tail": "char_102_texas", "tail_name": "德克萨斯", "notes": "通过其与罗德岛建立联系"}
+{"head": "char_4065_judge", "type": "ally_of", "tail": "char_427_vigil", "tail_name": "伺夜", "notes": "关系亲近，相处状态如姐弟"}
+{"head": "char_4065_judge", "type": "subordinate_of", "tail": "ent_0def7d", "tail_name": "西西里夫人", "notes": "曾作为其意志代言者担任城邦法官"}
+{"head": "char_4065_judge", "type": "subordinate_of", "tail": "ent_1091c8", "tail_name": "贝纳尔多", "notes": "贝洛内家族前任家主，曾支持其理想并提拔其为法官"}

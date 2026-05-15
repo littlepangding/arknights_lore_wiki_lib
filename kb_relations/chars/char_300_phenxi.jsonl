@@ -1,0 +1,4 @@
+{"head": "char_300_phenxi", "type": "subordinate_of", "tail": "ent_950cfc", "tail_name": "安多恩", "notes": "曾隶属于其担任队长的特勤小队"}
+{"head": "char_300_phenxi", "type": "ally_of", "tail": "char_213_mostma", "tail_name": "莫斯提马", "notes": "搭档、行动监管对象及前队友"}
+{"head": "char_300_phenxi", "type": "ally_of", "tail": "char_4193_lemuen", "tail_name": "蕾缪安", "notes": "前特勤小队队友"}
+{"head": "char_300_phenxi", "type": "identifies_as", "tail": "char_300_phenxi", "tail_name": "苦难陈述者", "notes": "曾用职务代号"}

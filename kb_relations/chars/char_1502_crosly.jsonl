@@ -1,0 +1,9 @@
+{"head": "char_1502_crosly", "type": "identifies_as", "tail": "char_1502_crosly", "tail_name": "柳德米拉·伊里尼奇娜", "notes": "真实姓名"}
+{"head": "char_1502_crosly", "type": "member_of", "tail": "ent_9d8a40", "tail_name": "整合运动", "notes": "原干部"}
+{"head": "char_1502_crosly", "type": "family_of", "tail": "ent_8001bc", "tail_name": "伊利亚", "notes": "父亲，研究员"}
+{"head": "char_1502_crosly", "type": "subordinate_of", "tail": "ent_7cc28a", "tail_name": "塔露拉", "notes": "原整合运动领袖"}
+{"head": "char_1502_crosly", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "现上级，父辈旧友"}
+{"head": "char_1502_crosly", "type": "ally_of", "tail": "char_311_mudrok", "tail_name": "泥岩", "notes": "前整合运动成员，现罗德岛同僚"}
+{"head": "char_1502_crosly", "type": "ally_of", "tail": "char_144_red", "tail_name": "红", "notes": "复杂的对手与救助关系"}
+{"head": "char_1502_crosly", "type": "ally_of", "tail": "ent_d9a636", "tail_name": "伊雷妮", "notes": "卡车互助会负责人"}
+{"head": "char_1502_crosly", "type": "rival_of", "tail": "ent_64bfbc", "tail_name": "谢尔盖", "notes": "背叛父亲的科研伙伴"}

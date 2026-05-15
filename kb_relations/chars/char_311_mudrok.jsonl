@@ -1,0 +1,10 @@
+{"head": "char_311_mudrok", "type": "member_of", "tail": "ent_9d8a40", "tail_name": "整合运动", "notes": "曾随军加入，后因意见不合带领小队离开"}
+{"head": "char_311_mudrok", "type": "creator_of", "tail": "ent_76366d", "tail_name": "泥岩小队", "notes": "领导并在莱塔尼亚吸纳感染者形成的团体"}
+{"head": "char_311_mudrok", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "罗德岛领导层"}
+{"head": "char_311_mudrok", "type": "ally_of", "tail": "char_4133_logos", "tail_name": "Logos", "notes": "精英干员，在卡兹戴尔协助泥岩小队并引荐入职"}
+{"head": "char_311_mudrok", "type": "ally_of", "tail": "char_220_grani", "tail_name": "格拉尼", "notes": "通过分享冒险经历促使泥岩产生入职意愿"}
+{"head": "char_311_mudrok", "type": "ally_of", "tail": "char_345_folnic", "tail_name": "亚叶", "notes": "劝说其留任罗德岛的干员"}
+{"head": "char_311_mudrok", "type": "ally_of", "tail": "char_358_lisa", "tail_name": "铃兰", "notes": "劝说其留任罗德岛的干员"}
+{"head": "char_311_mudrok", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "对泥岩的真面目示人与生活习惯提供建议"}
+{"head": "char_311_mudrok", "type": "rival_of", "tail": "ent_f7fc89", "tail_name": "安托", "notes": "罗德岛干员，在沃伦姆德事件中与泥岩小队冲突"}
+{"head": "char_311_mudrok", "type": "rival_of", "tail": "ent_d04ca9", "tail_name": "毕德曼", "notes": "沃伦姆德事件元凶"}
