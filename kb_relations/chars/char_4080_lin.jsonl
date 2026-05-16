@@ -1,0 +1,6 @@
+{"head": "char_4080_lin", "type": "identifies_as", "tail": "char_4080_lin", "tail_name": "林雨霞", "notes": "本名"}
+{"head": "char_4080_lin", "type": "family_of", "tail": "ent_7b7416", "tail_name": "鼠王", "notes": "父亲，绰号“灰色的林”"}
+{"head": "char_4080_lin", "type": "ally_of", "tail": "char_010_chen", "tail_name": "陈", "notes": "旧识，向罗德岛举荐林的合作"}
+{"head": "char_4080_lin", "type": "ally_of", "tail": "char_308_swire", "tail_name": "诗怀雅", "notes": "旧识，龙门近卫局警司"}
+{"head": "char_4080_lin", "type": "ally_of", "tail": "char_322_lmlee", "tail_name": "老鲤", "notes": "鲤氏侦探所所长，情报合作者"}
+{"head": "char_4080_lin", "type": "ally_of", "tail": "char_243_waaifu", "tail_name": "槐琥", "notes": "在玉门事件中与其有接触"}

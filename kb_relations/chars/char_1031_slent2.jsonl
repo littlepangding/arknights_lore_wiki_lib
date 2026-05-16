@@ -1,0 +1,9 @@
+{"head": "char_1031_slent2", "type": "identifies_as", "tail": "char_108_silent", "tail_name": "赫默", "notes": "曾用代号"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "char_202_demkni", "tail_name": "塞雷娅", "notes": "共同进退的伙伴"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "char_134_ifrit", "tail_name": "伊芙利特", "notes": "前监护人，重要的家人"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "深度合作伙伴"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "char_171_bldsk", "tail_name": "华法琳", "notes": "医学技术交流对象"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "char_128_plosis", "tail_name": "乔伊丝", "notes": "白面鸮，提供咖啡豆的好友"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "ent_c8e983", "tail_name": "雅拉", "notes": "前人力资源考察科主任，引荐人"}
+{"head": "char_1031_slent2", "type": "ally_of", "tail": "char_4151_tinman", "tail_name": "锡人", "notes": "梅兰德基金会负责人"}
+{"head": "char_1031_slent2", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "医疗部任职时的上级"}

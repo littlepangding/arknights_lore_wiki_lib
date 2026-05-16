@@ -1,0 +1,13 @@
+{"head": "char_002_amiya", "type": "identifies_as", "tail": "char_4134_cetsyr", "tail_name": "魔王", "notes": "萨卡兹的君主身份"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "意志与情感的继承对象，深受其影响"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "导师与紧密的战友"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "char_010_chen", "tail_name": "陈", "notes": "剑术受其影响并在战斗中流淌"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "char_017_huang", "tail_name": "煌", "notes": "罗德岛精英干员，好友"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "char_113_cqbw", "tail_name": "W", "notes": "未来的合作者，同为萨卡兹事业努力"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "ent_a467da", "tail_name": "Ace", "notes": "已牺牲的罗德岛重要战友"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "ent_8a1db4", "tail_name": "Scout", "notes": "已牺牲的罗德岛重要战友"}
+{"head": "char_002_amiya", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "罗德岛干员，负责财务与采购"}
+{"head": "char_002_amiya", "type": "rival_of", "tail": "ent_9d8a40", "tail_name": "整合运动", "notes": "主要的敌对组织"}
+{"head": "char_002_amiya", "type": "rival_of", "tail": "ent_f9969b", "tail_name": "霜星", "notes": "切尔诺伯格战役中的对手"}
+{"head": "char_002_amiya", "type": "rival_of", "tail": "ent_edab99", "tail_name": "爱国者", "notes": "切尔诺伯格战役中的对手"}
+{"head": "char_002_amiya", "type": "rival_of", "tail": "ent_63166e", "tail_name": "米莎", "notes": "切尔诺伯格事件中的关联对手"}

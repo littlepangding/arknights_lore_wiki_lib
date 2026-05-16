@@ -1,0 +1,10 @@
+{"head": "char_1042_phatm2", "type": "identifies_as", "tail": "char_250_phatom", "tail_name": "卢西恩", "notes": "本名"}
+{"head": "char_1042_phatm2", "type": "identifies_as", "tail": "char_250_phatom", "tail_name": "傀影", "notes": "代号"}
+{"head": "char_1042_phatm2", "type": "ally_of", "tail": "char_4198_christ", "tail_name": "Miss.Christine", "notes": "常伴身边的黑猫同伴"}
+{"head": "char_1042_phatm2", "type": "ally_of", "tail": null, "tail_name": "暮落", "ambiguous_candidates": ["char_4025_aprot2", "char_512_aprot"], "notes": "曾经在剧团一同学习的同伴"}
+{"head": "char_1042_phatm2", "type": "subordinate_of", "tail": "ent_a4536a", "tail_name": "剧团长", "notes": "曾隶属于其领导的剧团"}
+{"head": "char_1042_phatm2", "type": "rival_of", "tail": "ent_a4536a", "tail_name": "剧团长", "notes": "宿命中的对台戏对手"}
+{"head": "char_1042_phatm2", "type": "ally_of", "tail": "char_171_bldsk", "tail_name": "华法琳", "notes": "负责其医疗档案与随访"}
+{"head": "char_1042_phatm2", "type": "ally_of", "tail": "char_4173_nowell", "tail_name": "诺威尔", "notes": "传授其镜片打磨工艺"}
+{"head": "char_1042_phatm2", "type": "ally_of", "tail": "char_212_ansel", "tail_name": "安赛尔", "notes": "曾负责其矿石病诊疗"}
+{"head": "char_1042_phatm2", "type": "ally_of", "tail": "char_345_folnic", "tail_name": "亚叶", "notes": "为其提供医疗评估与行动建议"}

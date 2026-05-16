@@ -1,0 +1,5 @@
+{"head": "char_1030_noirc2", "type": "identifies_as", "tail": "char_500_noirc", "tail_name": "黑角", "notes": "换上东国新装备后的姿态，本质为同一人"}
+{"head": "char_1030_noirc2", "type": "ally_of", "tail": "char_502_nblade", "tail_name": "夜刀", "notes": "资深作战搭档，曾一同返回东国旧地休假"}
+{"head": "char_1030_noirc2", "type": "ally_of", "tail": "ent_2bdcef", "tail_name": "艾露猫", "notes": "将其介绍入职罗德岛的推荐人，并负责日常关照"}
+{"head": "char_1030_noirc2", "type": "ally_of", "tail": "ent_a17c66", "tail_name": "学者猫", "notes": "常被其纠缠并请教关于泰拉世界的知识"}
+{"head": "char_1030_noirc2", "type": "ally_of", "tail": "ent_cfb819", "tail_name": "工匠猫", "notes": "常被其拖去协助获取各类新材料"}

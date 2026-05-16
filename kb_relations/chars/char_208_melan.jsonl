@@ -1,0 +1,6 @@
+{"head": "char_208_melan", "type": "subordinate_of", "tail": "char_106_franka", "tail_name": "芙兰卡", "notes": "接受其剑术教导"}
+{"head": "char_208_melan", "type": "ally_of", "tail": "char_209_ardign", "tail_name": "卡缇", "notes": "好友"}
+{"head": "char_208_melan", "type": "ally_of", "tail": "char_210_stward", "tail_name": "史都华德"}
+{"head": "char_208_melan", "type": "ally_of", "tail": "char_212_ansel", "tail_name": "安赛尔", "notes": "负责其病情记录与护理"}
+{"head": "char_208_melan", "type": "ally_of", "tail": "char_211_adnach", "tail_name": "安德切尔"}
+{"head": "char_208_melan", "type": "ally_of", "tail": "char_120_hibisc", "tail_name": "芙蓉", "notes": "负责其医疗建议"}

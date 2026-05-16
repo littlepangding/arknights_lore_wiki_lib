@@ -1,0 +1,7 @@
+{"head": "char_369_bena", "type": "ally_of", "tail": "char_338_iris", "tail_name": "爱丽丝", "notes": "同乡及同伴"}
+{"head": "char_369_bena", "type": "subordinate_of", "tail": "char_338_iris", "tail_name": "爱丽丝", "notes": "爱丽丝是城堡继承人"}
+{"head": "char_369_bena", "type": "family_of", "tail": "ent_b50dde", "tail_name": "奶奶", "notes": "抚养贝娜长大的城堡前员工"}
+{"head": "char_369_bena", "type": "subordinate_of", "tail": "ent_b50dde", "tail_name": "奶奶", "notes": "接替其为城堡工作"}
+{"head": "char_369_bena", "type": "creator_of", "tail": "ent_e22951", "tail_name": "安妮", "notes": "由贝娜亲手制作并赋予生命的人偶"}
+{"head": "char_369_bena", "type": "ally_of", "tail": "ent_e22951", "tail_name": "安妮", "notes": "最好的朋友"}
+{"head": "char_369_bena", "type": "identifies_as", "tail": "ent_e22951", "tail_name": "安妮", "notes": "视安妮为“另外一个我”"}

@@ -1,0 +1,10 @@
+{"head": "char_391_rosmon", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "现由凯尔希指派并监管"}
+{"head": "char_391_rosmon", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "拥有其调动许可"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "好友，阿米娅常安抚其情绪并赠送新鞋"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": "char_017_huang", "tail_name": "煌", "notes": "好友"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": "char_4133_logos", "tail_name": "Logos", "notes": "曾协助稳定其精神状态并参与投票"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": null, "tail_name": "Touch", "ambiguous_candidates": ["char_510_amedic", "char_613_acmedc"], "notes": "负责其临床诊断并参与投票"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": "ent_4866c5", "tail_name": "Outcast", "notes": "参与制定其干员训练计划"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": null, "tail_name": "Pith", "ambiguous_candidates": ["char_509_acast", "char_612_accast"], "notes": "同为罗德岛精英干员"}
+{"head": "char_391_rosmon", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "罗德岛同僚"}
+{"head": "char_391_rosmon", "type": "rival_of", "tail": "ent_0cc03b", "tail_name": "洛肯·威廉姆斯", "notes": "洛肯水箱实验室负责人，非法实验的始作俑者"}

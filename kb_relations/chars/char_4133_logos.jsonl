@@ -1,0 +1,13 @@
+{"head": "char_4133_logos", "type": "identifies_as", "tail": "char_4133_logos", "tail_name": "哀珐尼尔"}
+{"head": "char_4133_logos", "type": "family_of", "tail": "ent_165be5", "tail_name": "菈玛莲", "notes": "母亲"}
+{"head": "char_4133_logos", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅"}
+{"head": "char_4133_logos", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希"}
+{"head": "char_4133_logos", "type": "subordinate_of", "tail": "ent_90a323", "tail_name": "特蕾西娅"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "char_610_acfend", "tail_name": "Mechanist"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": null, "tail_name": "Pith", "ambiguous_candidates": ["char_509_acast", "char_612_accast"]}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "char_615_acspec", "tail_name": "Misery"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "char_017_huang", "tail_name": "煌"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "ent_4866c5", "tail_name": "Outcast"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "ent_a467da", "tail_name": "Ace"}
+{"head": "char_4133_logos", "type": "ally_of", "tail": "ent_8a1db4", "tail_name": "Scout"}

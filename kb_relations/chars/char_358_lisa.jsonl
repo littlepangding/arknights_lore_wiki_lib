@@ -1,0 +1,7 @@
+{"head": "char_358_lisa", "type": "identifies_as", "tail": "ent_ae87b1", "tail_name": "丽萨", "notes": "本名"}
+{"head": "char_358_lisa", "type": "family_of", "tail": "ent_069af8", "tail_name": "父亲", "notes": "东国神职人员"}
+{"head": "char_358_lisa", "type": "family_of", "tail": "ent_568f6d", "tail_name": "母亲", "notes": "叙拉古某核心家族成员"}
+{"head": "char_358_lisa", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "接受其指导"}
+{"head": "char_358_lisa", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅"}
+{"head": "char_358_lisa", "type": "ally_of", "tail": "char_281_popka", "tail_name": "泡普卡", "notes": "同龄同伴"}
+{"head": "char_358_lisa", "type": "ally_of", "tail": "char_254_vodfox", "tail_name": "巫恋", "notes": "同龄同伴"}

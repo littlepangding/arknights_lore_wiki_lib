@@ -1,0 +1,9 @@
+{"head": "char_4132_ascln", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "听从其指令"}
+{"head": "char_4132_ascln", "type": "subordinate_of", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "效忠的殿下"}
+{"head": "char_4132_ascln", "type": "rival_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "昔日导师，现为最终的敌人"}
+{"head": "char_4132_ascln", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "暗中保护对象"}
+{"head": "char_4132_ascln", "type": "ally_of", "tail": "char_144_red", "tail_name": "红", "notes": "同事，参与过反追踪特训"}
+{"head": "char_4132_ascln", "type": "ally_of", "tail": "char_4087_ines", "tail_name": "伊内丝", "notes": "同事"}
+{"head": "char_4132_ascln", "type": "ally_of", "tail": "char_4088_hodrer", "tail_name": "赫德雷", "notes": "前巴别塔同伴"}
+{"head": "char_4132_ascln", "type": "ally_of", "tail": "char_113_cqbw", "tail_name": "W", "notes": "前巴别塔同伴"}
+{"head": "char_4132_ascln", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "前巴别塔同伴"}

@@ -1,0 +1,4 @@
+{"head": "char_356_broca", "type": "ally_of", "tail": "char_349_chiave", "tail_name": "贾维"}
+{"head": "char_356_broca", "type": "ally_of", "tail": "char_346_aosta", "tail_name": "奥斯塔"}
+{"head": "char_356_broca", "type": "subordinate_of", "tail": "char_349_chiave", "tail_name": "贾维", "notes": "notes:贾维团伙首领"}
+{"head": "char_356_broca", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "notes:罗德岛领导者"}

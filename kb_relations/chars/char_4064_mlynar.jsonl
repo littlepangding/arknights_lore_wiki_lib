@@ -1,0 +1,8 @@
+{"head": "char_4064_mlynar", "type": "family_of", "tail": "ent_6558d6", "tail_name": "西里尔·临光", "notes": "父亲"}
+{"head": "char_4064_mlynar", "type": "family_of", "tail": "ent_829db0", "tail_name": "斯尼茨·临光", "notes": "兄长"}
+{"head": "char_4064_mlynar", "type": "family_of", "tail": "char_148_nearl", "tail_name": "临光", "notes": "侄女，即玛嘉烈·临光"}
+{"head": "char_4064_mlynar", "type": "family_of", "tail": "char_423_blemsh", "tail_name": "瑕光", "notes": "侄女，即玛莉娅·临光"}
+{"head": "char_4064_mlynar", "type": "family_of", "tail": "char_265_sophia", "tail_name": "鞭刃", "notes": "亲属，即佐菲亚"}
+{"head": "char_4064_mlynar", "type": "ally_of", "tail": "ent_4976b5", "tail_name": "托兰", "notes": "旧识，曾共同行动"}
+{"head": "char_4064_mlynar", "type": "ally_of", "tail": "ent_d1063e", "tail_name": "切斯柏", "notes": "旧识"}
+{"head": "char_4064_mlynar", "type": "subordinate_of", "tail": "ent_6558d6", "tail_name": "西里尔·临光", "notes": "曾随其作为学徒历练"}

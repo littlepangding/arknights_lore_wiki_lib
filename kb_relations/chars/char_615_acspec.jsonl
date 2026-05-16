@@ -1,0 +1,13 @@
+{"head": "char_615_acspec", "type": "subordinate_of", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "曾效力于巴别塔，视其为追随的对象"}
+{"head": "char_615_acspec", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "现任上级，与其共同处理多项机密任务"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "共同经历多次战事，对其抱有期待"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "ent_4866c5", "tail_name": "Outcast", "notes": "挚友，在其牺牲后亲自为其主持葬礼"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "char_4039_horn", "tail_name": "号角", "notes": "曾潜入伦蒂尼姆营救并介绍其加入罗德岛"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "char_4133_logos", "tail_name": "Logos", "notes": "同事，同为活跃于前线的精英干员"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "char_4132_ascln", "tail_name": "阿斯卡纶", "notes": "同事，同为负责隐秘行动的精英干员"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "char_017_huang", "tail_name": "煌", "notes": "同事，多次共同参与重要作战任务"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "char_391_rosmon", "tail_name": "迷迭香", "notes": "同事，在伦蒂尼姆等战场共同行动"}
+{"head": "char_615_acspec", "type": "ally_of", "tail": "ent_8a1db4", "tail_name": "Scout", "notes": "同事，在巴别塔及罗德岛时期均有交情"}
+{"head": "char_615_acspec", "type": "rival_of", "tail": "ent_d92222", "tail_name": "曼弗雷德", "notes": "多次交手的宿敌，曾从其手中救走号角"}
+{"head": "char_615_acspec", "type": "rival_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "敌对阵营摄政王"}
+{"head": "char_615_acspec", "type": "rival_of", "tail": "ent_c76c0a", "tail_name": "血魔大君", "notes": "伦蒂尼姆战事中的主要对手之一"}

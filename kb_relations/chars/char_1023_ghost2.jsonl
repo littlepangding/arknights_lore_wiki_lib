@@ -1,0 +1,6 @@
+{"head": "char_1023_ghost2", "type": "identifies_as", "tail": "char_143_ghost", "tail_name": "劳伦缇娜", "notes": "本名"}
+{"head": "char_1023_ghost2", "type": "ally_of", "tail": "char_474_glady", "tail_name": "歌蕾蒂娅", "notes": "同为深海猎人成员"}
+{"head": "char_1023_ghost2", "type": "subordinate_of", "tail": "char_474_glady", "tail_name": "歌蕾蒂娅", "notes": "在歌蕾蒂娅带领下执行狩猎任务"}
+{"head": "char_1023_ghost2", "type": "ally_of", "tail": "char_263_skadi", "tail_name": "斯卡蒂", "notes": "同为深海猎人成员，曾为其创造击杀机会"}
+{"head": "char_1023_ghost2", "type": "rival_of", "tail": "ent_b2c5be", "tail_name": "昆图斯", "notes": "对其进行非人道实验的深海教会主教"}
+{"head": "char_1023_ghost2", "type": "rival_of", "tail": "ent_71887a", "tail_name": "阿玛雅", "notes": "负责记录其精神状态的实验人员"}

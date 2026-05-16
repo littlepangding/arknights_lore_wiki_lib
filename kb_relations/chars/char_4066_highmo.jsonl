@@ -1,0 +1,4 @@
+{"head": "char_4066_highmo", "type": "ally_of", "tail": "char_437_mizuki", "tail_name": "水月", "notes": "提议罗德岛接纳其为干员，并一同行动"}
+{"head": "char_4066_highmo", "type": "ally_of", "tail": null, "tail_name": "郁金香", "ambiguous_candidates": ["char_513_apionr", "char_608_acpion"], "notes": "曾将其作为伤员送回罗德岛本舰"}
+{"head": "char_4066_highmo", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "出面担保其安全性并批准其入职"}
+{"head": "char_4066_highmo", "type": "subordinate_of", "tail": "ent_bb4236", "tail_name": "主教", "notes": "曾指引其加入海嗣集体，并交付其代号"}

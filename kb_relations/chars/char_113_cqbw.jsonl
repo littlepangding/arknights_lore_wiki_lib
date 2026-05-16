@@ -1,0 +1,10 @@
+{"head": "char_113_cqbw", "type": "member_of", "tail": "ent_9d8a40", "tail_name": "整合运动", "notes": "曾受邀加入，后叛出并单方面撕毁合作"}
+{"head": "char_113_cqbw", "type": "identifies_as", "tail": "ent_fba19a", "tail_name": "萨卡兹雇佣兵"}
+{"head": "char_113_cqbw", "type": "subordinate_of", "tail": "ent_90a323", "tail_name": "特蕾西娅", "notes": "萨卡兹正统王室继承人，W追随效忠的对象"}
+{"head": "char_113_cqbw", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "达成合作共识，并由其负责监管"}
+{"head": "char_113_cqbw", "type": "subordinate_of", "tail": "char_002_amiya", "tail_name": "阿米娅", "notes": "虽然嫌弃但会听从其安排并完成任务"}
+{"head": "char_113_cqbw", "type": "ally_of", "tail": "char_4088_hodrer", "tail_name": "赫德雷", "notes": "雇佣兵时期的同伴，经常与其互动"}
+{"head": "char_113_cqbw", "type": "ally_of", "tail": "char_4087_ines", "tail_name": "伊内丝", "notes": "雇佣兵时期的同伴，与其性格不合但常共事"}
+{"head": "char_113_cqbw", "type": "ally_of", "tail": "char_4132_ascln", "tail_name": "阿斯卡纶", "notes": "巴别塔时期的旧识"}
+{"head": "char_113_cqbw", "type": "rival_of", "tail": "ent_7cc28a", "tail_name": "塔露拉", "notes": "整合运动领袖，W曾为其部下后转为敌对"}
+{"head": "char_113_cqbw", "type": "rival_of", "tail": "ent_21ad57", "tail_name": "特雷西斯", "notes": "萨卡兹摄政王，W称其为篡位者"}

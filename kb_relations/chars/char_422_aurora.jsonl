@@ -1,0 +1,7 @@
+{"head": "char_422_aurora", "type": "subordinate_of", "tail": null, "tail_name": "Sharp", "ambiguous_candidates": ["char_508_aguard", "char_609_acguad"]}
+{"head": "char_422_aurora", "type": "subordinate_of", "tail": "char_4228_closur", "tail_name": "可露希尔"}
+{"head": "char_422_aurora", "type": "subordinate_of", "tail": "char_172_svrash", "tail_name": "银灰"}
+{"head": "char_422_aurora", "type": "subordinate_of", "tail": "char_174_slbell", "tail_name": "圣女"}
+{"head": "char_422_aurora", "type": "ally_of", "tail": "char_248_mgllan", "tail_name": "麦哲伦"}
+{"head": "char_422_aurora", "type": "family_of", "tail": "ent_45f136", "tail_name": "妈妈", "notes": "母亲"}
+{"head": "char_422_aurora", "type": "identifies_as", "tail": "char_422_aurora", "tail_name": "洛拉"}

@@ -1,0 +1,5 @@
+{"head": "char_291_aglina", "type": "identifies_as", "tail": "ent_274e89", "tail_name": "信使", "notes": "职业身份"}
+{"head": "char_291_aglina", "type": "family_of", "tail": "ent_568f6d", "tail_name": "母亲", "notes": "母亲来自东国"}
+{"head": "char_291_aglina", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "听从其指挥与建议"}
+{"head": "char_291_aglina", "type": "ally_of", "tail": "char_171_bldsk", "tail_name": "华法琳", "notes": "为其进行临床诊断的医疗干员"}
+{"head": "char_291_aglina", "type": "ally_of", "tail": "char_201_moeshd", "tail_name": "可颂", "notes": "曾给予其安慰的同伴"}

@@ -1,0 +1,6 @@
+{"head": "char_4031_liesel", "type": "identifies_as", "tail": "char_4031_liesel", "tail_name": "莉泽尔", "notes": "本名"}
+{"head": "char_4031_liesel", "type": "subordinate_of", "tail": "char_4047_pianst", "tail_name": "车尔尼", "notes": "钢琴课学生"}
+{"head": "char_4031_liesel", "type": "ally_of", "tail": "char_4047_pianst", "tail_name": "车尔尼", "notes": "老师，合作为乐团提供定制曲目"}
+{"head": "char_4031_liesel", "type": "ally_of", "tail": "char_120_hibisc", "tail_name": "芙蓉", "notes": "学习待人处事的分寸"}
+{"head": "char_4031_liesel", "type": "ally_of", "tail": "char_4065_judge", "tail_name": "拉维妮娅", "notes": "新沃尔西尼大法官，审理养母遇害案"}
+{"head": "char_4031_liesel", "type": "ally_of", "tail": "char_4037_demetr", "tail_name": "贝洛内", "notes": "罗德岛同事，对其有正面评价"}

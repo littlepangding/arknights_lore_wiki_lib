@@ -15,6 +15,7 @@ from libs.bases import get_simple_filename
 
 KB_DIRNAME = "data/kb"
 SUMMARIES_DIRNAME = "kb_summaries"
+RELATIONS_DIRNAME = "kb_relations"
 
 Family = Literal["mainline", "activity", "mini_activity", "operator_record", "other"]
 FAMILIES: tuple[Family, ...] = (
@@ -43,6 +44,10 @@ def default_kb_root() -> Path:
 
 def default_summaries_root() -> Path:
     return Path.cwd() / SUMMARIES_DIRNAME
+
+
+def default_relations_root() -> Path:
+    return Path.cwd() / RELATIONS_DIRNAME
 
 
 def safe_slug(s: str) -> str:
@@ -155,6 +160,21 @@ def entities_jsonl_path(kb_root: Path) -> Path:
     return kb_root / "entities.jsonl"
 
 
+def cooccurrence_jsonl_path(kb_root: Path) -> Path:
+    """Deterministic char-pair co-occurrence — one row per unordered
+    `(a, b)`. Built by `kb_build` from the merged WS-0 `event_to_chars`
+    index; consumed by `kb_query relations cooccur …` and (later) the
+    relation bake's candidate-pair list."""
+    return kb_root / "cooccurrence.jsonl"
+
+
+def relations_jsonl_path(kb_root: Path) -> Path:
+    """Typed relation table — one assertion per line. Populated by a
+    future LLM bake (`scripts/kb_relations.py`); until then the file is
+    absent and `load_relations` returns `[]`."""
+    return kb_root / "relations.jsonl"
+
+
 def curated_entities_path(wiki_path: Path) -> Path:
     """`<lore_wiki_path>/data/entities_curated.jsonl` — hand-curated
     non-operator entity overrides (named NPCs, organizations, ...).
@@ -183,3 +203,30 @@ def stage_summary_path(summaries_root: Path, event_id: str, stage_idx: int) -> P
 
 def summaries_manifest_path(summaries_root: Path) -> Path:
     return summaries_root / "manifest.json"
+
+
+# --- relations bake path helpers ------------------------------------------
+
+
+def relations_chars_root(relations_root: Path) -> Path:
+    """`kb_relations/chars/` — one JSONL per char, tracked in git (LLM
+    outputs). The collated query view lives at `data/kb/relations.jsonl`,
+    derived by `kb_build` from these per-char files plus the curated
+    override."""
+    return relations_root / "chars"
+
+
+def char_relations_path(relations_root: Path, char_id: str) -> Path:
+    return relations_chars_root(relations_root) / f"{char_id}.jsonl"
+
+
+def relations_manifest_path(relations_root: Path) -> Path:
+    return relations_root / "manifest.json"
+
+
+def curated_relations_path(wiki_path: Path) -> Path:
+    """`<lore_wiki_path>/data/relations_curated.jsonl` — hand-curated
+    relation overrides (same shape as a bake row; sibling of
+    `entities_curated.jsonl`). Lets a curator pin assertions the LLM
+    bake missed or hallucinated."""
+    return Path(wiki_path) / "data" / "relations_curated.jsonl"

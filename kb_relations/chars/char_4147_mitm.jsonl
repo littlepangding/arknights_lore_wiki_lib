@@ -1,0 +1,6 @@
+{"head": "char_4147_mitm", "type": "identifies_as", "tail": "char_4147_mitm", "tail_name": "珀耳", "notes": "本名"}
+{"head": "char_4147_mitm", "type": "ally_of", "tail": "char_4146_nymph", "tail_name": "妮芙", "notes": "推荐其加入罗德岛"}
+{"head": "char_4147_mitm", "type": "ally_of", "tail": "char_311_mudrok", "tail_name": "泥岩", "notes": "曾向其了解罗德岛待遇"}
+{"head": "char_4147_mitm", "type": "ally_of", "tail": "char_491_humus", "tail_name": "休谟斯", "notes": "“樱桃三号”联合发明人"}
+{"head": "char_4147_mitm", "type": "ally_of", "tail": "char_4131_odda", "tail_name": "奥达", "notes": "经常交谈的罗德岛干员"}
+{"head": "char_4147_mitm", "type": "ally_of", "tail": "char_242_otter", "tail_name": "梅尔", "notes": "曾为其介绍商人"}

@@ -1,0 +1,3114 @@
+{
+  "version": 1,
+  "chars": {
+    "char_002_amiya": {
+      "source_hash": "8086ff8f594613748f7e5bf46299101aeb5c696571589035527e8f993e0a693f",
+      "summary_path": "chars/char_002_amiya.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:47:19"
+    },
+    "char_003_kalts": {
+      "source_hash": "db43f185b52343313031edd292bd3e0a18b3cd38d58849bcb8123fffbe4b50e8",
+      "summary_path": "chars/char_003_kalts.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:47:46"
+    },
+    "char_009_12fce": {
+      "source_hash": "7925df6126533c589ad9a4d503fdc1bb283b611441c0571aa8783af5264df058",
+      "summary_path": "chars/char_009_12fce.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:48:07"
+    },
+    "char_010_chen": {
+      "source_hash": "590600dbbc36e8f12db5b2151d8f5d816d527820ad2679345b31663add47cc39",
+      "summary_path": "chars/char_010_chen.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:48:27"
+    },
+    "char_017_huang": {
+      "source_hash": "2955f055400542f4b6f49f05ba8d740c098cba83b410e1d80d462eb5c08a4174",
+      "summary_path": "chars/char_017_huang.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:48:52"
+    },
+    "char_1011_lava2": {
+      "source_hash": "ebfcf931331b9a57fe49e68f2397d0d399640056f45e5c7f5fb00d081f9b33bc",
+      "summary_path": "chars/char_1011_lava2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:49:06"
+    },
+    "char_1012_skadi2": {
+      "source_hash": "562fca2e5e3053bf9f8f2c5b817ffab89dd078e4585d233752e010d6eb103977",
+      "summary_path": "chars/char_1012_skadi2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:49:32"
+    },
+    "char_1013_chen2": {
+      "source_hash": "9c0d2d781d20484763972755db550fe9beff63f6efe91f9ad0b00ec68d682dc0",
+      "summary_path": "chars/char_1013_chen2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:50:03"
+    },
+    "char_1014_nearl2": {
+      "source_hash": "147187371261a90748dce11a10d2c99a42fdee20892c283feca112bbbe077078",
+      "summary_path": "chars/char_1014_nearl2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:50:39"
+    },
+    "char_1016_agoat2": {
+      "source_hash": "217f0ae68b1a0521907a0ca6f584efdf58f397807672f0317aa6cd7de194885a",
+      "summary_path": "chars/char_1016_agoat2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:50:55"
+    },
+    "char_1019_siege2": {
+      "source_hash": "5917e8eec91c954f62a7c2fe870ba0f499d6d98b52efabb111861731e4de2e8f",
+      "summary_path": "chars/char_1019_siege2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:51:12"
+    },
+    "char_101_sora": {
+      "source_hash": "52f663550507baa31a86563160074b436840763865a46815961099dd9d7646f9",
+      "summary_path": "chars/char_101_sora.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:51:31"
+    },
+    "char_1020_reed2": {
+      "source_hash": "0ada4b7e0bf1335cf6697e482e69d64858caa5084d2c47e8324eaf8d24bb37d2",
+      "summary_path": "chars/char_1020_reed2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:51:48"
+    },
+    "char_1021_kroos2": {
+      "source_hash": "5226adcde231f898d6434f6f922e1a54e471779852bf7f7336a67fc4085713ca",
+      "summary_path": "chars/char_1021_kroos2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:52:01"
+    },
+    "char_1022_flwr2": {
+      "source_hash": "3267941f73bbc8692996426d62557ad51a70b7a0ee9eb6c8207a4ea112b76ce9",
+      "summary_path": "chars/char_1022_flwr2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:52:27"
+    },
+    "char_1023_ghost2": {
+      "source_hash": "bda02b8fd1c2044fb3ba31a162663a3ba4f74a468769b7e46b19eed4eb5f373e",
+      "summary_path": "chars/char_1023_ghost2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:52:40"
+    },
+    "char_1024_hbisc2": {
+      "source_hash": "5822bf526ae3c776528b5416c1c58a9147e8b806f116f56f7ea65b436447baa4",
+      "summary_path": "chars/char_1024_hbisc2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:53:10"
+    },
+    "char_1026_gvial2": {
+      "source_hash": "11ab76760eac7b4ef23b6d47e7a6da05c5e9b60d2e8232baa0e44a64b2792e4d",
+      "summary_path": "chars/char_1026_gvial2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:53:31"
+    },
+    "char_1027_greyy2": {
+      "source_hash": "ba95b846035ac061d484c82047a8d29fce3b39bc5687f8992f2ab01e5b96f2cd",
+      "summary_path": "chars/char_1027_greyy2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:55:35"
+    },
+    "char_1028_texas2": {
+      "source_hash": "664bbebaca08b3813ea52f2b88595083441c2f46cb9cad554d20b8458aca109d",
+      "summary_path": "chars/char_1028_texas2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:57:58"
+    },
+    "char_1029_yato2": {
+      "source_hash": "af7a09f8f1340be84051dd8c9792ffdd2f9282eca585bc654d43a373ab8bbb81",
+      "summary_path": "chars/char_1029_yato2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:58:28"
+    },
+    "char_102_texas": {
+      "source_hash": "eec667b99dd7636095d1bcbd869a6a42a762b0eb071d5a55534cdd5226f5fa1e",
+      "summary_path": "chars/char_102_texas.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:58:46"
+    },
+    "char_1030_noirc2": {
+      "source_hash": "71de1425bf855aeb67aa1c26991c4265b42b9f5e79987f7233f9a3fb0c665ade",
+      "summary_path": "chars/char_1030_noirc2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T14:59:03"
+    },
+    "char_1031_slent2": {
+      "source_hash": "3ba887adacc327f2008319f267954c19bd8f1919c2061104d78075af8cd83df2",
+      "summary_path": "chars/char_1031_slent2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:01:13"
+    },
+    "char_1032_excu2": {
+      "source_hash": "ee7cd8062f82cf63b7aa23108e6f53cb554be6b52d01bd2b9ea8851e84639e01",
+      "summary_path": "chars/char_1032_excu2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:01:36"
+    },
+    "char_1033_swire2": {
+      "source_hash": "b936c9c0b6cc3ecf36752c786e74f4e13a40906defa9e886a5ae18b79b3b8e88",
+      "summary_path": "chars/char_1033_swire2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:01:57"
+    },
+    "char_1034_jesca2": {
+      "source_hash": "475fd5c530f0dba8953d34c674b6857fca275a81f14ed4d5cb6742634e415fd7",
+      "summary_path": "chars/char_1034_jesca2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:02:21"
+    },
+    "char_1035_wisdel": {
+      "source_hash": "6e5dae590eb6d16c43d1e2dd59061c49a057408d2058c4513768ad4df0ad0e09",
+      "summary_path": "chars/char_1035_wisdel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:02:39"
+    },
+    "char_1036_fang2": {
+      "source_hash": "1bc3cc6d5ececddc2cd667fad2a12f9d7333c97d47e0ae78e72c43d45fdb368c",
+      "summary_path": "chars/char_1036_fang2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:03:00"
+    },
+    "char_1038_whitw2": {
+      "source_hash": "aa2ade148998ea40c2acd602eb98786452165b79fcb9c4ce96594923018ac5dd",
+      "summary_path": "chars/char_1038_whitw2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:03:22"
+    },
+    "char_1039_thorn2": {
+      "source_hash": "d5921e374c95afedff966f1f84c250ad1a0351ff71f6f148a949b6e761e4f5af",
+      "summary_path": "chars/char_1039_thorn2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:03:54"
+    },
+    "char_103_angel": {
+      "source_hash": "fb5430bdd4bdaf37bac622a63d830fdfbe7599b4934e11555075be1036770586",
+      "summary_path": "chars/char_103_angel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:04:09"
+    },
+    "char_1040_blaze2": {
+      "source_hash": "faacefa0bd069104ccaaf9cc5e382a683354ecd4dec55f4abd0f93380a1523b7",
+      "summary_path": "chars/char_1040_blaze2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:04:28"
+    },
+    "char_1041_angel2": {
+      "source_hash": "74dcb951130217a6c52e9d39eead25c3913e434541b2439a72fd247c51e5c2ac",
+      "summary_path": "chars/char_1041_angel2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:04:49"
+    },
+    "char_1042_phatm2": {
+      "source_hash": "2bff049e55d66cd4e821ade39c8cf54439d731818d99684a87b22d014a214009",
+      "summary_path": "chars/char_1042_phatm2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:05:21"
+    },
+    "char_1043_leizi2": {
+      "source_hash": "c90efd51573a0ed5b256c7b17b6bd8c8378bd4a4db456ffeecb86ee032884b65",
+      "summary_path": "chars/char_1043_leizi2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:05:40"
+    },
+    "char_1044_hsgma2": {
+      "source_hash": "d5805d344f20bb96e121200d3c4713e1f3ab181643baf52291669eeb98af6d07",
+      "summary_path": "chars/char_1044_hsgma2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:06:10"
+    },
+    "char_1045_svash2": {
+      "source_hash": "45e0a09c0f28eec2c6b81505d31373b7f326e66ebfc578ccd385cc02703e5bdb",
+      "summary_path": "chars/char_1045_svash2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:06:33"
+    },
+    "char_1046_sbell2": {
+      "source_hash": "0ced94c53ce260debf42604a7d9dbf083a74fcbff3f3cc6739fc15a4e1b476b9",
+      "summary_path": "chars/char_1046_sbell2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:06:51"
+    },
+    "char_1047_halo2": {
+      "source_hash": "cbd719097e65b6b007dab8c197d209d40d7c56ab2fb8dbd2538ff2d1567c4b8f",
+      "summary_path": "chars/char_1047_halo2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:07:07"
+    },
+    "char_1050_chen3": {
+      "source_hash": "616a1ebbba52b56222eb61895c9d923c940c1d8996de00190fa46059f5d3984e",
+      "summary_path": "chars/char_1050_chen3.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:07:28"
+    },
+    "char_1051_headb2": {
+      "source_hash": "fbc5604393bfc99fab9323340653c54cba6125c7920a21d62344efb019c6ee72",
+      "summary_path": "chars/char_1051_headb2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:07:53"
+    },
+    "char_1052_kalts2": {
+      "source_hash": "b72ea58ae4690066d13a0a376b63df63d1caff3986e4158a3622e5f14ac1fc16",
+      "summary_path": "chars/char_1052_kalts2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:08:25"
+    },
+    "char_106_franka": {
+      "source_hash": "e6193c3b5b35c54198adc92dedea60fa885f27b92d76fb4ebba951cacdd02f65",
+      "summary_path": "chars/char_106_franka.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:08:54"
+    },
+    "char_107_liskam": {
+      "source_hash": "5021cb6988dacd583ea6ba07d236bb6b7851046978d0495a2735622113dfdff8",
+      "summary_path": "chars/char_107_liskam.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:09:10"
+    },
+    "char_108_silent": {
+      "source_hash": "36510468ce784c21dbf31ae85fd40d46f4eb96b544839ad6aec687fcce98db0b",
+      "summary_path": "chars/char_108_silent.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:09:35"
+    },
+    "char_109_fmout": {
+      "source_hash": "c3fc680f24eae5323724c4a629fabe089f1163625e00b018925e2315b2e16cb9",
+      "summary_path": "chars/char_109_fmout.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:09:46"
+    },
+    "char_110_deepcl": {
+      "source_hash": "4b0499062bf07f261dca4538a60ce4d9ed5ce19ce9886568cf9a337649918865",
+      "summary_path": "chars/char_110_deepcl.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:10:20"
+    },
+    "char_112_siege": {
+      "source_hash": "1d2c84e170da6f64e85200c2bb998212c668ce5cab8e848cb8af066e30772fd0",
+      "summary_path": "chars/char_112_siege.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:10:39"
+    },
+    "char_113_cqbw": {
+      "source_hash": "e6d5843541398128a84d679d8d6c438782ebd6ce09d1b1397903d573ea3dd0b2",
+      "summary_path": "chars/char_113_cqbw.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:10:59"
+    },
+    "char_115_headbr": {
+      "source_hash": "a5d2b563e2a05bc1fafaea2847afb767d7ccbd98086c53d4867cd0080cfde253",
+      "summary_path": "chars/char_115_headbr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:11:16"
+    },
+    "char_117_myrrh": {
+      "source_hash": "3f687a7aee86e9c79d321b7b43a6dc9b1823d649b7f4e80e904b39e591217009",
+      "summary_path": "chars/char_117_myrrh.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:11:33"
+    },
+    "char_118_yuki": {
+      "source_hash": "4fa0a0e2f207d66efb5cd8f193cf26a93194748dbfff4cc8a41c832d20591436",
+      "summary_path": "chars/char_118_yuki.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:11:51"
+    },
+    "char_120_hibisc": {
+      "source_hash": "016e0cce76127bafa40a439624049aa6a4cd47c3a09355be7c97178eb64fde54",
+      "summary_path": "chars/char_120_hibisc.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:12:04"
+    },
+    "char_121_lava": {
+      "source_hash": "8178c1f9ac9f64d3f99e3025d784fb15a4bc223f9ed31fe46eb9b846303a0b35",
+      "summary_path": "chars/char_121_lava.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:12:17"
+    },
+    "char_122_beagle": {
+      "source_hash": "c74a74cd4f15fd117106c520edb36e4b09d6a119650ec111e08ac6f43fb27985",
+      "summary_path": "chars/char_122_beagle.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:12:34"
+    },
+    "char_123_fang": {
+      "source_hash": "c3633df362f9ff13a484d5477f8275612365aaf829b0f5870115b8a53827205f",
+      "summary_path": "chars/char_123_fang.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:12:53"
+    },
+    "char_124_kroos": {
+      "source_hash": "bcbfc8ad55956e563373e8808170ab28d05f1f5995591de8cabbaaffbb826e87",
+      "summary_path": "chars/char_124_kroos.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:13:09"
+    },
+    "char_126_shotst": {
+      "source_hash": "a9ef3e0c1cad124b0e66243c7530fe390cdc3a1a13b656e9e95c34bae317bf5b",
+      "summary_path": "chars/char_126_shotst.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:13:33"
+    },
+    "char_127_estell": {
+      "source_hash": "1a32b1d2ea0e44b6f20b6b9cc62f4314df3daaad48dad0495934c06c9d573d1e",
+      "summary_path": "chars/char_127_estell.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:13:45"
+    },
+    "char_128_plosis": {
+      "source_hash": "9b6dd29a4a7eb26d9e468977d7ec76bf6849c87bf6e659bf50163f262e3919eb",
+      "summary_path": "chars/char_128_plosis.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:14:01"
+    },
+    "char_129_bluep": {
+      "source_hash": "479f8e985c0299218b27ee93cc17e09d675fe62169acfcd7bef49fc5bc1ec8b1",
+      "summary_path": "chars/char_129_bluep.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:14:23"
+    },
+    "char_130_doberm": {
+      "source_hash": "6795a167e170fd2aea79cd87d8bf3d41a531b5dd82f9a49c80f9cc3d7c92b80e",
+      "summary_path": "chars/char_130_doberm.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:14:42"
+    },
+    "char_131_flameb": {
+      "source_hash": "3b7b8690e73af02bec826848f1e5e5589d698f1eaa3af6138ed556b3b91c6189",
+      "summary_path": "chars/char_131_flameb.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:15:02"
+    },
+    "char_133_mm": {
+      "source_hash": "cc65f728260b38769a0aecbabd5a2167108ee8776502e5eedc6edb4edd850d31",
+      "summary_path": "chars/char_133_mm.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:15:17"
+    },
+    "char_134_ifrit": {
+      "source_hash": "096775c8b8f89ec844a697580c8c246610ed4e595be8d79349cbb14c6c5a9f63",
+      "summary_path": "chars/char_134_ifrit.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:15:40"
+    },
+    "char_135_halo": {
+      "source_hash": "fa13fa2bbb4f6763aa21745d143988fa6fd47475a41d1b343d49ae1ecb528b02",
+      "summary_path": "chars/char_135_halo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:15:50"
+    },
+    "char_136_hsguma": {
+      "source_hash": "654a95efdcc6e4bd6b1376aa3de6571ee61f55fa7e3d17aa661bf1441b090543",
+      "summary_path": "chars/char_136_hsguma.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:16:08"
+    },
+    "char_137_brownb": {
+      "source_hash": "a5e046902617caf69c2d86132a1a52d1fc4ad5e02cc50751130affd9bcf64e44",
+      "summary_path": "chars/char_137_brownb.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:16:20"
+    },
+    "char_140_whitew": {
+      "source_hash": "6a65e445649cbdc758cdba0a3a4d7953036246a3a038eea894f87ed8f236ef3a",
+      "summary_path": "chars/char_140_whitew.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:16:35"
+    },
+    "char_141_nights": {
+      "source_hash": "5a2e1670433f7f9e2a9cd5ee371c851b4f16eb75c6087d10ee70878642eb1071",
+      "summary_path": "chars/char_141_nights.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:16:45"
+    },
+    "char_143_ghost": {
+      "source_hash": "e51343ec27282c34391d752a5edf5518003a6338140b841aface09b465a92124",
+      "summary_path": "chars/char_143_ghost.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:17:00"
+    },
+    "char_144_red": {
+      "source_hash": "041a692fc9958bd8b4adb1722e0659ed8ddf5c09e9a20946cff9e4ae869349fb",
+      "summary_path": "chars/char_144_red.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:17:36"
+    },
+    "char_145_prove": {
+      "source_hash": "dee5bed4f723459ad0b1e4082c7c28c8d68fac03be7f13efb4fc8e1e006b0d76",
+      "summary_path": "chars/char_145_prove.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:17:54"
+    },
+    "char_147_shining": {
+      "source_hash": "5ae0cf843c0874a7e0ed80963a2b8aec8b2c97485867e4f75e1631f542843433",
+      "summary_path": "chars/char_147_shining.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:18:07"
+    },
+    "char_148_nearl": {
+      "source_hash": "0adb4ef4c7b259f34870468c9eb8e171114a127124a173c3140073069b7b9513",
+      "summary_path": "chars/char_148_nearl.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:18:37"
+    },
+    "char_149_scave": {
+      "source_hash": "50a31a9b7e7607ea629d7fe6075d4757ebf960c41d836334010891b7c099ff68",
+      "summary_path": "chars/char_149_scave.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:19:00"
+    },
+    "char_1502_crosly": {
+      "source_hash": "a87c335637a2df701b147f65938a41bb6c6a92a6952a516db5f5d27102d7d204",
+      "summary_path": "chars/char_1502_crosly.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:19:24"
+    },
+    "char_150_snakek": {
+      "source_hash": "100b7098f479cb6242b9a2c5b7bca2ef339d9e909aa956d0351d0e3e6479669f",
+      "summary_path": "chars/char_150_snakek.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:19:45"
+    },
+    "char_151_myrtle": {
+      "source_hash": "6ebeb338742ed471d9e3720d78999ac74ae6b5e5e02e1b15a308edb6caa59a3f",
+      "summary_path": "chars/char_151_myrtle.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:20:13"
+    },
+    "char_154_morgan": {
+      "source_hash": "21dc420032583e9322219ab7edc46f612719e277283a2e1216f381d7c3efee3f",
+      "summary_path": "chars/char_154_morgan.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:20:32"
+    },
+    "char_155_tiger": {
+      "source_hash": "3459783e399425e46428cd5e5e957c31c74d539f9f995eb283a021f2d9ca0fae",
+      "summary_path": "chars/char_155_tiger.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:20:57"
+    },
+    "char_157_dagda": {
+      "source_hash": "ba0fed166dd5272f6363b73c535d12a9847582f653f00aef8471c94d77de34eb",
+      "summary_path": "chars/char_157_dagda.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:21:14"
+    },
+    "char_158_milu": {
+      "source_hash": "8a1795211423d6f148cb91a1ca16acf991493dddfdb06cd6b9be19e84d8045e6",
+      "summary_path": "chars/char_158_milu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:21:29"
+    },
+    "char_159_peacok": {
+      "source_hash": "39ca9d5a5f8dbbce8274b2a468628275e33c60f8408192b75e96b1a65d487332",
+      "summary_path": "chars/char_159_peacok.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:21:51"
+    },
+    "char_163_hpsts": {
+      "source_hash": "d07fdea9b767ddb7de846eefc058e058c864917baaefe8aba9aa2d6cd6d490d4",
+      "summary_path": "chars/char_163_hpsts.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:22:06"
+    },
+    "char_164_nightm": {
+      "source_hash": "a5013e454eb7d1cbdb09de62e8d1341f8df8b2269c2edecb619a194c3571aaa4",
+      "summary_path": "chars/char_164_nightm.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:22:26"
+    },
+    "char_166_skfire": {
+      "source_hash": "26cefcc5da896945c8ae75ca203eee953bc2e270b4ea3069c0ad0dc4ba62015c",
+      "summary_path": "chars/char_166_skfire.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:22:46"
+    },
+    "char_171_bldsk": {
+      "source_hash": "35f47e97632a7ca9c6e4b870a5fc81bb8407eb074fd6f4528b7e2cb2757a8443",
+      "summary_path": "chars/char_171_bldsk.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:23:01"
+    },
+    "char_172_svrash": {
+      "source_hash": "a4ae8dbf89bbb4020bfa04229eea0c47ac069f1054a11c99b1f0c34f2823ad8b",
+      "summary_path": "chars/char_172_svrash.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:24:07"
+    },
+    "char_173_slchan": {
+      "source_hash": "9cfa89564ef6243cd3f1ca9d4706d93b9d407bb525038c295fc4e8fb39dabd16",
+      "summary_path": "chars/char_173_slchan.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:24:22"
+    },
+    "char_174_slbell": {
+      "source_hash": "cb820c61433554f0ad03222b7f25f0cb3245b2dee67a4306de9e204a013a0da7",
+      "summary_path": "chars/char_174_slbell.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:24:37"
+    },
+    "char_179_cgbird": {
+      "source_hash": "e51590b385f61dfc6f4040d2f071bf3722defa494d359397973159002c8eda27",
+      "summary_path": "chars/char_179_cgbird.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:26:41"
+    },
+    "char_180_amgoat": {
+      "source_hash": "313fb33816865aa1e45994fe36fdd675049a3d4c32e07bfaaf52e84d0d2dfe5a",
+      "summary_path": "chars/char_180_amgoat.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:26:59"
+    },
+    "char_181_flower": {
+      "source_hash": "7a1841e18d4178c632b4d2919ba00dbcc5680082166fd2240851c6cc807123ce",
+      "summary_path": "chars/char_181_flower.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:27:11"
+    },
+    "char_183_skgoat": {
+      "source_hash": "56b2dd37ec3f4c4fa864c2d141d32bb0214c9dac31e1f0f5233bdf6f7f80c67c",
+      "summary_path": "chars/char_183_skgoat.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:27:27"
+    },
+    "char_185_frncat": {
+      "source_hash": "5c0848fd3cffdb41ffebd3752e5ec7583d25798f4cae665962babd6c8e057006",
+      "summary_path": "chars/char_185_frncat.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:27:40"
+    },
+    "char_187_ccheal": {
+      "source_hash": "227ac2d01fde0f7aa517e9d4bb9f3626d413f4c61d80b0e314e3411bd412e795",
+      "summary_path": "chars/char_187_ccheal.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:27:57"
+    },
+    "char_188_helage": {
+      "source_hash": "695817ce783fd952db7f3e95d8adf6a8492737df859cd851e260cebd772c60c6",
+      "summary_path": "chars/char_188_helage.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:28:20"
+    },
+    "char_190_clour": {
+      "source_hash": "d6db72324fcee9f5bc5a7b31f37c467434c618d587cfc2cbaafd5a65d9465498",
+      "summary_path": "chars/char_190_clour.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:28:36"
+    },
+    "char_192_falco": {
+      "source_hash": "12d5b748f46d66e67bd4e2a69c7ee49b7c1fecffbfe3c8fda15c45cb0e6113d5",
+      "summary_path": "chars/char_192_falco.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:29:00"
+    },
+    "char_193_frostl": {
+      "source_hash": "b280eb2b9385005cde1bca6604f172a47f706d3a9892b6b29b5467b72aba5fe5",
+      "summary_path": "chars/char_193_frostl.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:29:12"
+    },
+    "char_194_leto": {
+      "source_hash": "f9a11bc352a0a5f58b795ec52dec863098d2c499ca4460fa587da554edd09c94",
+      "summary_path": "chars/char_194_leto.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:29:27"
+    },
+    "char_195_glassb": {
+      "source_hash": "f39d47f825c462eeb0e20e2a258bba19676c2dcf86fa32334c58bea007b1116a",
+      "summary_path": "chars/char_195_glassb.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:29:37"
+    },
+    "char_196_sunbr": {
+      "source_hash": "f0cb77186e2d8aad495566e25878f72298b4e8bd49efe33fa9c7fd4da0561c63",
+      "summary_path": "chars/char_196_sunbr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:30:01"
+    },
+    "char_197_poca": {
+      "source_hash": "b086028cd9f1476f49a6928424da071b765d32e1c040347db853f497f623ade2",
+      "summary_path": "chars/char_197_poca.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:30:16"
+    },
+    "char_198_blackd": {
+      "source_hash": "9da93ee70f8a5aef64913600dc81292a71222f6d077498c870d83b84617da472",
+      "summary_path": "chars/char_198_blackd.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:30:36"
+    },
+    "char_199_yak": {
+      "source_hash": "082ea216e77d9ff399c3f9ba0fcc18e72c4758cc667daf0c4c657007ab64f53f",
+      "summary_path": "chars/char_199_yak.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:30:57"
+    },
+    "char_2012_typhon": {
+      "source_hash": "2efa8af4e7b875a9b69e35a29bd40c9c77ed040a5063e83ee2a0117e5f6921a6",
+      "summary_path": "chars/char_2012_typhon.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:31:16"
+    },
+    "char_2013_cerber": {
+      "source_hash": "642c4ad19bdcb1f9aa3503288386b7b0565a2cad8b994303a09b80e4e3cc2d08",
+      "summary_path": "chars/char_2013_cerber.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:31:30"
+    },
+    "char_2014_nian": {
+      "source_hash": "d73e7aca47e4080122b77e34bdc565ade4c6c6bd8e3782b2ee7dd3a54f33afc9",
+      "summary_path": "chars/char_2014_nian.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:31:50"
+    },
+    "char_2015_dusk": {
+      "source_hash": "f062e30a6121ce9e23e936ce32bf66426dba8d638cb4f74954aadcdc1d3c6ed5",
+      "summary_path": "chars/char_2015_dusk.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:32:10"
+    },
+    "char_201_moeshd": {
+      "source_hash": "a9d9a18a6de6913b00c39e95f2cfe146220ed11cb2bf7057224345828a5c7bff",
+      "summary_path": "chars/char_201_moeshd.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:32:23"
+    },
+    "char_2023_ling": {
+      "source_hash": "1b480a2d1a4d245b6ee679971f9bad499fc5bc5ad9e4f9c4d88a1f83fd159f8a",
+      "summary_path": "chars/char_2023_ling.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:32:37"
+    },
+    "char_2024_chyue": {
+      "source_hash": "32b8408b9e83688f655b86f3ca4f8722d84aa432ee724af42b4d28d5adc671c7",
+      "summary_path": "chars/char_2024_chyue.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:33:09"
+    },
+    "char_2025_shu": {
+      "source_hash": "710189b08a08412688f80c383d651dc14bc3f503c3e5cfbcca66eac8be177874",
+      "summary_path": "chars/char_2025_shu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:33:38"
+    },
+    "char_2026_yu": {
+      "source_hash": "4a054f6f96162fd16d398cb2a9cbc1f3df091cf2b6977d7d531b3a842d0c0bc9",
+      "summary_path": "chars/char_2026_yu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:33:57"
+    },
+    "char_2027_wang": {
+      "source_hash": "e46ede34485b8fc9b46ede2ba749f9b4df5fd28fe0564bbaebf06815058e386e",
+      "summary_path": "chars/char_2027_wang.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:34:23"
+    },
+    "char_202_demkni": {
+      "source_hash": "0c0b2a0d58ce7c4b1299aa4d61ad66d2ae1ee158c6b7712b6e76dc9a12b66235",
+      "summary_path": "chars/char_202_demkni.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:34:40"
+    },
+    "char_204_platnm": {
+      "source_hash": "bdcc6336925199c4c58a908ecaf35f344ff3c7481f495cfc504e56743e61c810",
+      "summary_path": "chars/char_204_platnm.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:35:48"
+    },
+    "char_206_gnosis": {
+      "source_hash": "85ccbe93b03e5f93f01f25735ceb57149e5cebe0c9beb5f5fb39879b6584cf60",
+      "summary_path": "chars/char_206_gnosis.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:36:11"
+    },
+    "char_208_melan": {
+      "source_hash": "aa5c74e4da6b8cea246190f707077e88300138d91ce223a859eea206728295f4",
+      "summary_path": "chars/char_208_melan.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:36:29"
+    },
+    "char_209_ardign": {
+      "source_hash": "eb135bbd20a7b680504ad3f1f1c2e2075c40ed4de66bc4576da327d9e015fa97",
+      "summary_path": "chars/char_209_ardign.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:36:45"
+    },
+    "char_210_stward": {
+      "source_hash": "9501c30f3cd1f6a1f3aa7dbf310754bf96016299fde91d3087b24f6669b9a0a5",
+      "summary_path": "chars/char_210_stward.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:36:59"
+    },
+    "char_211_adnach": {
+      "source_hash": "e630ac2e2d70aee9f81992e8fc8e8289e0021dd9dcde7dbc89ffa746b0f2725c",
+      "summary_path": "chars/char_211_adnach.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:37:13"
+    },
+    "char_212_ansel": {
+      "source_hash": "17199db80f72612946b2397bde1b1e8f3151286688391a6691ec5979102bf901",
+      "summary_path": "chars/char_212_ansel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:37:28"
+    },
+    "char_213_mostma": {
+      "source_hash": "d3118deb733b937ec2bab1c0c11c5459045c50bf4069131856c161d62adeb8f9",
+      "summary_path": "chars/char_213_mostma.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:37:47"
+    },
+    "char_214_kafka": {
+      "source_hash": "c092e7aabf23bb37d96cd3e93b452cca3295ca1663a08c7d237a1330f3b9c604",
+      "summary_path": "chars/char_214_kafka.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:38:02"
+    },
+    "char_215_mantic": {
+      "source_hash": "c1f9dc63fec83ac61b3510bc87183de76363202d39790cfc78c918a4f17f4fb4",
+      "summary_path": "chars/char_215_mantic.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:38:18"
+    },
+    "char_218_cuttle": {
+      "source_hash": "199f1ce58064ca7b2db59800d9a1e1325bd01a3516feddf1fb4d5efd53f844e9",
+      "summary_path": "chars/char_218_cuttle.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:38:36"
+    },
+    "char_219_meteo": {
+      "source_hash": "8df2d4e7958366b429ce4e3f598f358ac6023aa97a5b76fc08194586b3e535a1",
+      "summary_path": "chars/char_219_meteo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:38:52"
+    },
+    "char_220_grani": {
+      "source_hash": "64c3056779b67dc55d71d736d6f5665c73a3074e40c09929eff9b8e74b1a67aa",
+      "summary_path": "chars/char_220_grani.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:39:07"
+    },
+    "char_222_bpipe": {
+      "source_hash": "5faf2843b2bd50cc1eacfa89b1612a61011ac8e38752f28197ea33e25ccd9adc",
+      "summary_path": "chars/char_222_bpipe.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:39:31"
+    },
+    "char_225_haak": {
+      "source_hash": "67a87a7ee44fdbe76d9aafbaa1617036ac5c28c0d4fccc5c4984f1deccd8bad2",
+      "summary_path": "chars/char_225_haak.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:39:53"
+    },
+    "char_226_hmau": {
+      "source_hash": "7bb354220205eb5f0bf27b55246bfe5279fdcaa788e1aad68eefd90d16fc2128",
+      "summary_path": "chars/char_226_hmau.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:40:04"
+    },
+    "char_230_savage": {
+      "source_hash": "1d744e5084c5d249bad20241dbd184bcc1860e93a25d853574b2bee0709c712a",
+      "summary_path": "chars/char_230_savage.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:40:20"
+    },
+    "char_235_jesica": {
+      "source_hash": "4b68ea26371a658bf390eed8a4fb307c955c3bd9a2d3794dda3318a48e4b956f",
+      "summary_path": "chars/char_235_jesica.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:40:41"
+    },
+    "char_236_rope": {
+      "source_hash": "816f5020ce0a9f627161151b7fbf15171f182b4e003f9e332055010536452b03",
+      "summary_path": "chars/char_236_rope.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:40:55"
+    },
+    "char_237_gravel": {
+      "source_hash": "12f0603464c3b7c2a53ce9c9915bf83f5cd4413aee03359fd306117c33e1a621",
+      "summary_path": "chars/char_237_gravel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:41:16"
+    },
+    "char_240_wyvern": {
+      "source_hash": "09023b4d7083a24c61afd9d37adab563665dea8c01b32d53619b271dbca07864",
+      "summary_path": "chars/char_240_wyvern.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:41:41"
+    },
+    "char_241_panda": {
+      "source_hash": "40565f90c19b42418f0a8e709614e81f28db0b544971e9ad511285c3ee6c9b8a",
+      "summary_path": "chars/char_241_panda.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:42:20"
+    },
+    "char_242_otter": {
+      "source_hash": "687b10b336871fda4dcc9ada5a39012199ee417a1d630ed73c5837d5de805806",
+      "summary_path": "chars/char_242_otter.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:42:30"
+    },
+    "char_243_waaifu": {
+      "source_hash": "f8ff6f995d8bfb77c32bff8e334d8f827bb9520802f8c92a07a5d7077027ec83",
+      "summary_path": "chars/char_243_waaifu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:42:44"
+    },
+    "char_245_cello": {
+      "source_hash": "aa02f37e78b0bfa5735c0554fffb5668a73419f5130b4fa37af51fd3664deb6d",
+      "summary_path": "chars/char_245_cello.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:43:10"
+    },
+    "char_248_mgllan": {
+      "source_hash": "28b65b06f00d791a6a86c4b6dca19a186e61dbb4bbf6dfffc79a6f52d4f928d5",
+      "summary_path": "chars/char_248_mgllan.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:43:33"
+    },
+    "char_249_mlyss": {
+      "source_hash": "1dda3a90d68c03408e82acbafd4e8435994bbb9a5afe0ee19ccb1738c6fe98d0",
+      "summary_path": "chars/char_249_mlyss.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:43:55"
+    },
+    "char_250_phatom": {
+      "source_hash": "4b62fcd62cd01bd8a99eade893c3f9d8b7a631d6f5de52bd1c12ae8ed0ce852b",
+      "summary_path": "chars/char_250_phatom.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:44:11"
+    },
+    "char_252_bibeak": {
+      "source_hash": "2251d767f93919f95154af2d74b890c062a583c33bfd25948558b57d0ee46cb0",
+      "summary_path": "chars/char_252_bibeak.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:44:26"
+    },
+    "char_253_greyy": {
+      "source_hash": "d5e4d97a93620917b6b9a5a16e694335e69f2777f48dd9aaea12900c6c519868",
+      "summary_path": "chars/char_253_greyy.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:44:48"
+    },
+    "char_254_vodfox": {
+      "source_hash": "0076acfb24c61ecd7428b5869f3ab92d6f61f49f0166db38063b8a908c4962e8",
+      "summary_path": "chars/char_254_vodfox.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:45:02"
+    },
+    "char_258_podego": {
+      "source_hash": "7b443623c9b9451c0c5f833488dc0e3e91d9f7bd6724b21f271e1db62fb9b9a8",
+      "summary_path": "chars/char_258_podego.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:45:25"
+    },
+    "char_260_durnar": {
+      "source_hash": "fe2ba5b550aca7a3c851f6a7357471118319b1cbf45ab2ef4de633e01b23bb0c",
+      "summary_path": "chars/char_260_durnar.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:45:42"
+    },
+    "char_261_sddrag": {
+      "source_hash": "9c32dd562fc53af6b7e06a0054822451ae0e213ec6c9c3b0c67bc55e0b32431f",
+      "summary_path": "chars/char_261_sddrag.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:46:05"
+    },
+    "char_263_skadi": {
+      "source_hash": "baacd1d15c4bab3b966a16f6832bb1c3cf7a6b527f838081a59faf96cd2a46bc",
+      "summary_path": "chars/char_263_skadi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:46:20"
+    },
+    "char_264_f12yin": {
+      "source_hash": "88aa290b833d3be8f0f7ceb80b40e052f340ac8a5c30d8868ae04fc84a72b0da",
+      "summary_path": "chars/char_264_f12yin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:46:43"
+    },
+    "char_265_sophia": {
+      "source_hash": "e99db5f9c577e47c92801fa62f11d4e9a4bca04d75bab7f9a2eb3e855b919164",
+      "summary_path": "chars/char_265_sophia.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:47:01"
+    },
+    "char_271_spikes": {
+      "source_hash": "f0554d79d7dca74b827e4a8380a6c6abd01080077e4cb020fe7baeb950f09d85",
+      "summary_path": "chars/char_271_spikes.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:47:15"
+    },
+    "char_272_strong": {
+      "source_hash": "7eee915861a61ef52e0a4c72002a42e1d63dbf75495fe9107e18f95e551049ea",
+      "summary_path": "chars/char_272_strong.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:47:32"
+    },
+    "char_274_astesi": {
+      "source_hash": "85a7f11f17b3f74f3ca5638c76371ea75c74cdb5e551b77efbb8215a95f0f5ed",
+      "summary_path": "chars/char_274_astesi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:47:47"
+    },
+    "char_275_breeze": {
+      "source_hash": "d5968451a9dee46c28d74227c0de5de01c847f760bf54896ff05e05ee56f38b2",
+      "summary_path": "chars/char_275_breeze.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:49:52"
+    },
+    "char_277_sqrrel": {
+      "source_hash": "9035797edef845c13b39d6749d1247da1785adc021b0bf81a866170ada669988",
+      "summary_path": "chars/char_277_sqrrel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:50:09"
+    },
+    "char_278_orchid": {
+      "source_hash": "65a6bf983d8351c1f61cac8c1115795677d4cb68dd963c6fb3230a1f0b62d538",
+      "summary_path": "chars/char_278_orchid.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:50:24"
+    },
+    "char_279_excu": {
+      "source_hash": "1945b1340fc45dd2024ca10ba2866391c2e79a73512e3f6e7cba19a4f0c70b5f",
+      "summary_path": "chars/char_279_excu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:50:47"
+    },
+    "char_281_popka": {
+      "source_hash": "7321eea3b68690ac2bdbce4818efb9b0c1c499822e5ce8d81288cebb921c3edb",
+      "summary_path": "chars/char_281_popka.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:51:02"
+    },
+    "char_282_catap": {
+      "source_hash": "8ecd93bf1b218ef904576e1259cdf345dfa767a05571ed71426f99736db96a2c",
+      "summary_path": "chars/char_282_catap.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:51:16"
+    },
+    "char_283_midn": {
+      "source_hash": "5def223af7c5ecdd1ba72398c591bc2ef98870add125688b01117a87aa1f0b06",
+      "summary_path": "chars/char_283_midn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:51:31"
+    },
+    "char_284_spot": {
+      "source_hash": "5842b67f49ba44288e797e004a50f0f831f076749de3bfba05de163dea2b7ddf",
+      "summary_path": "chars/char_284_spot.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:51:46"
+    },
+    "char_285_medic2": {
+      "source_hash": "b700db972ac54e31a05777842176c3cc98ccba3e48d72c255f15442502899ad8",
+      "summary_path": "chars/char_285_medic2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:51:58"
+    },
+    "char_286_cast3": {
+      "source_hash": "05b2baf0a2fe444774ff6a0599cfc2be1ab7719a5c24250f390bbcb63b09efb4",
+      "summary_path": "chars/char_286_cast3.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:52:11"
+    },
+    "char_289_gyuki": {
+      "source_hash": "49aedffe5d954f6cd557d26443c362973110bb9779fb820223851186bd30add0",
+      "summary_path": "chars/char_289_gyuki.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:52:25"
+    },
+    "char_290_vigna": {
+      "source_hash": "1c2f0f6fe4aadf8b50ee4d37af3c4e09fc0f68a146b62604d3bd8c40cd0097c4",
+      "summary_path": "chars/char_290_vigna.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:52:40"
+    },
+    "char_291_aglina": {
+      "source_hash": "70ca11c7586e3527a95eb2a882b61c44ef389c81f88ce3f9770661cb4d55b271",
+      "summary_path": "chars/char_291_aglina.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:52:54"
+    },
+    "char_293_thorns": {
+      "source_hash": "d34910adf27ee24e8267ecaef2a084330c687f0294d361c070001591ad93482c",
+      "summary_path": "chars/char_293_thorns.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:53:33"
+    },
+    "char_294_ayer": {
+      "source_hash": "1a15692a3f3e3849f6629817d278ec5712ebc09f4903ee4f5daba562a173b21c",
+      "summary_path": "chars/char_294_ayer.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:53:57"
+    },
+    "char_297_hamoni": {
+      "source_hash": "63d5a61e190a5b60116f7c0cbfbf72d2fd0c76d861a88e95a5b895b61123b7a0",
+      "summary_path": "chars/char_297_hamoni.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:54:21"
+    },
+    "char_298_susuro": {
+      "source_hash": "6147c8caf8569d485ab578118adb3802bda09be9f3680462c237e545369aa971",
+      "summary_path": "chars/char_298_susuro.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:54:38"
+    },
+    "char_300_phenxi": {
+      "source_hash": "d85823b0150d40114197a7aee3351798a0426d15e00c9f61e360bad02e8a0e3f",
+      "summary_path": "chars/char_300_phenxi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:55:02"
+    },
+    "char_301_cutter": {
+      "source_hash": "84abf53e4df6650191724fa7d5cf1dfa8496dba01c0826f5577c43a2786009f1",
+      "summary_path": "chars/char_301_cutter.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:55:27"
+    },
+    "char_302_glaze": {
+      "source_hash": "1cb6e307d619c79fd0f4997594b2474de54547bf9ac1a94b0d33dcfd506e80ca",
+      "summary_path": "chars/char_302_glaze.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:55:45"
+    },
+    "char_304_zebra": {
+      "source_hash": "e5f1614593e294ebe556b437eebc366473956e638b9e4b611590bcab951164b7",
+      "summary_path": "chars/char_304_zebra.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:56:01"
+    },
+    "char_306_leizi": {
+      "source_hash": "33f78b5bb251f0b64b3be6b2dfa2660f8843425e069506eb2d9ac4355f360e58",
+      "summary_path": "chars/char_306_leizi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:56:22"
+    },
+    "char_308_swire": {
+      "source_hash": "dcc3e6646799b76f7a543d3237157fa465d23f9fa0434975f035db1745ca26de",
+      "summary_path": "chars/char_308_swire.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:56:42"
+    },
+    "char_311_mudrok": {
+      "source_hash": "8e671af63452e96a9413f95aa2eaee5fae8b24ed99dbb6391f6112c88e6d726b",
+      "summary_path": "chars/char_311_mudrok.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:57:13"
+    },
+    "char_322_lmlee": {
+      "source_hash": "9acdf4b75ed3698d4212fcaf7601c5c9bec6a2c91cac86a3c9fe8f6323e58155",
+      "summary_path": "chars/char_322_lmlee.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:57:30"
+    },
+    "char_325_bison": {
+      "source_hash": "c78d27d30d2e8c90cff8648fafe02dcfd690fca4655a345ce873ec9d15a102f7",
+      "summary_path": "chars/char_325_bison.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:57:45"
+    },
+    "char_326_glacus": {
+      "source_hash": "3be7c14bab79f77b29f95284bca8f658b4a2e3c41a02bd00d01bc57241915b4a",
+      "summary_path": "chars/char_326_glacus.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:58:08"
+    },
+    "char_328_cammou": {
+      "source_hash": "ab59f3eece6c8327feecd552bb0270eba648031248ec9edfcfa4ddda40f115a2",
+      "summary_path": "chars/char_328_cammou.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:58:27"
+    },
+    "char_332_archet": {
+      "source_hash": "5ac6adca9ef78db8cbf8b5f86afbc21cdfffb2b6f85db8df2ea6fd52bfcadbaa",
+      "summary_path": "chars/char_332_archet.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:58:45"
+    },
+    "char_333_sidero": {
+      "source_hash": "b4a2c85bebfc93de569cb695aac0a2c50addc83312d83e602ec0f183d2fcbcae",
+      "summary_path": "chars/char_333_sidero.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:59:00"
+    },
+    "char_336_folivo": {
+      "source_hash": "2b1ddf22ba24cddf81dd841c1866152806099d90edfd68451741cf4012fa62a6",
+      "summary_path": "chars/char_336_folivo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:59:16"
+    },
+    "char_337_utage": {
+      "source_hash": "70d44a338660dbb4f50d1cc642e16d343be8c4bdcbbcfb458d8ad52af671e650",
+      "summary_path": "chars/char_337_utage.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:59:30"
+    },
+    "char_338_iris": {
+      "source_hash": "120b19dab2cf2d42309b8064a6f0b546b75f72870efb871c50a6c7bcefd598b6",
+      "summary_path": "chars/char_338_iris.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T15:59:47"
+    },
+    "char_340_shwaz": {
+      "source_hash": "7c089ee839a0eaa182904532f098474ba7dc6a2acfd81133f9d5e92bdc4c4ada",
+      "summary_path": "chars/char_340_shwaz.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:00:00"
+    },
+    "char_341_sntlla": {
+      "source_hash": "84f53ec250d68a1ab6ced10dc26b23d078984413d5abdb74d2c7382deba98820",
+      "summary_path": "chars/char_341_sntlla.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:00:21"
+    },
+    "char_343_tknogi": {
+      "source_hash": "d89d274be81379f486187f61ec938f1d14f2b1276d9baa3407c34da11452c171",
+      "summary_path": "chars/char_343_tknogi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:00:35"
+    },
+    "char_344_beewax": {
+      "source_hash": "54be2de1b64d30bf54008fc257e9f38c24c9279ab7a5e931257d76996db7d7f1",
+      "summary_path": "chars/char_344_beewax.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:00:57"
+    },
+    "char_345_folnic": {
+      "source_hash": "7de3d749da16c4ef5faa92824346f1df981b9887fff86728f008cf9728b0d4e0",
+      "summary_path": "chars/char_345_folnic.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:01:13"
+    },
+    "char_346_aosta": {
+      "source_hash": "b5a7f60fdc1035ab125906c6ae38e3abf59ac53838bb80acbadc607f46b2a497",
+      "summary_path": "chars/char_346_aosta.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:01:26"
+    },
+    "char_347_jaksel": {
+      "source_hash": "9329e0adfd2c55a5fa1d5c42102eb19b96acbbb4392f041d9252dbab5069215a",
+      "summary_path": "chars/char_347_jaksel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:01:41"
+    },
+    "char_348_ceylon": {
+      "source_hash": "0ff2992ac628ae724144816c00d15242bc84d336a6484ead211e05514a7052bf",
+      "summary_path": "chars/char_348_ceylon.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:01:57"
+    },
+    "char_349_chiave": {
+      "source_hash": "5cb09b8d0a533c5bf03118ba2d3a4fe03eb22d217b8145401c9f21ba349949d4",
+      "summary_path": "chars/char_349_chiave.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:02:14"
+    },
+    "char_350_surtr": {
+      "source_hash": "9e1e7b1e250ca1e3c5f4743068f03f5e532767adf1af58680c05b815fad653a4",
+      "summary_path": "chars/char_350_surtr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:02:35"
+    },
+    "char_355_ethan": {
+      "source_hash": "57bc7751452438f13a552ab164590389389e8e443da047d72ab8519a9672fc04",
+      "summary_path": "chars/char_355_ethan.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:02:48"
+    },
+    "char_356_broca": {
+      "source_hash": "ba07c28fad4e9a7796c389bd7e9cb3a141564d04d9b5f98bd1000068dc9607af",
+      "summary_path": "chars/char_356_broca.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:03:05"
+    },
+    "char_358_lisa": {
+      "source_hash": "c7664577a37828302244463b640c0920606bf1b6fd2e9f5692e7dc154ae24c68",
+      "summary_path": "chars/char_358_lisa.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:05:07"
+    },
+    "char_362_saga": {
+      "source_hash": "a7c737e7e8a50be8a446a1fe552c102c2595411daf238510607354acb4176770",
+      "summary_path": "chars/char_362_saga.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:05:26"
+    },
+    "char_363_toddi": {
+      "source_hash": "a74d5234f8ced127ad6ef5753fbb4d4b380aa03a6dbea28299383927398bad67",
+      "summary_path": "chars/char_363_toddi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:05:41"
+    },
+    "char_365_aprl": {
+      "source_hash": "0c952e9234b76b139966f6de43c1bc4f53c78bbdac5049da1994b6ad7908cbcf",
+      "summary_path": "chars/char_365_aprl.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:05:53"
+    },
+    "char_366_acdrop": {
+      "source_hash": "480ab38bf9536fe1d7c2f9e04cb8311c1009b03275994191f171d611d31ba3eb",
+      "summary_path": "chars/char_366_acdrop.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:06:14"
+    },
+    "char_367_swllow": {
+      "source_hash": "f5257ffc4ac1373e7d95e5b10e7ed69e059d2db3dfcf572ea94c344bfa59f827",
+      "summary_path": "chars/char_367_swllow.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:06:31"
+    },
+    "char_369_bena": {
+      "source_hash": "350f0013a500ae5181ea162277820446cb46ec3a6ababd8294b27b3577663410",
+      "summary_path": "chars/char_369_bena.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:06:45"
+    },
+    "char_373_lionhd": {
+      "source_hash": "71dc12d6bb29bb59f2eff5e6aaca7eca09380d2d3878029d7be62a42e82df26b",
+      "summary_path": "chars/char_373_lionhd.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:06:59"
+    },
+    "char_376_therex": {
+      "source_hash": "519b79a934bba50c489d173d3188fe8895081a789aaef9974db28c45ef2adf43",
+      "summary_path": "chars/char_376_therex.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:07:13"
+    },
+    "char_377_gdglow": {
+      "source_hash": "7caf186fdd6dafbd2292182633ac9f1d4a4a986dcaf087e3f10b3239aca73e8b",
+      "summary_path": "chars/char_377_gdglow.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:07:30"
+    },
+    "char_378_asbest": {
+      "source_hash": "3c15204749718502736fd31fd475b04e0aed3731355d33761f486ed52e6ab339",
+      "summary_path": "chars/char_378_asbest.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:07:45"
+    },
+    "char_379_sesa": {
+      "source_hash": "e93300fda4b1108b50da16ab1cffb0e7db2a91d374644af1c3efd8c8105ff5a4",
+      "summary_path": "chars/char_379_sesa.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:08:22"
+    },
+    "char_381_bubble": {
+      "source_hash": "bf3748691277278d30eab244c9db7bc42ba5c08065e6bdb98e4b281bd8f44a51",
+      "summary_path": "chars/char_381_bubble.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:08:40"
+    },
+    "char_383_snsant": {
+      "source_hash": "e309a4440d5aaf18c1af933379df386d6ddb49df22e6d2ab488e73c293cd7897",
+      "summary_path": "chars/char_383_snsant.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:08:52"
+    },
+    "char_385_finlpp": {
+      "source_hash": "7b3df3f5f312eb1749e19d77943c24ad1b4af59ace5c4a20c3d1f2d106e1746a",
+      "summary_path": "chars/char_385_finlpp.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:09:09"
+    },
+    "char_388_mint": {
+      "source_hash": "db407bf2419a0378bf9edfa67222dc84a9715764c37a60b285ecbf0e8d48efff",
+      "summary_path": "chars/char_388_mint.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:09:22"
+    },
+    "char_391_rosmon": {
+      "source_hash": "9ec0f16764b15ba968d89b1085ea07ca9f18019f05f27a5caeaa1323038ba50a",
+      "summary_path": "chars/char_391_rosmon.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:09:44"
+    },
+    "char_394_hadiya": {
+      "source_hash": "65ed0941a070d19c90e2bf9f0811735bf5ee4a94906d80fa55e86de3166fc6d1",
+      "summary_path": "chars/char_394_hadiya.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:10:02"
+    },
+    "char_4000_jnight": {
+      "source_hash": "8049ee62c3ae674d5d76cf47b3fea347a2bb03b754e2583e58fc137d3de5b15e",
+      "summary_path": "chars/char_4000_jnight.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:10:19"
+    },
+    "char_4004_pudd": {
+      "source_hash": "714e262889eeb3d842ba050d2b0ef5a925fddcadeb8e07b987ff4b5cd3704f7b",
+      "summary_path": "chars/char_4004_pudd.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:10:33"
+    },
+    "char_4006_melnte": {
+      "source_hash": "7c03da3dbc4127d4d69fa51f1e9740268bf26b3e672bdcb144a627903c59a7be",
+      "summary_path": "chars/char_4006_melnte.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:10:49"
+    },
+    "char_4009_irene": {
+      "source_hash": "bbb0fe829571cb2038ecc7b8467019e06b697f9fa6fe7849b73f7f146f08e775",
+      "summary_path": "chars/char_4009_irene.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:11:13"
+    },
+    "char_400_weedy": {
+      "source_hash": "7c6f3e110674cf60ff9451b44ec9f95a25f7a907d30c528736a992967b94bfec",
+      "summary_path": "chars/char_400_weedy.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:11:30"
+    },
+    "char_4010_etlchi": {
+      "source_hash": "6e3d856e8b16f96a14d060456e0c82e7cb0f7800b8a426d63065aa9dbae4c6a3",
+      "summary_path": "chars/char_4010_etlchi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:11:51"
+    },
+    "char_4011_lessng": {
+      "source_hash": "65362e4bef8b9081a5f3f15866d4a58131d3f435fe004bd7892a72352b01ad35",
+      "summary_path": "chars/char_4011_lessng.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:12:06"
+    },
+    "char_4013_kjera": {
+      "source_hash": "db30e2eb5f5649b77ba417218babcb98d058c2ed9d5027053c5d234354ccac3e",
+      "summary_path": "chars/char_4013_kjera.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:12:19"
+    },
+    "char_4014_lunacu": {
+      "source_hash": "3f4e228c05729a3b92da20595aba7d77f2b5a23a6398593f919d7a92fd84179a",
+      "summary_path": "chars/char_4014_lunacu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:12:33"
+    },
+    "char_4015_spuria": {
+      "source_hash": "336f1d38223c5eb0023ae2cecddd5dab1704b3b08b9bb0eb40bcbf303a797787",
+      "summary_path": "chars/char_4015_spuria.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:12:56"
+    },
+    "char_4016_kazema": {
+      "source_hash": "56e4d509799ff7dd527446ea40b231d201059e089111dec7962794e8db0cf74e",
+      "summary_path": "chars/char_4016_kazema.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:13:13"
+    },
+    "char_4017_puzzle": {
+      "source_hash": "d7bdd5aa73683fca2d6c55c068759eadd5584297eb08e88a343fc12f2931ba13",
+      "summary_path": "chars/char_4017_puzzle.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:13:34"
+    },
+    "char_4019_ncdeer": {
+      "source_hash": "f400e9801acec04a913f50af039c307bf9f52ea992706aefc2b5920768d12e84",
+      "summary_path": "chars/char_4019_ncdeer.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:13:54"
+    },
+    "char_401_elysm": {
+      "source_hash": "f68845022d1becaccb9541d09e2b4f49bf226bddb54ac3f4a5429fb7e1c991f4",
+      "summary_path": "chars/char_401_elysm.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:14:06"
+    },
+    "char_4023_rfalcn": {
+      "source_hash": "362e3a096067c08e8ba363c76ca254ec988d7bce53cfa1907aa3d3b66f6e3e46",
+      "summary_path": "chars/char_4023_rfalcn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:14:22"
+    },
+    "char_4025_aprot2": {
+      "source_hash": "6bec4d1e12a4ebb1035c7f00f1e28f7f1d6957961efc72699c499d96b6290cad",
+      "summary_path": "chars/char_4025_aprot2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:14:38"
+    },
+    "char_4026_vulpis": {
+      "source_hash": "25141b506429e3894700f1a117c61c8fb54e8c8851e7830c813fa4442c34a8c4",
+      "summary_path": "chars/char_4026_vulpis.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:15:02"
+    },
+    "char_4027_heyak": {
+      "source_hash": "0d78ee68da78ef30ef910e2edc679dc0e2f752ba3cd60c4c3f6b030ce704797d",
+      "summary_path": "chars/char_4027_heyak.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:15:18"
+    },
+    "char_402_tuye": {
+      "source_hash": "ef314c3ca264b80da7ff4a008434389a5f0428ca75edb48f4dd416ac2e588b48",
+      "summary_path": "chars/char_402_tuye.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:15:34"
+    },
+    "char_4031_liesel": {
+      "source_hash": "2d08ce8463106990f7de18220b345ca145e4ceea84bdf75e2e7aa28a9a2378b3",
+      "summary_path": "chars/char_4031_liesel.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:15:51"
+    },
+    "char_4032_provs": {
+      "source_hash": "b10ef8e988f1610a819412b28334fbb9be52e5e6b19e362c5f2bbf0967fd842a",
+      "summary_path": "chars/char_4032_provs.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:16:07"
+    },
+    "char_4036_forcer": {
+      "source_hash": "12a409cc8c20b761b26d79ea6587223c4cdc71e48f2030ec3ef07a553bceadcb",
+      "summary_path": "chars/char_4036_forcer.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:16:26"
+    },
+    "char_4037_demetr": {
+      "source_hash": "4cd2d9979505bd7c22277f6beb6eb5268d04f65fea2f5181830084d40d30b76f",
+      "summary_path": "chars/char_4037_demetr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:16:47"
+    },
+    "char_4039_horn": {
+      "source_hash": "83b7de94dc8b043ae6f6b4aa2d26ac93aadea6e2c31c9a585a2b503fc1459163",
+      "summary_path": "chars/char_4039_horn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:17:08"
+    },
+    "char_4040_rockr": {
+      "source_hash": "01078de1847e18b6a0ed2c9038791f4cc9919a7f1ca5c971a0644ffa836c5fd4",
+      "summary_path": "chars/char_4040_rockr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:17:40"
+    },
+    "char_4041_chnut": {
+      "source_hash": "2e6ab3304c8755868227297300059573876b3cc738b891f25f55994767fe3486",
+      "summary_path": "chars/char_4041_chnut.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:18:00"
+    },
+    "char_4042_lumen": {
+      "source_hash": "01de507d049296e0350394c55f0fcc3faaf08db20a85d17131d8058160de82e2",
+      "summary_path": "chars/char_4042_lumen.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:18:17"
+    },
+    "char_4043_erato": {
+      "source_hash": "f44c3628e9449c76ac91009e1f33aecefcf8980301705f7ee34444dbf59c4479",
+      "summary_path": "chars/char_4043_erato.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:18:34"
+    },
+    "char_4045_heidi": {
+      "source_hash": "34657374f2a8d03b546076f564a6030a6d288477f76d27eab37429b6dbaf2bb4",
+      "summary_path": "chars/char_4045_heidi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:19:00"
+    },
+    "char_4046_ebnhlz": {
+      "source_hash": "70084de710e1ca03d36c32c7057493f709ffdc0ffe1da233d5e708ebe7ac516b",
+      "summary_path": "chars/char_4046_ebnhlz.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:19:21"
+    },
+    "char_4047_pianst": {
+      "source_hash": "3181d160227c352a9538ab774756d768413d06ff946003eee22d57df924cbe72",
+      "summary_path": "chars/char_4047_pianst.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:19:36"
+    },
+    "char_4048_doroth": {
+      "source_hash": "5a485b6e0b20b4cae1433d7a3f6db0a9a55b14fa4681a341dd0c2472203669bb",
+      "summary_path": "chars/char_4048_doroth.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:19:54"
+    },
+    "char_4051_akkord": {
+      "source_hash": "55f2f2d1406dcce142f0e677be04cd1122721ae39035853d6f83352dc53e3903",
+      "summary_path": "chars/char_4051_akkord.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:20:07"
+    },
+    "char_4052_surfer": {
+      "source_hash": "2825c6c09d8e549d9ea4f907a69ddb91df664ccf3ce7efd60c3b26f21d9cfcf0",
+      "summary_path": "chars/char_4052_surfer.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:20:25"
+    },
+    "char_4054_malist": {
+      "source_hash": "98e154998bbcc86a10c7981fe1b8d1ffa57261a7a834bebc163f85c67af17b39",
+      "summary_path": "chars/char_4054_malist.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:20:44"
+    },
+    "char_4055_bgsnow": {
+      "source_hash": "d213c0769734a2d2660480d33832ea74b06d8c1d1e2c9d1c0d4683446fad456a",
+      "summary_path": "chars/char_4055_bgsnow.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:20:58"
+    },
+    "char_4056_titi": {
+      "source_hash": "e33cf0089b972879704087ff14254ac571e22e28d3e26991a42405f0d5e4d72d",
+      "summary_path": "chars/char_4056_titi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:21:19"
+    },
+    "char_4058_pepe": {
+      "source_hash": "bc847d385880646f9aaf01f740eb943ae4b4abb37537e7864610fc8712e64311",
+      "summary_path": "chars/char_4058_pepe.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:21:37"
+    },
+    "char_405_absin": {
+      "source_hash": "1db91671159ab0ea1c46b91d42ce1e47b02c3a25631556895ac5775c3157f6e5",
+      "summary_path": "chars/char_405_absin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:21:57"
+    },
+    "char_4062_totter": {
+      "source_hash": "8c6e971d8886112f760081e30eaf6d5b88fb0e1917c6ef5f826b4c685a315981",
+      "summary_path": "chars/char_4062_totter.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:22:12"
+    },
+    "char_4063_quartz": {
+      "source_hash": "1548b96ba3785bb9fab8cd92dddb2b899875c21a4016e375afb175a582aeee2d",
+      "summary_path": "chars/char_4063_quartz.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:22:26"
+    },
+    "char_4064_mlynar": {
+      "source_hash": "8e45c2536470f677225c9cf104f747884258e2115ee610e67c1daec38a15fe1d",
+      "summary_path": "chars/char_4064_mlynar.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:22:48"
+    },
+    "char_4065_judge": {
+      "source_hash": "b065ac575e5d675b97af7e89e0a824787ba4f92b5dfe28e6e4ee058e055f55e2",
+      "summary_path": "chars/char_4065_judge.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:24:57"
+    },
+    "char_4066_highmo": {
+      "source_hash": "99ef4fa2a73f2903e408986d1165a14ddaa3795e0311e1b514c654856345806a",
+      "summary_path": "chars/char_4066_highmo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:25:16"
+    },
+    "char_4067_lolxh": {
+      "source_hash": "6813afe3808757d1f4304bfde0b628bdc736cdc1c031bc0a1d8f31c9be363172",
+      "summary_path": "chars/char_4067_lolxh.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:25:46"
+    },
+    "char_4071_peper": {
+      "source_hash": "1cbdfa2258ebbb0fdac90c37798f0008892ef54e4c044885cf8cb922afd90abd",
+      "summary_path": "chars/char_4071_peper.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:26:04"
+    },
+    "char_4072_ironmn": {
+      "source_hash": "72065e1ee73dde1c356d12bb3c84fb0717eb5021ab25350ac3a31405d9c11cca",
+      "summary_path": "chars/char_4072_ironmn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:26:20"
+    },
+    "char_4077_palico": {
+      "source_hash": "9149de716bc35f294efae2def8dc4c3313f995165bd9cc3cef4a99185ddd24c0",
+      "summary_path": "chars/char_4077_palico.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:26:33"
+    },
+    "char_4078_bdhkgt": {
+      "source_hash": "e0ed385b2c06c5d5545f5878ece33de47065c49a24722e2f5f1d29f7c32d34c6",
+      "summary_path": "chars/char_4078_bdhkgt.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:26:54"
+    },
+    "char_4079_haini": {
+      "source_hash": "10a9f4a3f3c84e3c109e69a3a9e08cee196909a50a5222531920fb43ab8a5478",
+      "summary_path": "chars/char_4079_haini.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:27:17"
+    },
+    "char_4080_lin": {
+      "source_hash": "f5a994f87540a86c4168f8daebf4922e3485fe4a70168201f6a407830eecac1c",
+      "summary_path": "chars/char_4080_lin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:27:36"
+    },
+    "char_4081_warmy": {
+      "source_hash": "6f38838547a1acdf6098755d15ed14a62a87749c56a935eba7323a4933cc3693",
+      "summary_path": "chars/char_4081_warmy.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:27:53"
+    },
+    "char_4082_qiubai": {
+      "source_hash": "b88e658947fdd4568720c853ae5478f423653d814b0d1d5fa6b0a950640a6cb6",
+      "summary_path": "chars/char_4082_qiubai.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:28:16"
+    },
+    "char_4083_chimes": {
+      "source_hash": "c3b8479285bb07db67a34aa85f9d8c057a4f890b34a4bfecc2b43c09d2ff3885",
+      "summary_path": "chars/char_4083_chimes.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:28:39"
+    },
+    "char_4087_ines": {
+      "source_hash": "91d455ddf759cf21e0db89807a26d0e23e672dcd32c1447ae4385f2b1b1bf4f3",
+      "summary_path": "chars/char_4087_ines.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:28:56"
+    },
+    "char_4088_hodrer": {
+      "source_hash": "c090c804abc70e72c91d5440ab83e9e16e2514cb7671e5a5f4e5b1fa61829970",
+      "summary_path": "chars/char_4088_hodrer.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:29:17"
+    },
+    "char_4091_ulika": {
+      "source_hash": "6ae81e30a8a36dc01cb9ffe72d25d102c44705cbfee362e97c7f69f2421e3e43",
+      "summary_path": "chars/char_4091_ulika.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:29:39"
+    },
+    "char_4093_frston": {
+      "source_hash": "b1a32cafeff001f88f87dc88f9e33ede982d250369de9c0ea703c129d63acbd4",
+      "summary_path": "chars/char_4093_frston.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:29:58"
+    },
+    "char_4098_vvana": {
+      "source_hash": "fe379198ad49e65bd021bf08d243a8b45371fcb35b05ecd5250fc718c71fc79a",
+      "summary_path": "chars/char_4098_vvana.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:30:13"
+    },
+    "char_4100_caper": {
+      "source_hash": "8cdbcfd132d9477e1ee5d03c86811c941d0dcfe9e94c317f97436d87458fa883",
+      "summary_path": "chars/char_4100_caper.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:30:27"
+    },
+    "char_4102_threye": {
+      "source_hash": "1a6576f4603d88c892babec14f4df54ae42f329ed66db0dcd63e86058baeb61a",
+      "summary_path": "chars/char_4102_threye.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:30:51"
+    },
+    "char_4104_coldst": {
+      "source_hash": "b0d16206a6f0114a48687a212e0db87227c67eef603955438c1b488f8b96336e",
+      "summary_path": "chars/char_4104_coldst.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:31:07"
+    },
+    "char_4105_almond": {
+      "source_hash": "48e86e65d39e6c0ea71c76ba89e5219e0f8b70845cb0010aa63003697ae485ea",
+      "summary_path": "chars/char_4105_almond.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:31:24"
+    },
+    "char_4106_bryota": {
+      "source_hash": "c8b26447183df24d51366b699a519f059f86ff65efb2d2695af504cb7f053659",
+      "summary_path": "chars/char_4106_bryota.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:31:42"
+    },
+    "char_4107_vrdant": {
+      "source_hash": "8d475d67822e3faf5a4d8231e128ce162512a97ead9abf2f49ddbff501983e0b",
+      "summary_path": "chars/char_4107_vrdant.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:32:00"
+    },
+    "char_4109_baslin": {
+      "source_hash": "e6968ec227a7d716a1495a32a4c1c82562cf6c301cbe888fb0f333b07f2c032c",
+      "summary_path": "chars/char_4109_baslin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:32:20"
+    },
+    "char_4110_delphn": {
+      "source_hash": "7d4de952788517f64d323c20f52bc69ec92adeccf02552b04feaa1f253defc9a",
+      "summary_path": "chars/char_4110_delphn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:32:35"
+    },
+    "char_4114_harold": {
+      "source_hash": "6e844e675b771a417af5a0ca04e8646b7b2240008cfb681c1406d9126a4d66d0",
+      "summary_path": "chars/char_4114_harold.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-14T16:32:51"
+    },
+    "char_4116_blkkgt": {
+      "source_hash": "8d71dd19979fce7a8bd0d0ce8dae1fb6a03966b11280e7376ece7570a4f31006",
+      "summary_path": "chars/char_4116_blkkgt.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:49:58"
+    },
+    "char_4117_ray": {
+      "source_hash": "2ccc470439688f49dde7dc3d0dea60fb7ba9a9ab1cd2477942099485f7713e82",
+      "summary_path": "chars/char_4117_ray.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:50:17"
+    },
+    "char_4119_wanqin": {
+      "source_hash": "16312dc578c891c6e309f5757bd2a3c569c2ccd7ebc182db5bd158e6afa8a76c",
+      "summary_path": "chars/char_4119_wanqin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:50:39"
+    },
+    "char_411_tomimi": {
+      "source_hash": "43c89ffe07642c858c6237017ac0dae2ef5522a1edf8887d73c2e079d693e4c8",
+      "summary_path": "chars/char_411_tomimi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:50:53"
+    },
+    "char_4121_zuole": {
+      "source_hash": "2b6effe72e3057467335f82007e4d67a110fc985684edc640957355818e23e9b",
+      "summary_path": "chars/char_4121_zuole.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:51:17"
+    },
+    "char_4122_grabds": {
+      "source_hash": "b3dd7f9b584b0d2b7c7b487614b7a17803f484ef9c0713e7d568675cd3f924bb",
+      "summary_path": "chars/char_4122_grabds.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:51:41"
+    },
+    "char_4123_ela": {
+      "source_hash": "704303c5e63e3bab3055ac5ad7c5d8987e7978e750e6f36013a2848296cf7486",
+      "summary_path": "chars/char_4123_ela.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:51:59"
+    },
+    "char_4124_iana": {
+      "source_hash": "7781c9f2b32ae75d76275401549f3791f1a072cf45dc16f86881c710f6db8bd5",
+      "summary_path": "chars/char_4124_iana.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:52:15"
+    },
+    "char_4125_rdoc": {
+      "source_hash": "37f7294c9e34f8b4482c8bde4e83a534e1c717e67fa61c24c72ea20b7e67817a",
+      "summary_path": "chars/char_4125_rdoc.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:52:30"
+    },
+    "char_4126_fuze": {
+      "source_hash": "d5b7bfc28c1751a7f806d5890daa43ee1f3fa802e8a202c39e38def351f86323",
+      "summary_path": "chars/char_4126_fuze.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:52:44"
+    },
+    "char_4130_luton": {
+      "source_hash": "9b73aa2ed49b27ff1172df5d995b7550b92fe5ba181446f443e0ec64830c3776",
+      "summary_path": "chars/char_4130_luton.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:52:57"
+    },
+    "char_4131_odda": {
+      "source_hash": "c182feac333a5809bc2f81fc87f89efd4489ce78b1f18272981d06836016d8bd",
+      "summary_path": "chars/char_4131_odda.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:53:28"
+    },
+    "char_4132_ascln": {
+      "source_hash": "8190d18ad51180661c960f69d81355be32a9e701a3b60e7ed2d540bd916f9aa3",
+      "summary_path": "chars/char_4132_ascln.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:53:57"
+    },
+    "char_4133_logos": {
+      "source_hash": "14c2a43126d498a7a7512c2cafab09a77431eb259f2a29e58eea916c07c68a56",
+      "summary_path": "chars/char_4133_logos.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:56:10"
+    },
+    "char_4134_cetsyr": {
+      "source_hash": "ecaa6e5f8568d5b4970989683014b3af46e89755a05164af1086367cf487e487",
+      "summary_path": "chars/char_4134_cetsyr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:56:40"
+    },
+    "char_4136_phonor": {
+      "source_hash": "09473e442dd8627bb389597e046321de26b4b3d902c6ae18a03b4a375cb6dc0d",
+      "summary_path": "chars/char_4136_phonor.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:56:59"
+    },
+    "char_4137_udflow": {
+      "source_hash": "22f80839bb7e832cee25a31f8ff23ddf0810f0129296de2c2c859a8cf40d3529",
+      "summary_path": "chars/char_4137_udflow.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:57:18"
+    },
+    "char_4138_narant": {
+      "source_hash": "8bef1cb09af848be7a2f7ab577c5292b8bae215f32b5282a38130c52cc18448a",
+      "summary_path": "chars/char_4138_narant.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:58:09"
+    },
+    "char_4139_papyrs": {
+      "source_hash": "6153dadfc0a30060d4b3d6e2bdfedeb88be9f37ace9e231e5ccec333aae20cf7",
+      "summary_path": "chars/char_4139_papyrs.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:58:33"
+    },
+    "char_4140_lasher": {
+      "source_hash": "56088b76dfe0750d4d2908aa56e484f918530f386ffaf16a79c7ac044af04395",
+      "summary_path": "chars/char_4140_lasher.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:59:00"
+    },
+    "char_4141_marcil": {
+      "source_hash": "6bc3eda0a7dc2825a5f1dc2650a90c3115b3045fe2913129d94e7eb4579bdf9f",
+      "summary_path": "chars/char_4141_marcil.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:59:20"
+    },
+    "char_4142_laios": {
+      "source_hash": "809dbceb35911f97a0a36745e95ace9c445dcc596410a164f68bc96e22e00939",
+      "summary_path": "chars/char_4142_laios.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:59:42"
+    },
+    "char_4143_sensi": {
+      "source_hash": "1d8ad27693e8b71024c853a620580919837e488b3c3929640e14afac4ad5dac1",
+      "summary_path": "chars/char_4143_sensi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T21:59:59"
+    },
+    "char_4144_chilc": {
+      "source_hash": "4cbacb04d830d34d5bc75398a54f2821e2bea4ade8b9de240a7e8aa8b70c69c4",
+      "summary_path": "chars/char_4144_chilc.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:00:18"
+    },
+    "char_4145_ulpia": {
+      "source_hash": "927ff12b9bedfc3acb8212700a923452fa2660af40c19bd37702658691fa12e6",
+      "summary_path": "chars/char_4145_ulpia.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:00:38"
+    },
+    "char_4146_nymph": {
+      "source_hash": "0e1a67e5d21e3e0623f150d9379d4b74bf83371ead6809ed26a366b35825e918",
+      "summary_path": "chars/char_4146_nymph.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:01:01"
+    },
+    "char_4147_mitm": {
+      "source_hash": "8c545ac486dd66d9b2bd574cea360f55c330d33d087f4ef555654e8a38a65155",
+      "summary_path": "chars/char_4147_mitm.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:01:22"
+    },
+    "char_4148_philae": {
+      "source_hash": "bf518cb6aa1c227b946d3146a8231e267e41a9a6f65015ab5658ca21964349d2",
+      "summary_path": "chars/char_4148_philae.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:01:40"
+    },
+    "char_4151_tinman": {
+      "source_hash": "9a645afceb76d6a884cf2d2fcb48e34683b9277da13738504591f7ff89f08248",
+      "summary_path": "chars/char_4151_tinman.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:02:04"
+    },
+    "char_4155_talr": {
+      "source_hash": "2eb88b0184920d8e54a237156b4c0ab049aefddf6d47b11b06a1b148f7dfc613",
+      "summary_path": "chars/char_4155_talr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:02:20"
+    },
+    "char_415_flint": {
+      "source_hash": "f7c50fd017a0ec32cfc68002e44d27f8ef19121681d563a835bb73bf283318f8",
+      "summary_path": "chars/char_415_flint.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:02:41"
+    },
+    "char_4162_cathy": {
+      "source_hash": "d355c579e86ccd427e3e189aa5b0134583cebcfc560023e5c14c625219fe2298",
+      "summary_path": "chars/char_4162_cathy.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:03:06"
+    },
+    "char_4163_rosesa": {
+      "source_hash": "0b77daa5e58c5e3437f3acf1a8132d49a65b132f2ef5bd9b0ba5a7dd58a2ae50",
+      "summary_path": "chars/char_4163_rosesa.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:03:30"
+    },
+    "char_4164_tecno": {
+      "source_hash": "3d64f8be1730880ca775574a99ea3e345376c12419400e1f4806f12f5fe4e054",
+      "summary_path": "chars/char_4164_tecno.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:03:46"
+    },
+    "char_4165_ctrail": {
+      "source_hash": "f05f759a1472c29950de60e6e8f11e84e5bb6cc5774f53a9e186516c451e009f",
+      "summary_path": "chars/char_4165_ctrail.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:04:01"
+    },
+    "char_4166_varkis": {
+      "source_hash": "9d024098e96a5be52c610e4df39cf83b75df49f1f71967b8886824d501970c3f",
+      "summary_path": "chars/char_4166_varkis.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:04:34"
+    },
+    "char_416_zumama": {
+      "source_hash": "c2accb2cea007ac2e211d1de51e0b5f5fd7d7e15b44d216eddb5790c8e54a135",
+      "summary_path": "chars/char_416_zumama.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:05:01"
+    },
+    "char_4171_wulfen": {
+      "source_hash": "e979a06a7f96cecb3c78df1310207230e7729077c5c35f4bf9eac350c3862119",
+      "summary_path": "chars/char_4171_wulfen.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:05:24"
+    },
+    "char_4172_xingzh": {
+      "source_hash": "60126eb34f0e6370a871525e6e3bca351eab7427047690a20cc145c99a41ac59",
+      "summary_path": "chars/char_4172_xingzh.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:05:43"
+    },
+    "char_4173_nowell": {
+      "source_hash": "4838739145fcf165ffb459762774a2cedf892d47a85b1758847de22ef99ed36a",
+      "summary_path": "chars/char_4173_nowell.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:06:10"
+    },
+    "char_4177_brigid": {
+      "source_hash": "33ed3fca8e403bc16b1716ec1dd1e48a0f4bb18f955ad016ebece00ce74f0b50",
+      "summary_path": "chars/char_4177_brigid.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:06:31"
+    },
+    "char_4178_alanna": {
+      "source_hash": "92997cb0ddb73e96fae86ff796ee004ab53c8e10d9d3517e984e4f43d7cb4d6d",
+      "summary_path": "chars/char_4178_alanna.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:06:55"
+    },
+    "char_4179_monstr": {
+      "source_hash": "e812ef5ef459fdd5c428a6ed07f3538db36edda34da081a0c62f4423d745f471",
+      "summary_path": "chars/char_4179_monstr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:07:22"
+    },
+    "char_4182_oblvns": {
+      "source_hash": "1700519f2cec96e8f950f4d84fab25b73a7e6bdbc0b06d62b389231a0790674e",
+      "summary_path": "chars/char_4182_oblvns.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:07:42"
+    },
+    "char_4183_mortis": {
+      "source_hash": "d09b786ca78072c124666d068baaa373832832c4a3acec3db4e417e134aecb32",
+      "summary_path": "chars/char_4183_mortis.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:07:58"
+    },
+    "char_4184_dolris": {
+      "source_hash": "7f3e4b19825f88bf505642b1eaae1d76bbfdcd67929b6d35a463c88568cae97c",
+      "summary_path": "chars/char_4184_dolris.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:08:12"
+    },
+    "char_4185_amoris": {
+      "source_hash": "08675bc681b03e223039ef38e910573b94387e26a876ecf97b0aa2f4f33fce99",
+      "summary_path": "chars/char_4185_amoris.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:08:30"
+    },
+    "char_4186_tmoris": {
+      "source_hash": "53cccd3592c2b40a35a0a1c5c064271c70c7d66fdbc9556e55d778a644e18962",
+      "summary_path": "chars/char_4186_tmoris.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:08:51"
+    },
+    "char_4187_graceb": {
+      "source_hash": "a5fe741ea849f89d21dbf3fab2099c221b4fdb7d283cfcd986b4f1c6ff185062",
+      "summary_path": "chars/char_4187_graceb.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:09:21"
+    },
+    "char_4188_confes": {
+      "source_hash": "0b2ce63a200541b814a204edee7d294ecdc41a90a69edbb812fcb2e88f4f3673",
+      "summary_path": "chars/char_4188_confes.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:09:40"
+    },
+    "char_4191_tippi": {
+      "source_hash": "2395eedcb4905fa207fb90c929cc485f02732b606fd2c7f62d811ded5d82ac4c",
+      "summary_path": "chars/char_4191_tippi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:09:59"
+    },
+    "char_4193_lemuen": {
+      "source_hash": "efb6be65de52b137e7bbd4a3679e19c5f4e69177c2ce668e5d50624bf580b170",
+      "summary_path": "chars/char_4193_lemuen.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:10:22"
+    },
+    "char_4194_rmixer": {
+      "source_hash": "4254452c09e773720ca43fd6c516cde4275c8ad5853fb8aacdf4d3806d105b2b",
+      "summary_path": "chars/char_4194_rmixer.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:10:52"
+    },
+    "char_4195_radian": {
+      "source_hash": "506ebf57e070e349a14c2f08d548d0a09ea45baa8cc28f87098b39253f7c6833",
+      "summary_path": "chars/char_4195_radian.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:11:11"
+    },
+    "char_4196_reckpr": {
+      "source_hash": "64c26c1d9ef519188b6b52e519867573676bdf8600dd5ede13b18fe16b1feeb0",
+      "summary_path": "chars/char_4196_reckpr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:11:29"
+    },
+    "char_4198_christ": {
+      "source_hash": "1a7872da416fd6517645a711dee7d59670f7b4000c12ffbd107eb8d3702ae2e2",
+      "summary_path": "chars/char_4198_christ.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:12:03"
+    },
+    "char_4199_makiri": {
+      "source_hash": "aa531ece3e08d35cae477b0c60f8c23367246e1d0408f63b132a978ee586ba12",
+      "summary_path": "chars/char_4199_makiri.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:12:19"
+    },
+    "char_4202_haruka": {
+      "source_hash": "9987654fcf3ccd4a1b88b32a01228d962f47fc50104601a47ed0e95d03d2d3c9",
+      "summary_path": "chars/char_4202_haruka.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:12:42"
+    },
+    "char_4203_kichi": {
+      "source_hash": "970c65373bd046159cfac5cb6ddc86bba494affe6e75167827469b5a6c9a0421",
+      "summary_path": "chars/char_4203_kichi.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:12:54"
+    },
+    "char_4204_mantra": {
+      "source_hash": "f49bcc39101753b0b1f7f0042286afe2e2e439bfe67292483daac7c526872144",
+      "summary_path": "chars/char_4204_mantra.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:13:18"
+    },
+    "char_4207_branch": {
+      "source_hash": "0086b0fdc6405f5eee34cab7f68c93c794da180ab34d0139ac483badbc368283",
+      "summary_path": "chars/char_4207_branch.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:13:55"
+    },
+    "char_4208_wintim": {
+      "source_hash": "30c0aa134f6a0482b443dd39d9f2e80cd10a12b8a7d997322792a8314b1a1fb5",
+      "summary_path": "chars/char_4208_wintim.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:14:16"
+    },
+    "char_420_flamtl": {
+      "source_hash": "37f2b96ca305a5eb8173d63270633f7fb8828919c7c5ede4391216bb46c85afd",
+      "summary_path": "chars/char_420_flamtl.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:14:41"
+    },
+    "char_4211_snhunt": {
+      "source_hash": "4b2c11776024642178c49c121083bc6662cec031f84c7fceb9f36b9ba982290d",
+      "summary_path": "chars/char_4211_snhunt.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:15:00"
+    },
+    "char_4212_nasti": {
+      "source_hash": "53d17fa7ef8de39f4d9c5be6bf628e9c5642de5d27ee79438c5463280d1565e6",
+      "summary_path": "chars/char_4212_nasti.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:15:35"
+    },
+    "char_4213_skybx": {
+      "source_hash": "513966617354c8214bf9d3890857c61eef002561a387cb69f468cc8aec1e3b86",
+      "summary_path": "chars/char_4213_skybx.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:16:00"
+    },
+    "char_4214_cairn": {
+      "source_hash": "5b5b08d240d3e954595be80843556819129391f4c8b85206e5c607be7542bb12",
+      "summary_path": "chars/char_4214_cairn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:16:16"
+    },
+    "char_421_crow": {
+      "source_hash": "4d13ccfc768e477776a1fdedc2bb29714c5172bfa15b49d32460d9ef4525569a",
+      "summary_path": "chars/char_421_crow.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:16:32"
+    },
+    "char_4221_ju": {
+      "source_hash": "61a58b8e81f7bec9f870bba6664773c8656a6ed6824b348cf8385bb58c0c4bd9",
+      "summary_path": "chars/char_4221_ju.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:16:52"
+    },
+    "char_4222_taraxa": {
+      "source_hash": "d4ff635b6b2eb030a3d3039083083e519af123239c304e7551212b66814d5176",
+      "summary_path": "chars/char_4222_taraxa.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:17:14"
+    },
+    "char_4223_botany": {
+      "source_hash": "a93dc001697ca1650a1f3e58b53c32a0778c743367e274ae81cca6c6843bba18",
+      "summary_path": "chars/char_4223_botany.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:17:45"
+    },
+    "char_4224_turdus": {
+      "source_hash": "92e3106ac420e8322663feb46ae6f7cc094b154b011f6d79d8a34868fde18a4e",
+      "summary_path": "chars/char_4224_turdus.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:18:11"
+    },
+    "char_4225_tanya": {
+      "source_hash": "a83c25f12393435e29dab23185ae9451bcc4c932d7e7074c5d3ba4c843ff0e43",
+      "summary_path": "chars/char_4225_tanya.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:18:41"
+    },
+    "char_4226_veen": {
+      "source_hash": "01b9b1d6746fe696c3802ebcdc00caea6d3213fb2ba228a2284f6ebb63c0d85b",
+      "summary_path": "chars/char_4226_veen.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:19:02"
+    },
+    "char_4227_gallus": {
+      "source_hash": "d3939f63cc2d3e4c1c8def1d98aa50f2c025bad6cd1a94c665ae8ba6aebbdd88",
+      "summary_path": "chars/char_4227_gallus.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:19:24"
+    },
+    "char_4228_closur": {
+      "source_hash": "59c68c61b32e99293ae6a4759d39c36df302802678e46f700672450765ba14f6",
+      "summary_path": "chars/char_4228_closur.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:19:46"
+    },
+    "char_422_aurora": {
+      "source_hash": "0aa327c31ee34feb2d6a85737be3e9b6d4018cd11b7b05f8b4e1356874a36616",
+      "summary_path": "chars/char_422_aurora.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:20:12"
+    },
+    "char_423_blemsh": {
+      "source_hash": "91cae9e3b53eeb45f62b7db7b2ba5c0c7e645b7579f680f7799e63cfa30eb63b",
+      "summary_path": "chars/char_423_blemsh.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:20:34"
+    },
+    "char_426_billro": {
+      "source_hash": "08274eba71c9f439e05926fc48430adb73157204f4156e85b849e8146787648a",
+      "summary_path": "chars/char_426_billro.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:20:50"
+    },
+    "char_427_vigil": {
+      "source_hash": "45ed6f5efc8ccf782c057a1b76f02676aad85ecfd34bfff139ef4e74a6f5221f",
+      "summary_path": "chars/char_427_vigil.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:21:11"
+    },
+    "char_430_fartth": {
+      "source_hash": "6d8640b3b74dbe20d22b7d823752938bc111671acda2a7b9ddec85798ca204a1",
+      "summary_path": "chars/char_430_fartth.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:21:31"
+    },
+    "char_431_ashlok": {
+      "source_hash": "c4dbf0549873b2e3296dce7457b749161daaea6a4da090d4b77edfc3ca5d7851",
+      "summary_path": "chars/char_431_ashlok.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:21:50"
+    },
+    "char_433_windft": {
+      "source_hash": "f14c7bafcab6966d2155a4aa9fedca00cc9e5c7a3e4373fd9f73f121e096065b",
+      "summary_path": "chars/char_433_windft.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:22:11"
+    },
+    "char_436_whispr": {
+      "source_hash": "1444517c9558d104c6000095666e8f77af86489242cb8c92132a04e2214e258b",
+      "summary_path": "chars/char_436_whispr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:22:55"
+    },
+    "char_437_mizuki": {
+      "source_hash": "a9cf36acdb2d63d3b806056d01c93077caa195ebff9eb315b6b7616ff56b50ff",
+      "summary_path": "chars/char_437_mizuki.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:23:11"
+    },
+    "char_440_pinecn": {
+      "source_hash": "3236d402bd00972481f3831894bfcb197d28c26557d1d0b8b7f47d4efcf8d9f8",
+      "summary_path": "chars/char_440_pinecn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:23:30"
+    },
+    "char_445_wscoot": {
+      "source_hash": "563eaffecceffeb82f68e894f830fc37b63cceba6c05cdb163e987da2443bc88",
+      "summary_path": "chars/char_445_wscoot.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:23:52"
+    },
+    "char_446_aroma": {
+      "source_hash": "6fa79e288fb92bb46bdd4c4454aa2a83e09de807a7648dc1a1da6f6be0a4c9a1",
+      "summary_path": "chars/char_446_aroma.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:24:12"
+    },
+    "char_449_glider": {
+      "source_hash": "48c4705ab508a708805d2bff57f95fe497d27176efed911a6cda89cbe624d604",
+      "summary_path": "chars/char_449_glider.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:24:28"
+    },
+    "char_450_necras": {
+      "source_hash": "7fe6afc3e092b88a0b327b0a18d954da5086602d5dff0374e1528349565ce8a5",
+      "summary_path": "chars/char_450_necras.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:24:55"
+    },
+    "char_451_robin": {
+      "source_hash": "bf311044d79e6e743a307984288d91e34d65e423dc1ae97b3fa031ff26c50773",
+      "summary_path": "chars/char_451_robin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:25:16"
+    },
+    "char_452_bstalk": {
+      "source_hash": "10ef906d98524b5f5a5af61ca766b4f18edba5d9de52dfc31001bdb65ee00c72",
+      "summary_path": "chars/char_452_bstalk.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:25:28"
+    },
+    "char_455_nothin": {
+      "source_hash": "d2a6993ec1c22b4b3ad32dd95e67db8f036a4f6af27291c68a047910c3505709",
+      "summary_path": "chars/char_455_nothin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:25:43"
+    },
+    "char_456_ash": {
+      "source_hash": "fb8c34ca6fc18225de1894fa9702a163081e9faf022c46f040f3b8afcf3dce29",
+      "summary_path": "chars/char_456_ash.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:26:01"
+    },
+    "char_457_blitz": {
+      "source_hash": "6eb9faafedbe81c49ebd02ca689a02ad921155cc725859bf488eda2d3e55c306",
+      "summary_path": "chars/char_457_blitz.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:26:16"
+    },
+    "char_458_rfrost": {
+      "source_hash": "99baf26fcd695f4e82294b95680080a6a83e5b2247bdb382cd47354bdd6f8604",
+      "summary_path": "chars/char_458_rfrost.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:26:29"
+    },
+    "char_459_tachak": {
+      "source_hash": "3f51b8a55f0d5f6224a74cbca1dca581769d4758fa0fc221c596931c24b4ca7a",
+      "summary_path": "chars/char_459_tachak.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:26:48"
+    },
+    "char_464_cement": {
+      "source_hash": "3e13269f09383225732987158823433dc6b3a42e8b3a8df34708eb11d3da9475",
+      "summary_path": "chars/char_464_cement.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:27:04"
+    },
+    "char_466_qanik": {
+      "source_hash": "4e3539972b4a2a3057878856150d7e088af0f356fd2f3e2468e8f848f97f3870",
+      "summary_path": "chars/char_466_qanik.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:27:25"
+    },
+    "char_469_indigo": {
+      "source_hash": "57c40872b8550a9b0e06de471968545225a42b5e1b3697c59c303f779775fea4",
+      "summary_path": "chars/char_469_indigo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:27:43"
+    },
+    "char_472_pasngr": {
+      "source_hash": "c45346e4044de42fc5977b39cc2e2b5772d6472f9fb1578ffe7cd0f376f721e2",
+      "summary_path": "chars/char_472_pasngr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:28:16"
+    },
+    "char_473_mberry": {
+      "source_hash": "de6ef0ae5b96b5247bbb6bf7f14a7e4de777a6905fa16fc669c7d3c496abdf13",
+      "summary_path": "chars/char_473_mberry.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:28:31"
+    },
+    "char_474_glady": {
+      "source_hash": "74f26cc7e5b489b47deaabe701ad768638ee2e56f5997a62e240cc8a1764ec12",
+      "summary_path": "chars/char_474_glady.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:28:49"
+    },
+    "char_475_akafyu": {
+      "source_hash": "21caab55282c81c3e156ae249f628987d318bff830bec770f34ff72960d603f3",
+      "summary_path": "chars/char_475_akafyu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:29:10"
+    },
+    "char_476_blkngt": {
+      "source_hash": "ac6a9e1398ed98975f39603915235de4af5bb7cdd396f8eee22d7058e10fcddc",
+      "summary_path": "chars/char_476_blkngt.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:29:26"
+    },
+    "char_478_kirara": {
+      "source_hash": "369866c7df983b5a022adca835da35c55613a25ebb6dcb572ecd00df45596b90",
+      "summary_path": "chars/char_478_kirara.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:29:44"
+    },
+    "char_479_sleach": {
+      "source_hash": "2452d3e1e8eb970d599bda859aae82e826392bd7c2ac6c0da69110fafabce0f6",
+      "summary_path": "chars/char_479_sleach.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:30:11"
+    },
+    "char_484_robrta": {
+      "source_hash": "68339126b3f1374458eebf10ecd35649a3ce077fe6401fcd11dad86d20084304",
+      "summary_path": "chars/char_484_robrta.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:30:30"
+    },
+    "char_485_pallas": {
+      "source_hash": "be0b80a96992ccf7a779ad534b81cc53ca13e674390cbb92d2cda87630704c6a",
+      "summary_path": "chars/char_485_pallas.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:30:56"
+    },
+    "char_486_takila": {
+      "source_hash": "85584524d3faf7ca5f33149f87266372b1d6e88f38fb4d72bcef8ef18fc10d85",
+      "summary_path": "chars/char_486_takila.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:31:18"
+    },
+    "char_487_bobb": {
+      "source_hash": "849e15270d150be3cff3952ed2c4c7f44461dec2e99901d6ca06e094704303cd",
+      "summary_path": "chars/char_487_bobb.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:31:46"
+    },
+    "char_488_buildr": {
+      "source_hash": "31aa3604305b5ae384d706e59857d2a95e802d175b633c255ef5bca0c7c579dd",
+      "summary_path": "chars/char_488_buildr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:32:00"
+    },
+    "char_489_serum": {
+      "source_hash": "54ac23c52461ab8cb478e4ddb469588ca91e516773f1c927009cbdcc1263aa71",
+      "summary_path": "chars/char_489_serum.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:32:13"
+    },
+    "char_491_humus": {
+      "source_hash": "236d6161e478379beb9da6701045cfbd8ee247849ea456e7de4194bde13c92ed",
+      "summary_path": "chars/char_491_humus.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:32:30"
+    },
+    "char_492_quercu": {
+      "source_hash": "fc658084388b6963bad945c31ea27fb66954c288607d8d46cf93ce1c957bd0dc",
+      "summary_path": "chars/char_492_quercu.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:32:43"
+    },
+    "char_493_firwhl": {
+      "source_hash": "637cbb697a67fa813232446525a9bdecee62c87974f06a5d9e492516981c3169",
+      "summary_path": "chars/char_493_firwhl.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:34:42"
+    },
+    "char_494_vendla": {
+      "source_hash": "763683af2df7f898a190c735373f0db2733f555504e1db5ee5f8d1eb07665411",
+      "summary_path": "chars/char_494_vendla.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:34:59"
+    },
+    "char_496_wildmn": {
+      "source_hash": "3011fc8c62302a2341376c247c47256675b623d75078b009e963edb418deabac",
+      "summary_path": "chars/char_496_wildmn.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:35:23"
+    },
+    "char_497_ctable": {
+      "source_hash": "d4a75b9a85a195035a86d50856e4ceb843d76a21696f8c4e78240c25f3838e7d",
+      "summary_path": "chars/char_497_ctable.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:35:48"
+    },
+    "char_498_inside": {
+      "source_hash": "e52535d11640594fa94990f5be486ce55276bb304ab17491a93bd0d36b3a2ccd",
+      "summary_path": "chars/char_498_inside.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:36:12"
+    },
+    "char_499_kaitou": {
+      "source_hash": "8acdb00a825ea09ce118657a36f6c3cac06205a5bb3acee1664b56593b8e1d7a",
+      "summary_path": "chars/char_499_kaitou.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:36:29"
+    },
+    "char_500_noirc": {
+      "source_hash": "633af5c8c85ecf3f061d7b399e52390fa60acc22796e9d7bac99c8a090de8dab",
+      "summary_path": "chars/char_500_noirc.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:36:45"
+    },
+    "char_501_durin": {
+      "source_hash": "96c0971e89c5faf2be9ff10ee13de33e57c719cd439c9baf33475f21343e362d",
+      "summary_path": "chars/char_501_durin.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:36:56"
+    },
+    "char_502_nblade": {
+      "source_hash": "2a3fb122724fd851b276c2e2b3d50c4fa1ff46736ed0701d52d56ebff42478b1",
+      "summary_path": "chars/char_502_nblade.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:37:08"
+    },
+    "char_503_rang": {
+      "source_hash": "6dcd6a9c2accd46ff690136451e1ab93f9b0fcbcffb9f1c2a945c95e5ae60515",
+      "summary_path": "chars/char_503_rang.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:37:19"
+    },
+    "char_504_rguard": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_504_rguard.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:37:37"
+    },
+    "char_505_rcast": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_505_rcast.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:37:48"
+    },
+    "char_506_rmedic": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_506_rmedic.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:38:04"
+    },
+    "char_507_rsnipe": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_507_rsnipe.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:38:22"
+    },
+    "char_508_aguard": {
+      "source_hash": "cbd6faf40a897683497cecef9e5b344162a09897b3e8f847353cf9fea914cbad",
+      "summary_path": "chars/char_508_aguard.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:38:41"
+    },
+    "char_509_acast": {
+      "source_hash": "a3c057f69c2eb2e985c0db0ba62ddc67ce83c6991b3b3f40bea153b5e0d7fa53",
+      "summary_path": "chars/char_509_acast.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:38:55"
+    },
+    "char_510_amedic": {
+      "source_hash": "d84efe2560d5c5c497b5ca85661765ee05cf9e88f69aa6f009b9485a19b9ed81",
+      "summary_path": "chars/char_510_amedic.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:39:08"
+    },
+    "char_511_asnipe": {
+      "source_hash": "31001c463f2a41f2e23746bd4015e1d0e0d0171866c6500c7a82a133b29f6811",
+      "summary_path": "chars/char_511_asnipe.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:39:17"
+    },
+    "char_512_aprot": {
+      "source_hash": "5e250f48db6b5a421ff87e737285f98e900a4965d0ea560c217cc4ec83a59f4d",
+      "summary_path": "chars/char_512_aprot.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:39:32"
+    },
+    "char_513_apionr": {
+      "source_hash": "e340add5ea11831afe1e945c446956c5516736404a16de2195d999e3f47d47f6",
+      "summary_path": "chars/char_513_apionr.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:39:44"
+    },
+    "char_514_rdfend": {
+      "source_hash": "dd9b48cbf20a6129c27b0c97bfaeabd77f837ce0563ca6d138a795a56a00b521",
+      "summary_path": "chars/char_514_rdfend.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:39:52"
+    },
+    "char_600_cpione": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_600_cpione.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:40:01"
+    },
+    "char_601_cguard": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_601_cguard.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:40:12"
+    },
+    "char_602_cdfend": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_602_cdfend.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:40:48"
+    },
+    "char_603_csnipe": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_603_csnipe.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:41:00"
+    },
+    "char_604_ccast": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_604_ccast.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:41:21"
+    },
+    "char_605_cmedic": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_605_cmedic.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:41:47"
+    },
+    "char_606_csuppo": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_606_csuppo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:42:02"
+    },
+    "char_607_cspec": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_607_cspec.jsonl",
+      "backend": "cli",
+      "model": "gemini-3.1-pro-preview",
+      "generated_at": "2026-05-14T22:42:12"
+    },
+    "char_608_acpion": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_608_acpion.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T12:51:18"
+    },
+    "char_609_acguad": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_609_acguad.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T12:53:55"
+    },
+    "char_610_acfend": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_610_acfend.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T12:59:28"
+    },
+    "char_611_acnipe": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_611_acnipe.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:03:41"
+    },
+    "char_612_accast": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_612_accast.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:04:56"
+    },
+    "char_613_acmedc": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_613_acmedc.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:07:14"
+    },
+    "char_614_acsupo": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_614_acsupo.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:07:23"
+    },
+    "char_615_acspec": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_615_acspec.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:09:50"
+    },
+    "char_616_pithst": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_616_pithst.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:17:29"
+    },
+    "char_617_sharp2": {
+      "source_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_path": "chars/char_617_sharp2.jsonl",
+      "backend": "cli",
+      "model": "gemini-3-flash-preview",
+      "generated_at": "2026-05-15T13:19:53"
+    }
+  },
+  "generated_at": "2026-05-15T13:34:55"
+}

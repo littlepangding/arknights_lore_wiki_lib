@@ -1,0 +1,3 @@
+{"head": "char_345_folnic", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "学生，视其为唯一的亲属"}
+{"head": "char_345_folnic", "type": "ally_of", "tail": "ent_f7fc89", "tail_name": "安托", "notes": "医疗部同事，命名契机"}
+{"head": "char_345_folnic", "type": "ally_of", "tail": "char_017_huang", "tail_name": "煌", "notes": "罗德岛干员"}

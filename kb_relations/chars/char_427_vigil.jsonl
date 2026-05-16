@@ -1,0 +1,10 @@
+{"head": "char_427_vigil", "type": "identifies_as", "tail": "char_427_vigil", "tail_name": "莱昂图索", "notes": "本名"}
+{"head": "char_427_vigil", "type": "ally_of", "tail": "char_102_texas", "tail_name": "德克萨斯"}
+{"head": "char_427_vigil", "type": "ally_of", "tail": "char_4065_judge", "tail_name": "斥罪"}
+{"head": "char_427_vigil", "type": "family_of", "tail": "char_4065_judge", "tail_name": "斥罪", "notes": "视作姐姐般的存在"}
+{"head": "char_427_vigil", "type": "ally_of", "tail": "char_349_chiave", "tail_name": "贾维"}
+{"head": "char_427_vigil", "type": "family_of", "tail": "ent_069af8", "tail_name": "父亲", "notes": "父亲"}
+{"head": "char_427_vigil", "type": "family_of", "tail": "ent_568f6d", "tail_name": "母亲", "notes": "母亲"}
+{"head": "char_427_vigil", "type": "subordinate_of", "tail": "ent_b2a80e", "tail_name": "卡拉奇", "notes": "曾作为其秘书"}
+{"head": "char_427_vigil", "type": "rival_of", "tail": "ent_0def7d", "tail_name": "西西里夫人"}
+{"head": "char_427_vigil", "type": "rival_of", "tail": "ent_4d1a87", "tail_name": "扎罗"}

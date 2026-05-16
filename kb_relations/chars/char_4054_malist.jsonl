@@ -1,0 +1,5 @@
+{"head": "char_4054_malist", "type": "origin_from", "tail": "char_501_durin", "tail_name": "杜林"}
+{"head": "char_4054_malist", "type": "ally_of", "tail": "char_187_ccheal", "tail_name": "嘉维尔", "notes": "将其带离地底并劝说其前往罗德岛接受治疗"}
+{"head": "char_4054_malist", "type": "ally_of", "tail": "char_151_myrtle", "tail_name": "桃金娘", "notes": "同为杜林族干员，曾一同举办杜林人联欢会"}
+{"head": "char_4054_malist", "type": "ally_of", "tail": "char_4041_chnut", "tail_name": "褐果", "notes": "同为杜林族、工程部干员"}
+{"head": "char_4054_malist", "type": "subordinate_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "至简任职于其领导的工程部"}

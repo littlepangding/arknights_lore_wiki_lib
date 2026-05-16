@@ -1,0 +1,4 @@
+{"head": "char_340_shwaz", "type": "ally_of", "tail": "char_348_ceylon", "tail_name": "锡兰"}
+{"head": "char_340_shwaz", "type": "family_of", "tail": "char_348_ceylon", "tail_name": "锡兰", "notes": "情同姐妹"}
+{"head": "char_340_shwaz", "type": "subordinate_of", "tail": "ent_6a5d54", "tail_name": "赫尔曼", "notes": "曾任市长SP"}
+{"head": "char_340_shwaz", "type": "subordinate_of", "tail": "char_348_ceylon", "tail_name": "锡兰", "notes": "私人保镖"}

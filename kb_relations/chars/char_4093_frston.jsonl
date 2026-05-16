@@ -1,0 +1,11 @@
+{"head": "char_4093_frston", "type": "identifies_as", "tail": "ent_7f24be", "tail_name": "特雷弗·弗里斯顿", "notes": "其内部搭载的完整人格身份"}
+{"head": "char_4093_frston", "type": "identifies_as", "tail": "char_4093_frston", "tail_name": "弗里斯顿", "notes": "本人更认可的自称，抗拒“-3”后缀"}
+{"head": "char_4093_frston", "type": "subordinate_of", "tail": "char_003_kalts", "tail_name": "凯尔希", "notes": "对其负有直接责任的决策者"}
+{"head": "char_4093_frston", "type": "subordinate_of", "tail": "char_4228_closur", "tail_name": "可露希尔", "notes": "主导其研发、组装与维护的工程师"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_003_kalts", "tail_name": "凯尔希"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_4228_closur", "tail_name": "可露希尔"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_400_weedy", "tail_name": "温蒂", "notes": "聘请其为研究室顾问并进行学术交流"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_285_medic2", "tail_name": "Lancet-2", "notes": "同为罗德岛智能作业平台"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_286_cast3", "tail_name": "Castle-3", "notes": "同为罗德岛智能作业平台"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_376_therex", "tail_name": "THRM-EX", "notes": "同为罗德岛智能作业平台"}
+{"head": "char_4093_frston", "type": "ally_of", "tail": "char_4000_jnight", "tail_name": "正义骑士号", "notes": "同为罗德岛智能作业平台"}
