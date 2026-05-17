@@ -443,3 +443,82 @@ def summary_char_ids_by_event(
         for r in rows:
             by_event[r["event_id"]].add(cid)
     return {eid: frozenset(s) for eid, s in by_event.items()}
+
+
+def build_entity_to_events_summary(
+    summaries_root: Path | None,
+    entity_alias_to_ids: dict[str, list[str]],
+    operator_entity_ids: set[str],
+) -> dict[str, list[dict]]:
+    """Non-operator companion to `build_char_to_events_summary`.
+
+    Returns `entity_id -> [summary rows]` for entities whose `id` is *not*
+    an operator (`char_<id>`) — i.e. curated NPCs/organizations, the
+    `protagonist` row (`ent_76be2e` for 博士), and auto-seeded `unknown`
+    placeholders. Operators are already covered by the char-keyed builder,
+    so they're excluded here to avoid double-counting.
+
+    Same row shape as the char builder (`{event_id, stage_idx, source,
+    tier, matched_aliases}`); ambiguous surface names (alias → >1 entity)
+    are dropped silently. Stage-scoped rows from `kb_summaries/stages/`
+    take precedence — the per-event row is suppressed for `(entity_id,
+    event_id)` pairs already covered by ≥1 stage hit, matching the char
+    builder's contract. No deterministic-edge filter (non-operators have
+    no deterministic edges)."""
+    edges: dict[str, list[dict]] = {}
+    if summaries_root is None:
+        return edges
+
+    def _resolve(name: str) -> str | None:
+        ids = entity_alias_to_ids.get(name, [])
+        if len(ids) != 1:
+            return None
+        eid_entity = ids[0]
+        if eid_entity in operator_entity_ids:
+            return None
+        return eid_entity
+
+    # entity_id -> event_id -> sidx -> [surface names]
+    stage_acc: dict[str, dict[str, dict[int, list[str]]]] = defaultdict(
+        lambda: defaultdict(dict)
+    )
+    ents_with_stage_hit: set[tuple[str, str]] = set()
+    stages_root = paths.stages_summary_root(summaries_root)
+    if stages_root.is_dir():
+        for ev_dir in sorted(stages_root.iterdir()):
+            if not ev_dir.is_dir():
+                continue
+            eid = ev_dir.name
+            for md in sorted(ev_dir.glob("*.md")):
+                try:
+                    sidx = int(md.stem)
+                except ValueError:
+                    continue
+                for name in parse_key_chars(md.read_text(encoding="utf-8")):
+                    ent_id = _resolve(name)
+                    if ent_id is None:
+                        continue
+                    stage_acc[ent_id][eid].setdefault(sidx, []).append(name)
+                    ents_with_stage_hit.add((ent_id, eid))
+
+    # entity_id -> event_id -> [surface names]
+    event_acc: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
+    events_dir = summaries_root / "events"
+    if events_dir.is_dir():
+        for md in sorted(events_dir.glob("*.md")):
+            eid = md.stem
+            for name in parse_key_chars(md.read_text(encoding="utf-8")):
+                ent_id = _resolve(name)
+                if ent_id is None or (ent_id, eid) in ents_with_stage_hit:
+                    continue
+                event_acc[ent_id][eid].append(name)
+
+    for ent_id in sorted(set(stage_acc) | set(event_acc)):
+        rows: list[dict] = []
+        for eid in sorted(set(stage_acc.get(ent_id, {})) | set(event_acc.get(ent_id, {}))):
+            if eid in event_acc.get(ent_id, {}):
+                rows.append(_summary_row(eid, None, event_acc[ent_id][eid]))
+            for sidx in sorted(stage_acc.get(ent_id, {}).get(eid, {})):
+                rows.append(_summary_row(eid, sidx, stage_acc[ent_id][eid][sidx]))
+        edges[ent_id] = rows
+    return edges

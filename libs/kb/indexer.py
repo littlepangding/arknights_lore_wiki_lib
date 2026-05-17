@@ -464,6 +464,17 @@ def build_all_indexes(
         paths.entities_jsonl_path(kb_root), ent_summary["entities"]
     )
 
+    entity_alias_to_ids = entities.build_entity_alias_index(ent_summary["entities"])
+    operator_entity_ids = {
+        r["id"] for r in ent_summary["entities"] if r["entity_type"] == "operator"
+    }
+    entity_summary_edges = participants.build_entity_to_events_summary(
+        sumroot, entity_alias_to_ids, operator_entity_ids
+    )
+    atomic_write_json(
+        paths.index_path(kb_root, "entity_to_events_summary"), entity_summary_edges
+    )
+
     cooccur_rows = cooccurrence.build_cooccurrence(event_to_chars)
     cooccurrence.write_cooccurrence_jsonl(
         paths.cooccurrence_jsonl_path(kb_root), cooccur_rows

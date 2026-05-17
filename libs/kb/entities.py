@@ -58,13 +58,14 @@ from typing import Literal
 from libs.kb._io import atomic_write_text, invert_alias_lists
 
 EntityType = Literal[
-    "operator", "npc", "organization", "location", "group", "unknown"
+    "operator", "npc", "organization", "location", "group", "protagonist", "unknown"
 ]
 ENTITY_TYPES: tuple[EntityType, ...] = (
-    "operator", "npc", "organization", "location", "group", "unknown",
+    "operator", "npc", "organization", "location", "group", "protagonist", "unknown",
 )
 # Curated entries may declare any of these. `operator` is reserved for
 # rows seeded from `character_table` — a curator can't manually mint one.
+# `protagonist` is the player avatar (博士); v1 has exactly one such entry.
 _NON_OPERATOR_TYPES: frozenset[str] = frozenset(ENTITY_TYPES) - {"operator"}
 
 

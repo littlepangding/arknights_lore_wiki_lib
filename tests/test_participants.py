@@ -402,3 +402,61 @@ def test_summary_char_ids_by_event_inversion():
     }
     out = participants.summary_char_ids_by_event(edges)
     assert out == {"ev1": frozenset({"char_a", "char_b"}), "ev2": frozenset({"char_b"})}
+
+
+# --- entity-keyed summary edges (non-operators) -----------------------
+
+
+def test_build_entity_to_events_summary_skips_operators(tmp_path):
+    """Operator hits stay out of the entity-keyed index (they're already
+    covered by the char-keyed index)."""
+    sr = tmp_path / "kb_summaries"
+    (sr / "events").mkdir(parents=True)
+    (sr / "events" / "ev1.md").write_text(
+        "<关键人物>\n阿米娅;博士\n</关键人物>\n", encoding="utf-8"
+    )
+    entity_alias_to_ids = {
+        "阿米娅": ["char_002_amiya"],
+        "博士": ["ent_76be2e"],
+    }
+    operator_ids = {"char_002_amiya"}
+    edges = participants.build_entity_to_events_summary(
+        sr, entity_alias_to_ids, operator_ids
+    )
+    # 阿米娅 → operator → suppressed; 博士 → non-operator → kept.
+    assert list(edges) == ["ent_76be2e"]
+    assert edges["ent_76be2e"] == [_srow("ev1", None, ["博士"])]
+
+
+def test_build_entity_to_events_summary_ambiguous_dropped(tmp_path):
+    sr = tmp_path / "kb_summaries"
+    (sr / "events").mkdir(parents=True)
+    (sr / "events" / "ev1.md").write_text(
+        "<关键人物>\n暮落\n</关键人物>\n", encoding="utf-8"
+    )
+    edges = participants.build_entity_to_events_summary(
+        sr, {"暮落": ["ent_a", "ent_b"]}, set()
+    )
+    assert edges == {}
+
+
+def test_build_entity_to_events_summary_stage_subsumes_event(tmp_path):
+    """Same precedence rule as the char builder: stage row supersedes
+    the per-event row for `(entity_id, event_id)` pairs covered by both."""
+    sr = tmp_path / "kb_summaries"
+    (sr / "events").mkdir(parents=True)
+    (sr / "events" / "ev1.md").write_text(
+        "<关键人物>\n博士\n</关键人物>\n", encoding="utf-8"
+    )
+    _write_stage_summary(sr, "ev1", 3, "博士")
+    edges = participants.build_entity_to_events_summary(
+        sr, {"博士": ["ent_76be2e"]}, set()
+    )
+    assert edges["ent_76be2e"] == [_srow("ev1", 3, ["博士"])]
+
+
+def test_build_entity_to_events_summary_no_summaries_dir(tmp_path):
+    assert participants.build_entity_to_events_summary(None, {}, set()) == {}
+    assert (
+        participants.build_entity_to_events_summary(tmp_path / "nope", {}, set()) == {}
+    )

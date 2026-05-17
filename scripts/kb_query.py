@@ -261,7 +261,31 @@ def cmd_entity_get(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         return 1
-    _print_json(ent)
+    # For non-operators a hand-curated dossier may exist under
+    # `kb_curated/chars/<entity_id>/` (v1: ent_76be2e for 博士). Operators
+    # have no entries there — their section data is on the char side.
+    section = getattr(args, "section", None)
+    if section is None:
+        _print_json(ent)
+        return 0
+    text = query.get_entity_section(args.entity_id, section)
+    if args.text:
+        sys.stdout.write(text or "")
+        return 0
+    _print_json({"entity_id": args.entity_id, "section": section, "row": ent, "text": text})
+    return 0
+
+
+def cmd_entity_appearances(args: argparse.Namespace) -> int:
+    kb = _load(args)
+    if kb.entities_by_id.get(args.entity_id) is None:
+        print(
+            f"kb_query: no entity with id {args.entity_id!r} "
+            "(try `entity resolve <name>` or `entity list`)",
+            file=sys.stderr,
+        )
+        return 1
+    _print_json(query.entity_appearances(kb, args.entity_id))
     return 0
 
 
@@ -491,7 +515,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _add_common(p)
     p.add_argument("entity_id")
+    p.add_argument(
+        "--section", choices=list(paths.ENTITY_SECTIONS_OR_ALL), default=None,
+        help="Read the hand-curated dossier section (non-operator entities only; "
+             "v1: ent_76be2e/博士). Omit for the bare entity row.",
+    )
+    p.add_argument("--text", action="store_true",
+                   help="With --section, print raw section text instead of JSON.")
     p.set_defaults(fn=cmd_entity_get)
+
+    p = g_entity_sub.add_parser(
+        "appearances",
+        help="Summary-source appearances for a non-operator entity "
+             "(the only edge layer non-operators have in v1).",
+    )
+    _add_common(p)
+    p.add_argument("entity_id")
+    p.set_defaults(fn=cmd_entity_appearances)
 
     g_relations = sub.add_parser(
         "relations",

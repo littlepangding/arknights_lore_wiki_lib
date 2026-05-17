@@ -259,6 +259,24 @@ def test_build_entities_top_level_integration(tmp_path):
     assert summary["entities"][0]["entity_type"] == "operator"
 
 
+def test_protagonist_type_accepted_through_curation(tmp_path):
+    """`protagonist` is a valid curated entity_type (v1: 博士)."""
+    p = tmp_path / "entities_curated.jsonl"
+    _write_jsonl(p, [{
+        "name": "博士",
+        "entity_type": "protagonist",
+        "aliases": ["博士", "Doctor", "Dr."],
+    }])
+    entries, errors = entities.parse_curated_entities_file(p)
+    assert errors == []
+    assert entries[0]["entity_type"] == "protagonist"
+    rows, warnings = entities.build_curated_entities(entries, {})
+    assert warnings == []
+    assert rows[0]["entity_type"] == "protagonist"
+    assert rows[0]["id"] == entities.synthetic_entity_id("博士")
+    assert set(rows[0]["aliases"]) >= {"博士", "Doctor", "Dr."}
+
+
 def test_build_entities_no_curated_no_unresolved():
     cm = {"char_002_amiya": _mf("char_002_amiya", name="阿米娅", appellation="Amiya")}
     summary = entities.build_entities(
