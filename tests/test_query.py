@@ -376,3 +376,37 @@ def test_event_stages_lists_chapters(loaded_kb):
 
 def test_event_stages_returns_none_for_unknown_event(loaded_kb):
     assert query.event_stages(loaded_kb, "no_such_event") is None
+
+
+# --- non-operator entity helpers (dossier + appearances) ----------------
+
+
+def test_get_entity_section_reads_dossier(tmp_path):
+    """`get_entity_section` reads `kb_curated/chars/<eid>/<section>.md`."""
+    eid = "ent_test01"
+    edir = tmp_path / "kb_curated" / "chars" / eid
+    edir.mkdir(parents=True)
+    (edir / "profile.md").write_text("# profile body\n", encoding="utf-8")
+    (edir / "archive.md").write_text("# archive body\n", encoding="utf-8")
+
+    assert query.get_entity_section(eid, "profile", tmp_path / "kb_curated") \
+        == "# profile body\n"
+    # `all` joins every present file in canonical order, missing files skipped.
+    joined = query.get_entity_section(eid, "all", tmp_path / "kb_curated")
+    assert "profile body" in joined and "archive body" in joined
+    # Missing section → None.
+    assert query.get_entity_section(eid, "voice_about", tmp_path / "kb_curated") is None
+
+
+def test_get_entity_section_returns_none_for_unknown_id(tmp_path):
+    assert query.get_entity_section("ent_nope", "profile", tmp_path / "kb_curated") is None
+    assert query.get_entity_section("ent_nope", "all", tmp_path / "kb_curated") is None
+
+
+def test_entity_appearances_returns_summary_rows(loaded_kb):
+    """Empty by default on the mini fixture (no curated non-operators),
+    so this confirms the new index loads and the helper returns `[]`
+    for unknown ids rather than raising."""
+    assert query.entity_appearances(loaded_kb, "ent_does_not_exist") == []
+    # And the field exists on the loaded KB.
+    assert isinstance(loaded_kb.entity_to_events_summary, dict)

@@ -199,6 +199,10 @@ class KB:
     entities: list[dict] = field(default_factory=list)
     entities_by_id: dict[str, dict] = field(default_factory=dict)
     entity_alias_to_ids: dict[str, list[str]] = field(default_factory=dict)
+    # Summary-source appearances for non-operator entities (curated NPCs,
+    # the protagonist `ent_76be2e`, auto-seeded unknowns). Operator
+    # appearances live in the char-keyed indexes above.
+    entity_to_events_summary: dict[str, list[dict]] = field(default_factory=dict)
     # Co-occurrence: deterministic char-pair table. `relations`: typed
     # relation assertions (empty until the LLM bake runs). Both degrade
     # to `[]` when the file is absent — a pre-cooccurrence build still
@@ -247,6 +251,9 @@ def load_kb(
     ent_list = entities_mod.load_entities(paths.entities_jsonl_path(root))
     entities_by_id = {e["id"]: e for e in ent_list}
     entity_alias_index = entities_mod.build_entity_alias_index(ent_list)
+    entity_summary = read_json_or(
+        paths.index_path(root, "entity_to_events_summary"), {}
+    )
 
     cooccur_rows = cooccurrence_mod.load_cooccurrence(
         paths.cooccurrence_jsonl_path(root)
@@ -270,6 +277,7 @@ def load_kb(
         entities=ent_list,
         entities_by_id=entities_by_id,
         entity_alias_to_ids=entity_alias_index,
+        entity_to_events_summary=entity_summary,
         cooccurrence=cooccur_rows,
         relations=relation_rows,
     )
@@ -677,6 +685,34 @@ def list_entities(
 def get_entity(kb: KB, entity_id: str) -> dict | None:
     """The full entity row, or `None` if no entity has that id."""
     return kb.entities_by_id.get(entity_id)
+
+
+def get_entity_section(
+    entity_id: str, section: str = "all", curated_root: Path | None = None
+) -> str | None:
+    """Read the hand-curated dossier file(s) at
+    `kb_curated/chars/<entity_id>/<section>.md`. `section='all'` joins
+    every present file in canonical order. Returns `None` if nothing
+    found on disk. Operators don't have entries here — their data lives
+    in `chars/<char_id>/` via `get_char_section`."""
+    from libs.kb.paths import ENTITY_SECTIONS
+
+    if section == "all":
+        parts: list[str] = []
+        for sec in ENTITY_SECTIONS:
+            p = paths.entity_section_path(entity_id, sec, curated_root)
+            if p.is_file():
+                parts.append(p.read_text(encoding="utf-8"))
+        return "\n".join(parts) if parts else None
+    p = paths.entity_section_path(entity_id, section, curated_root)
+    return p.read_text(encoding="utf-8") if p.is_file() else None
+
+
+def entity_appearances(kb: KB, entity_id: str) -> list[dict]:
+    """Summary-source appearances for a non-operator entity (the only
+    edge layer non-operators have in v1). Returns `[]` when the id is
+    unknown or has no recorded appearances."""
+    return list(kb.entity_to_events_summary.get(entity_id, []))
 
 
 # --- relation network -------------------------------------------------

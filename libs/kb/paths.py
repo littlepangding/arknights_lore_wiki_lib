@@ -16,6 +16,11 @@ from libs.bases import get_simple_filename
 KB_DIRNAME = "data/kb"
 SUMMARIES_DIRNAME = "kb_summaries"
 RELATIONS_DIRNAME = "kb_relations"
+CURATED_DIRNAME = "kb_curated"
+# Sections for the hand-curated non-operator entity dossiers under
+# `kb_curated/chars/<entity_id>/`. v1: 博士 only.
+ENTITY_SECTIONS: tuple[str, ...] = ("profile", "archive", "voice_about")
+ENTITY_SECTIONS_OR_ALL: tuple[str, ...] = ENTITY_SECTIONS + ("all",)
 
 Family = Literal["mainline", "activity", "mini_activity", "operator_record", "other"]
 FAMILIES: tuple[Family, ...] = (
@@ -48,6 +53,22 @@ def default_summaries_root() -> Path:
 
 def default_relations_root() -> Path:
     return Path.cwd() / RELATIONS_DIRNAME
+
+
+def default_curated_root() -> Path:
+    return Path.cwd() / CURATED_DIRNAME
+
+
+def entity_special_dir(entity_id: str, curated_root: Path | None = None) -> Path:
+    """`kb_curated/chars/<entity_id>/` — the hand-curated dossier root
+    for a non-operator entity (v1: only `ent_76be2e` for 博士)."""
+    return (curated_root or default_curated_root()) / "chars" / entity_id
+
+
+def entity_section_path(
+    entity_id: str, section: str, curated_root: Path | None = None
+) -> Path:
+    return entity_special_dir(entity_id, curated_root) / f"{section}.md"
 
 
 def safe_slug(s: str) -> str:
